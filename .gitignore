@@ -8,7 +8,9 @@ package-lock.json
 .env.*.local
 
 ## IDE
-.idea/
+.idea/*
+!.idea/runConfigurations/
+!.idea/runConfigurations.xml
 .vscode/
 *.swp
 *.swo
@@ -25,6 +27,7 @@ yarn-error.log*
 build-info.json
 .cache/
 .tmp/
+coverage/
 
 ## OS Files
 .DS_Store

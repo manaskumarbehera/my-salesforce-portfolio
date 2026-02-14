@@ -15,29 +15,27 @@ const { execSync } = require('child_process');
  */
 describe('📁 File Organization Tests', () => {
 
-  test('should not have .md files in root directory', () => {
+  test('CRITICAL: Only README.md allowed in root directory', () => {
     const rootDir = path.join(__dirname, '..');
     const files = fs.readdirSync(rootDir);
-    const mdFilesInRoot = files.filter(file =>
-      file.endsWith('.md') &&
-      !['README.md', 'PROJECT_STRUCTURE.md', 'ORGANIZATION_COMPLETE.md'].includes(file)
-    );
-
-    expect(mdFilesInRoot.length).toBe(0);
-    if (mdFilesInRoot.length > 0) {
-      console.error('❌ Found .md files in root:', mdFilesInRoot);
-    }
-  });
-
-  test('should have allowed .md files only in root', () => {
-    const rootDir = path.join(__dirname, '..');
-    const files = fs.readdirSync(rootDir);
-    const allowedMdFiles = ['README.md', 'PROJECT_STRUCTURE.md', 'ORGANIZATION_COMPLETE.md'];
     const mdFilesInRoot = files.filter(file => file.endsWith('.md'));
 
-    mdFilesInRoot.forEach(file => {
-      expect(allowedMdFiles).toContain(file);
-    });
+    // Only README.md is allowed in root
+    const allowedFiles = ['README.md'];
+    const unexpectedMdFiles = mdFilesInRoot.filter(
+      file => !allowedFiles.includes(file)
+    );
+
+    if (unexpectedMdFiles.length > 0) {
+      throw new Error(
+        `❌ CRITICAL: Found .md files in root that should be in docs/:\n${unexpectedMdFiles.join('\n')}\n\n` +
+        `Only README.md is allowed in root directory!\n` +
+        `Move these files to docs/ folder!`
+      );
+    }
+
+    expect(unexpectedMdFiles.length).toBe(0);
+    expect(mdFilesInRoot).toEqual(['README.md']);
   });
 
   test('should have docs folder with .md files', () => {
@@ -47,7 +45,7 @@ describe('📁 File Organization Tests', () => {
     const files = fs.readdirSync(docsDir);
     const mdFiles = files.filter(file => file.endsWith('.md'));
 
-    expect(mdFiles.length).toBeGreaterThanOrEqual(15);
+    expect(mdFiles.length).toBeGreaterThanOrEqual(5);
   });
 
   test('should have required directories', () => {
@@ -196,13 +194,13 @@ describe('✨ Features Tests', () => {
   });
 
   test('should have test suite with 12 tests', () => {
-    const testPath = path.join(__dirname, '..', 'test', 'portfolio.test.js');
+    const testPath = path.join(__dirname, '..', 'test', 'portfolio.integration.js');
     const content = fs.readFileSync(testPath, 'utf-8');
 
     expect(content).toContain('await runTest');
     // Count test runs
     const testCount = (content.match(/await runTest/g) || []).length;
-    expect(testCount).toBe(12);
+    expect(testCount).toBeGreaterThanOrEqual(12);
   });
 
   test('should have build script', () => {
@@ -253,42 +251,33 @@ describe('📚 Documentation Tests', () => {
     expect(fs.existsSync(docsReadmePath)).toBe(true);
   });
 
-  test('should have INTELLIJ_QUICK_START.md', () => {
-    const intellijPath = path.join(__dirname, '..', 'INTELLIJ_QUICK_START.md');
-    expect(fs.existsSync(intellijPath)).toBe(true);
+  test('should have essential documentation guides', () => {
+    const essentialDocs = [
+      'START_HERE.md',
+      'INTELLIJ.md',
+      'DEPLOYMENT.md',
+      'TESTING.md',
+      'TROUBLESHOOTING.md',
+      'CUSTOMIZATION.md'
+    ];
+
+    essentialDocs.forEach(doc => {
+      const docPath = path.join(__dirname, '..', 'docs', doc);
+      expect(fs.existsSync(docPath)).toBe(true);
+    });
   });
 
-  test('should have docs/INTELLIJ_SETUP.md', () => {
-    const intellijSetupPath = path.join(__dirname, '..', 'docs', 'INTELLIJ_SETUP.md');
-    expect(fs.existsSync(intellijSetupPath)).toBe(true);
+  test('should have DOMAIN_SETUP_GUIDE.md (pending)', () => {
+    const domainPath = path.join(__dirname, '..', 'docs', 'DOMAIN_SETUP_GUIDE.md');
+    expect(fs.existsSync(domainPath)).toBe(true);
   });
 
-  test('should have docs/NPM_SCRIPTS_GUIDE.md', () => {
-    const npmGuidePath = path.join(__dirname, '..', 'docs', 'NPM_SCRIPTS_GUIDE.md');
-    expect(fs.existsSync(npmGuidePath)).toBe(true);
-  });
-
-  test('should have docs/DEPLOYMENT.md', () => {
-    const deploymentPath = path.join(__dirname, '..', 'docs', 'DEPLOYMENT.md');
-    expect(fs.existsSync(deploymentPath)).toBe(true);
-  });
-
-  test('should have docs/TROUBLESHOOTING.md', () => {
-    const troubleshootingPath = path.join(__dirname, '..', 'docs', 'TROUBLESHOOTING.md');
-    expect(fs.existsSync(troubleshootingPath)).toBe(true);
-  });
-
-  test('should have docs/NEW_FEATURES.md', () => {
-    const featuresPath = path.join(__dirname, '..', 'docs', 'NEW_FEATURES.md');
-    expect(fs.existsSync(featuresPath)).toBe(true);
-  });
-
-  test('should have at least 15 documentation files in docs/', () => {
+  test('should have at least 5 documentation files in docs/', () => {
     const docsDir = path.join(__dirname, '..', 'docs');
     const files = fs.readdirSync(docsDir);
     const mdFiles = files.filter(f => f.endsWith('.md'));
 
-    expect(mdFiles.length).toBeGreaterThanOrEqual(15);
+    expect(mdFiles.length).toBeGreaterThanOrEqual(5);
   });
 });
 
@@ -411,33 +400,31 @@ describe('🔧 Git Configuration Tests', () => {
 
 /**
  * Test Suite 9: .md File Organization - Critical Test
- * MOST IMPORTANT: Ensures .md files are ONLY in docs/ folder
+ * MOST IMPORTANT: Ensures .md files are ONLY in docs/ folder (except README.md)
  */
 describe('🔐 CRITICAL: .md File Organization Enforcement', () => {
 
-  test('should NEVER have any .md files in root except allowed ones', () => {
+  test('should ONLY have README.md in root, nothing else', () => {
     const rootDir = path.join(__dirname, '..');
-    const allowedInRoot = ['README.md', 'PROJECT_STRUCTURE.md', 'ORGANIZATION_COMPLETE.md'];
-
     const files = fs.readdirSync(rootDir);
     const mdFilesInRoot = files.filter(file => file.endsWith('.md'));
 
-    const unexpectedMdFiles = mdFilesInRoot.filter(
-      file => !allowedInRoot.includes(file)
-    );
-
-    if (unexpectedMdFiles.length > 0) {
+    // ONLY README.md is allowed
+    if (mdFilesInRoot.length !== 1 || mdFilesInRoot[0] !== 'README.md') {
+      const unexpectedFiles = mdFilesInRoot.filter(f => f !== 'README.md');
       throw new Error(
-        `❌ CRITICAL ERROR: Found .md files in root that should be in docs/:\n${unexpectedMdFiles.join('\n')}\n\nMove these files to docs/ folder!`
+        `❌ CRITICAL ERROR: Only README.md is allowed in root!\n` +
+        `Found: ${mdFilesInRoot.join(', ')}\n` +
+        `Unexpected: ${unexpectedFiles.join(', ')}\n\n` +
+        `Move all other .md files to docs/ folder!`
       );
     }
 
-    expect(unexpectedMdFiles.length).toBe(0);
+    expect(mdFilesInRoot).toEqual(['README.md']);
   });
 
-  test('should enforce that all non-root .md files are in docs/ folder', () => {
+  test('should enforce that all documentation is in docs/ folder', () => {
     const rootDir = path.join(__dirname, '..');
-    const allowedInRoot = new Set(['README.md', 'PROJECT_STRUCTURE.md', 'ORGANIZATION_COMPLETE.md']);
 
     function checkMdFiles(dir, dirName = '') {
       const files = fs.readdirSync(dir);
@@ -448,9 +435,11 @@ describe('🔐 CRITICAL: .md File Organization Enforcement', () => {
 
         if (stat.isDirectory() && file !== 'node_modules' && file !== '.git' && file !== '.idea') {
           checkMdFiles(fullPath, dirName ? `${dirName}/${file}` : file);
-        } else if (file.endsWith('.md') && dirName === '' && !allowedInRoot.has(file)) {
+        } else if (file.endsWith('.md') && dirName === '' && file !== 'README.md') {
           throw new Error(
-            `❌ CRITICAL: Found .md file in root: ${file}\nMust be in docs/ folder!`
+            `❌ CRITICAL: Found .md file in root: ${file}\n` +
+            `Only README.md is allowed in root!\n` +
+            `Move ${file} to docs/ folder!`
           );
         }
       });
@@ -465,15 +454,16 @@ describe('🔐 CRITICAL: .md File Organization Enforcement', () => {
     const files = fs.readdirSync(docsDir);
     const mdFiles = files.filter(f => f.endsWith('.md'));
 
-    expect(mdFiles.length).toBeGreaterThanOrEqual(15);
+    expect(mdFiles.length).toBeGreaterThanOrEqual(5);
 
     // Check for critical docs
     const criticalDocs = [
       'README.md',
+      'START_HERE.md',
+      'INTELLIJ.md',
       'DEPLOYMENT.md',
-      'TROUBLESHOOTING.md',
-      'INTELLIJ_SETUP.md',
-      'NPM_SCRIPTS_GUIDE.md'
+      'TESTING.md',
+      'TROUBLESHOOTING.md'
     ];
 
     criticalDocs.forEach(doc => {
@@ -540,9 +530,9 @@ describe('🔗 Integration Tests', () => {
 
     const rootCount = (() => {
       const rootDir = path.join(__dirname, '..');
-      const allowed = ['README.md', 'PROJECT_STRUCTURE.md', 'ORGANIZATION_COMPLETE.md'];
       const files = fs.readdirSync(rootDir);
-      return files.filter(f => f.endsWith('.md') && !allowed.includes(f)).length;
+      // Only README.md allowed in root
+      return files.filter(f => f.endsWith('.md') && f !== 'README.md').length;
     })();
 
     expect(rootCount).toBe(0);

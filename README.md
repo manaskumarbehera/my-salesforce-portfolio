@@ -4,14 +4,34 @@ A professional portfolio website showcasing Salesforce development projects, too
 
 ## 📚 Documentation
 
-All comprehensive guides are in the **`docs/`** directory:
+**All guides are in the `docs/` directory.**
 
-- **[START_HERE_MANAS.md](docs/START_HERE_MANAS.md)** ⭐ - Personalized quick start
-- **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** - GitHub to Heroku deployment
-- **[QUICK_START.md](docs/QUICK_START.md)** - Quick commands reference
+### 🎯 Essential Guides
+- **[START_HERE.md](docs/START_HERE.md)** ⭐ - Quick setup in 5 minutes
+- **[INTELLIJ.md](docs/INTELLIJ.md)** - IntelliJ one-click commands
+- **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Deploy to Heroku
+- **[TESTING.md](docs/TESTING.md)** - Testing guide
 - **[TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** - Fix common issues
-- **[CUSTOMIZATION.md](docs/CUSTOMIZATION.md)** - Customize everything
-- **[DOCUMENTATION_INDEX.md](docs/DOCUMENTATION_INDEX.md)** - Full docs navigation
+- **[CUSTOMIZATION.md](docs/CUSTOMIZATION.md)** - Customize your portfolio
+
+**→ Full documentation index: [docs/README.md](docs/README.md)**
+
+## ⚡ IntelliJ One-Click Commands
+
+**New! Run everything from IntelliJ's top-right dropdown:**
+
+| Command | Purpose | Shortcut |
+|---------|---------|----------|
+| `npm: Start Server` | Start development server | Ctrl+Shift+R → Select |
+| `npm: Test` | Run all tests (52 tests) | Ctrl+Shift+R → Select |
+| `npm: Test Coverage` | Tests + coverage report | Ctrl+Shift+R → Select |
+| `npm: Validate` | Syntax validation | Ctrl+Shift+R → Select |
+| `npm: Commit` | Git commit workflow | Ctrl+Shift+R → Select |
+| `npm: Build` | Build project | Ctrl+Shift+R → Select |
+| `npm: Deploy` | Deploy to Heroku | Ctrl+Shift+R → Select |
+| `npm: Release` | **All-in-one deployment** | Ctrl+Shift+R → Select |
+
+**See:** [INTELLIJ.md](docs/INTELLIJ.md) for details.
 
 ## 🚀 Features
 
