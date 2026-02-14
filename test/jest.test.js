@@ -124,6 +124,15 @@ describe('🌐 Portfolio Content Tests', () => {
     expect(indexContent).toContain('behera.manas98@gmail.com');
   });
 
+  test('should have custom domain URL for portfolio link', () => {
+    expect(indexContent).toContain('https://www.manaskumarbehera.com/');
+  });
+
+  test('should NOT have old Heroku URLs in index.html', () => {
+    expect(indexContent).not.toContain('manas-behera-dev-5a0040c069c1.herokuapp.com');
+    expect(indexContent).not.toContain('manaskumarbehera-5a0040c069c1.herokuapp.com');
+  });
+
   test('should have CSS styling', () => {
     const styleCss = path.join(cssDir, 'style.css');
     expect(fs.existsSync(styleCss)).toBe(true);
@@ -759,6 +768,114 @@ describe('🔄 SMTP Configuration Tests', () => {
 
   test('should log email configuration on error', () => {
     expect(serverContent).toContain('Email Config: HOST=');
+  });
+});
+
+describe('🌐 Custom Domain Configuration Tests', () => {
+  const CUSTOM_DOMAIN = 'www.manaskumarbehera.com';
+  const CUSTOM_DOMAIN_ROOT = 'manaskumarbehera.com';
+
+  test('should have custom domain in main.js liveUrl', () => {
+    const mainJsPath = path.join(jsDir, 'main.js');
+    const content = fs.readFileSync(mainJsPath, 'utf-8');
+    expect(content).toContain(`https://${CUSTOM_DOMAIN}/`);
+  });
+
+  test('should NOT have old Heroku URLs in main.js', () => {
+    const mainJsPath = path.join(jsDir, 'main.js');
+    const content = fs.readFileSync(mainJsPath, 'utf-8');
+    expect(content).not.toContain('manaskumarbehera-5a0040c069c1.herokuapp.com');
+    expect(content).not.toContain('manas-behera-dev-5a0040c069c1.herokuapp.com');
+  });
+
+  test('should have custom domain in deploy script', () => {
+    const deployPath = path.join(scriptsDir, 'deploy.sh');
+    const content = fs.readFileSync(deployPath, 'utf-8');
+    expect(content).toContain(`https://${CUSTOM_DOMAIN}/`);
+  });
+
+  test('should have DOMAIN.md documentation', () => {
+    const domainMdPath = path.join(docsDir, 'DOMAIN.md');
+    expect(fs.existsSync(domainMdPath)).toBe(true);
+  });
+
+  test('DOMAIN.md should document custom domain', () => {
+    const domainMdPath = path.join(docsDir, 'DOMAIN.md');
+    const content = fs.readFileSync(domainMdPath, 'utf-8');
+    expect(content).toContain(CUSTOM_DOMAIN);
+    expect(content).toContain(CUSTOM_DOMAIN_ROOT);
+  });
+
+  test('DOMAIN.md should have DNS configuration', () => {
+    const domainMdPath = path.join(docsDir, 'DOMAIN.md');
+    const content = fs.readFileSync(domainMdPath, 'utf-8');
+    expect(content).toContain('DNS');
+    expect(content).toContain('CNAME');
+  });
+
+  test('should have website link in server.js auto-reply', () => {
+    const serverPath = path.join(rootDir, 'server.js');
+    const content = fs.readFileSync(serverPath, 'utf-8');
+    // Server has cloudwithmanas.com as website link in auto-reply
+    expect(content).toContain('cloudwithmanas.com');
+  });
+
+  test('index.html should use custom domain for portfolio links', () => {
+    const indexPath = path.join(rootDir, 'index.html');
+    const content = fs.readFileSync(indexPath, 'utf-8');
+    expect(content).toContain(`https://${CUSTOM_DOMAIN}/`);
+  });
+
+  test('should NOT have deprecated Heroku URLs in index.html', () => {
+    const indexPath = path.join(rootDir, 'index.html');
+    const content = fs.readFileSync(indexPath, 'utf-8');
+    expect(content).not.toContain('manas-behera-dev-5a0040c069c1.herokuapp.com');
+  });
+
+  test('deployment docs should reference custom domain', () => {
+    const deploymentPath = path.join(docsDir, 'DEPLOYMENT.md');
+    const content = fs.readFileSync(deploymentPath, 'utf-8');
+    expect(content).toContain(CUSTOM_DOMAIN);
+  });
+});
+
+describe('🔗 URL Consistency Tests', () => {
+  test('all project files should use consistent domain URLs', () => {
+    const filesToCheck = [
+      path.join(rootDir, 'index.html'),
+      path.join(jsDir, 'main.js'),
+      path.join(scriptsDir, 'deploy.sh')
+    ];
+
+    const deprecatedUrls = [
+      'manas-behera-dev-5a0040c069c1.herokuapp.com',
+      'manaskumarbehera-5a0040c069c1.herokuapp.com'
+    ];
+
+    filesToCheck.forEach(filePath => {
+      if (fs.existsSync(filePath)) {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        deprecatedUrls.forEach(url => {
+          expect(content).not.toContain(url);
+        });
+      }
+    });
+  });
+
+  test('social links should be consistent across files', () => {
+    const indexPath = path.join(rootDir, 'index.html');
+    const serverPath = path.join(rootDir, 'server.js');
+
+    const indexContent = fs.readFileSync(indexPath, 'utf-8');
+    const serverContent = fs.readFileSync(serverPath, 'utf-8');
+
+    // GitHub profile link
+    expect(indexContent).toContain('github.com/manaskumarbehera');
+    expect(serverContent).toContain('github.com/manaskumarbehera');
+
+    // LinkedIn profile link
+    expect(indexContent).toContain('linkedin.com/in/manas-behera');
+    expect(serverContent).toContain('linkedin.com/in/manas-behera');
   });
 });
 

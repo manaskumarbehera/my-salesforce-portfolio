@@ -156,7 +156,7 @@ heroku create
 
 ✅ **Your Heroku app is created!**
 
-**Your app URL:** https://manaskumarbehera.herokuapp.com (or whatever name you chose)
+**Your app URL:** https://www.manaskumarbehera.com (custom domain configured)
 
 ---
 
@@ -194,7 +194,7 @@ This is the magic step! Once connected, every push to GitHub automatically deplo
 
 7. **View Your Site:**
    - Click **"View"** button at the top
-   - Or visit: https://manaskumarbehera.herokuapp.com
+   - Or visit: https://www.manaskumarbehera.com
 
 ✅ **Pipeline is set up!** Now every push to GitHub will automatically deploy!
 
@@ -238,7 +238,7 @@ git push origin main
 2. Click **"Activity"** tab
 3. You'll see "Build in progress" - this happens automatically!
 4. Wait 1-2 minutes for build to complete
-5. Visit your site: https://manaskumarbehera.herokuapp.com
+5. Visit your site: https://www.manaskumarbehera.com
 
 🎉 **It works! Your GitHub to Heroku pipeline is live!**
 
@@ -770,16 +770,15 @@ You're successfully deployed when:
 Your portfolio is now live with professional CI/CD pipeline!
 
 **Your URLs:**
-- **GitHub Repo:** https://github.com/YOUR_USERNAME/my-salesforce-portfolio
-- **Live Site:** https://manaskumarbehera.herokuapp.com
-- **Custom Domain:** https://www.manaskumarbehera.com (after setup)
+- **GitHub Repo:** https://github.com/manaskumarbehera/MyDeveloperProfile
+- **Live Site:** https://www.manaskumarbehera.com
+- **Heroku App:** https://manaskumarbehera-0a839944011b.herokuapp.com
 
 **Next Steps:**
 1. Share your portfolio URL on LinkedIn
 2. Add to your resume
 3. Share in Salesforce communities
 4. Keep updating with new projects
-5. Consider buying custom domain
 
 ---
 

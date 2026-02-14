@@ -21,7 +21,7 @@ BRANCH="main"
 
 # Heroku Configuration (Optional - Separate Deployment)
 HEROKU_APP_NAME="manaskumarbehera"
-HEROKU_URL="https://${HEROKU_APP_NAME}-5a0040c069c1.herokuapp.com/"
+HEROKU_URL="https://www.manaskumarbehera.com/"
 
 # Check if git is clean
 if [[ -n $(git status -s) ]]; then
