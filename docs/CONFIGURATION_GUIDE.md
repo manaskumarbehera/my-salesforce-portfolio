@@ -12,9 +12,7 @@ This is your **personal portfolio website** - a website that shows off your skil
 
 ## Where Does Your Code Live?
 
-Your code is stored in **two places**:
-
-### 1. GitHub (Your Main Storage) 🏠
+### GitHub (Your Code Storage) 🏠
 
 **What is it?**  
 GitHub is like Google Drive, but for code. It safely stores all your website files and keeps track of every change you make.
@@ -22,41 +20,10 @@ GitHub is like Google Drive, but for code. It safely stores all your website fil
 **Your GitHub Repository:**  
 🔗 https://github.com/manaskumarbehera/my-salesforce-portfolio
 
-**When to use it:**  
+**Why use it:**  
 - Every time you make changes, they get saved here
 - It's your backup - if your computer crashes, your code is safe on GitHub
 - Other developers can see your work (great for job applications!)
-
----
-
-### 2. Heroku (Your Website Host) 🌐
-
-**What is it?**  
-Heroku is like a rental space on the internet where your website actually runs. When someone visits your website, they're seeing the version on Heroku.
-
-**Your Heroku App:**  
-- **App Name:** `manas-behera-dev`
-- **Website URL:** https://manas-behera-dev-5a0040c069c1.herokuapp.com/
-
-**When to use it:**  
-- When you want people to see your website online
-- Heroku deployment is **optional** - you can push to GitHub without updating Heroku
-
----
-
-## How the Two Work Together
-
-```
-Your Computer  →  GitHub (Storage)  →  Heroku (Live Website)
-     ↓                 ↓                      ↓
-  You edit      Code is saved         People can visit
-  your files    and backed up         your website
-```
-
-**Simple workflow:**
-1. You make changes on your computer
-2. Changes are saved to GitHub (automatic backup)
-3. When ready, you deploy to Heroku (makes it live)
 
 ---
 
@@ -75,30 +42,7 @@ This file contains:
 |---------|--------------|
 | `npm start` | Runs your website locally (on your computer) |
 | `npm run push` | Saves your changes to GitHub |
-| `npm run deploy` | Deploys to both GitHub and optionally Heroku |
 | `npm test` | Checks if everything is working correctly |
-
----
-
-### `scripts/deploy.sh` - The Deployment Script
-
-This is an automated helper that:
-1. ✅ Checks if you have unsaved changes
-2. ✅ Runs tests to make sure nothing is broken
-3. ✅ Pushes your code to GitHub
-4. ❓ Asks if you also want to update Heroku
-
-**Configuration inside this file:**
-
-```
-GitHub Settings:
-├── Repository: https://github.com/manaskumarbehera/my-salesforce-portfolio
-└── Branch: main
-
-Heroku Settings (Optional):
-├── App Name: manas-behera-dev  
-└── Website URL: https://manas-behera-dev-5a0040c069c1.herokuapp.com/
-```
 
 ---
 
@@ -113,18 +57,14 @@ This file controls how your website works. Key settings:
 
 ---
 
-## Git Remotes (Where Code Gets Sent)
-
-Think of "remotes" as different destinations for your code:
+## Git Remote (Where Code Gets Sent)
 
 | Remote Name | Destination | Purpose |
 |-------------|-------------|---------|
-| `origin` | GitHub | Main storage (always use this) |
-| `heroku` | Heroku | Live website (optional) |
+| `origin` | GitHub | Your code storage |
 
 **Current setup:**
-- When you "push" code, it goes to **GitHub** by default ✅
-- Heroku deployment is **separate** and **optional** ✅
+- When you "push" code, it goes to **GitHub** ✅
 
 ---
 
@@ -148,30 +88,18 @@ Then open your browser and go to: http://localhost:3000
 
 ---
 
-### "I want to update my live website"
+### "I want to commit with a custom message"
 
 ```bash
-npm run deploy
+npm run commit:quick "Your message here"
 ```
-This will:
-1. Save to GitHub
-2. Ask if you want to update Heroku too
 
 ---
 
-### "I want to see my live website"
+### "Something went wrong, I want to check for errors"
 
 ```bash
-npm run open
-```
-Or just visit: https://manas-behera-dev-5a0040c069c1.herokuapp.com/
-
----
-
-### "Something went wrong, I want to see error logs"
-
-```bash
-npm run logs
+npm test
 ```
 
 ---
@@ -181,18 +109,17 @@ npm run logs
 | What | Where |
 |------|-------|
 | **GitHub Repo** | https://github.com/manaskumarbehera/my-salesforce-portfolio |
-| **Live Website** | https://manas-behera-dev-5a0040c069c1.herokuapp.com/ |
-| **Heroku App Name** | manas-behera-dev |
 | **Main Branch** | main |
 | **Featured Projects** | 4 (from your GitHub) |
+| **Local Website** | http://localhost:3000 |
 
 ---
 
 ## Need Help?
 
-- **Website not updating?** Make sure you ran `npm run deploy` and said "yes" to Heroku
 - **GitHub not saving?** Check your internet connection and try `npm run push` again
-- **Errors?** Run `npm run logs` to see what went wrong
+- **Errors?** Run `npm test` to check what went wrong
+- **Website not working locally?** Make sure you ran `npm start` first
 
 ---
 
