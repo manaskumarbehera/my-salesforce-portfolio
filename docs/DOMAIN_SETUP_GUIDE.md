@@ -4,7 +4,8 @@
 
 **Domain:** `manaskumarbehera.com`  
 **Registrar:** Google Domains (domains.google.com)  
-**Heroku App:** `manas-behera-dev`
+**Heroku App:** `manaskumarbehera`  
+**Region:** EU (Europe) 🇪🇺
 
 ---
 
@@ -31,9 +32,9 @@ heroku domains -a manas-behera-dev
 **Your actual DNS Targets:**
 ```
 Domain Name                  DNS Record Type  DNS Target
-───────────────────────────  ───────────────  ─────────────────────────────────────────────────
-manaskumarbehera.com         ALIAS or ANAME   hidden-bug-2o45duap33xtispw1yl2xztu.herokudns.com
-www.manaskumarbehera.com     CNAME            agile-tuna-45cp10kx5dvfubdrmk3o66n1.herokudns.com
+───────────────────────────  ───────────────  ─────────────────────────────────────────────────────────────
+manaskumarbehera.com         ALIAS or ANAME   computational-badlands-vqbas54dog957lhao8pf7fc1.herokudns.com
+www.manaskumarbehera.com     CNAME            theoretical-ridge-1uiuylak162l9k9363hgnqk3.herokudns.com
 ```
 
 ### Step 3: Configure DNS in Google Domains
@@ -49,13 +50,13 @@ www.manaskumarbehera.com     CNAME            agile-tuna-45cp10kx5dvfubdrmk3o66n
 |-----------|------|-----|------|
 | `@` | A | 3600 | `75.2.60.5` |
 | `@` | A | 3600 | `99.80.186.122` |
-| `www` | CNAME | 3600 | `agile-tuna-45cp10kx5dvfubdrmk3o66n1.herokudns.com` |
+| `www` | CNAME | 3600 | `theoretical-ridge-1uiuylak162l9k9363hgnqk3.herokudns.com` |
 
 #### Alternative (if A records don't work):
 
 | Host Name | Type | TTL | Data |
 |-----------|------|-----|------|
-| `www` | CNAME | 3600 | `agile-tuna-45cp10kx5dvfubdrmk3o66n1.herokudns.com` |
+| `www` | CNAME | 3600 | `theoretical-ridge-1uiuylak162l9k9363hgnqk3.herokudns.com` |
 
 Then set up a redirect from `manaskumarbehera.com` to `www.manaskumarbehera.com` in Google Domains.
 

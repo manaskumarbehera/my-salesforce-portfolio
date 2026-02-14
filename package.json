@@ -8,11 +8,11 @@
     "local:dev": "nodemon server.js",
     "local:test": "jest --verbose",
     "git:push": "git add -A && git commit && git push origin main",
-    "heroku:deploy": "git push heroku main",
-    "heroku:logs": "heroku logs --tail -a manas-behera-dev",
-    "heroku:status": "heroku ps -a manas-behera-dev",
-    "heroku:restart": "heroku restart -a manas-behera-dev",
-    "heroku:open": "heroku open -a manas-behera-dev"
+    "heroku:deploy": "git push heroku-eu main",
+    "heroku:logs": "heroku logs --tail -a manaskumarbehera",
+    "heroku:status": "heroku ps -a manaskumarbehera",
+    "heroku:restart": "heroku restart -a manaskumarbehera",
+    "heroku:open": "heroku open -a manaskumarbehera"
   },
   "repository": {
     "type": "git",

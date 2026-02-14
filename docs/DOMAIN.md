@@ -11,7 +11,8 @@
 | **Domain Name** | `manaskumarbehera.com` |
 | **Registrar** | Google Domains (domains.google.com) |
 | **Hosting** | Heroku |
-| **Heroku App** | `manas-behera-dev` |
+| **Heroku App** | `manaskumarbehera` |
+| **Region** | EU (Europe) 🇪🇺 |
 | **SSL** | Automatic (Heroku ACM) |
 | **Status** | Active ✅ |
 
@@ -23,7 +24,7 @@
 |-----|-------------|
 | https://manaskumarbehera.com | Primary domain (root) |
 | https://www.manaskumarbehera.com | WWW subdomain |
-| https://manas-behera-dev-5a0040c069c1.herokuapp.com | Heroku default URL |
+| https://manaskumarbehera-0a839944011b.herokuapp.com | Heroku default URL |
 
 ---
 
@@ -33,8 +34,8 @@
 
 | Domain | Record Type | DNS Target |
 |--------|-------------|------------|
-| `manaskumarbehera.com` | ALIAS/ANAME | `hidden-bug-2o45duap33xtispw1yl2xztu.herokudns.com` |
-| `www.manaskumarbehera.com` | CNAME | `agile-tuna-45cp10kx5dvfubdrmk3o66n1.herokudns.com` |
+| `manaskumarbehera.com` | ALIAS/ANAME | `computational-badlands-vqbas54dog957lhao8pf7fc1.herokudns.com` |
+| `www.manaskumarbehera.com` | CNAME | `theoretical-ridge-1uiuylak162l9k9363hgnqk3.herokudns.com` |
 
 ### Google Domains DNS Records
 
@@ -42,7 +43,7 @@
 |------|------|-----|------|
 | `@` | A | 3600 | `75.2.60.5` |
 | `@` | A | 3600 | `99.80.186.122` |
-| `www` | CNAME | 3600 | `agile-tuna-45cp10kx5dvfubdrmk3o66n1.herokudns.com` |
+| `www` | CNAME | 3600 | `theoretical-ridge-1uiuylak162l9k9363hgnqk3.herokudns.com` |
 
 ---
 
