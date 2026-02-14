@@ -219,6 +219,31 @@ body {
 }
 
 /* Skills Section */
+.skill-badges {
+    margin-bottom: 2rem;
+}
+
+.skill-badge {
+    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+    margin: 0.3rem;
+    border-radius: 25px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.skill-badge:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.skill-badge i {
+    font-size: 1.1rem;
+}
+
 .skill-card {
     background: white;
     padding: 2rem;
