@@ -161,6 +161,220 @@ app.post('/api/contact', async (req, res) => {
     }
 });
 
+// Recommendations file path
+const recommendationsFile = path.join(__dirname, 'recommendations.json');
+
+// Helper function to read recommendations
+function readRecommendations() {
+    try {
+        if (fs.existsSync(recommendationsFile)) {
+            return JSON.parse(fs.readFileSync(recommendationsFile, 'utf-8'));
+        }
+    } catch (err) {
+        console.error('Error reading recommendations:', err);
+    }
+    return [];
+}
+
+// Helper function to save recommendations
+function saveRecommendations(recommendations) {
+    fs.writeFileSync(recommendationsFile, JSON.stringify(recommendations, null, 2));
+}
+
+// GET - Fetch approved recommendations (public)
+app.get('/api/recommendations', (req, res) => {
+    try {
+        const recommendations = readRecommendations();
+        // Only return approved recommendations for public view
+        const approved = recommendations.filter(r => r.status === 'approved');
+        res.json({ success: true, recommendations: approved });
+    } catch (error) {
+        console.error('Error fetching recommendations:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch recommendations' });
+    }
+});
+
+// GET - Fetch all recommendations (admin - requires secret key)
+app.get('/api/recommendations/all', (req, res) => {
+    const adminKey = req.query.key;
+    if (adminKey !== process.env.ADMIN_KEY && adminKey !== 'manas2026') {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    try {
+        const recommendations = readRecommendations();
+        res.json({ success: true, recommendations });
+    } catch (error) {
+        console.error('Error fetching recommendations:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch recommendations' });
+    }
+});
+
+// POST - Submit a new recommendation
+app.post('/api/recommendations', async (req, res) => {
+    const { name, title, email, linkedin, relationship, message, rating } = req.body;
+    const timestamp = new Date().toISOString();
+
+    // Validate required fields
+    if (!name || !title || !email || !relationship || !message || !rating) {
+        return res.status(400).json({
+            success: false,
+            message: 'All required fields must be filled.'
+        });
+    }
+
+    // Validate message length
+    if (message.length < 50) {
+        return res.status(400).json({
+            success: false,
+            message: 'Recommendation must be at least 50 characters.'
+        });
+    }
+
+    // Create recommendation object
+    const recommendation = {
+        id: Date.now().toString(),
+        name,
+        title,
+        email, // Stored but not displayed publicly
+        linkedin: linkedin || null,
+        relationship,
+        message,
+        rating: parseInt(rating),
+        status: 'pending', // pending, approved, rejected
+        timestamp,
+        approvedAt: null
+    };
+
+    // Save recommendation
+    try {
+        const recommendations = readRecommendations();
+        recommendations.push(recommendation);
+        saveRecommendations(recommendations);
+
+        console.log('⭐ New Recommendation Received:', { name, title, relationship, timestamp });
+
+        // Send email notification about new recommendation
+        if (EMAIL_PASS) {
+            try {
+                await transporter.sendMail({
+                    from: `"Portfolio Recommendation" <${EMAIL_USER}>`,
+                    to: EMAIL_USER,
+                    subject: `⭐ [NEW RECOMMENDATION] from ${name}`,
+                    html: `
+                        <h2>New Recommendation Submitted!</h2>
+                        <p><strong>From:</strong> ${name}</p>
+                        <p><strong>Title:</strong> ${title}</p>
+                        <p><strong>Email:</strong> ${email}</p>
+                        <p><strong>LinkedIn:</strong> ${linkedin || 'Not provided'}</p>
+                        <p><strong>Relationship:</strong> ${relationship}</p>
+                        <p><strong>Rating:</strong> ${'⭐'.repeat(rating)}</p>
+                        <p><strong>Recommendation:</strong></p>
+                        <blockquote style="border-left: 3px solid #ffc107; padding-left: 15px; color: #666;">
+                            ${message}
+                        </blockquote>
+                        <hr>
+                        <p><strong>To approve this recommendation, visit:</strong></p>
+                        <p><a href="https://www.manaskumarbehera.com/api/recommendations/approve?id=${recommendation.id}&key=manas2026">Click to Approve</a></p>
+                        <p><small>Received: ${timestamp}</small></p>
+                    `
+                });
+            } catch (emailError) {
+                console.error('Error sending recommendation notification:', emailError.message);
+            }
+        }
+
+        res.json({
+            success: true,
+            message: 'Thank you for your recommendation! It will be reviewed and published soon.'
+        });
+
+    } catch (error) {
+        console.error('Error saving recommendation:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to save recommendation. Please try again.'
+        });
+    }
+});
+
+// GET - Approve a recommendation (via email link)
+app.get('/api/recommendations/approve', (req, res) => {
+    const { id, key } = req.query;
+
+    if (key !== process.env.ADMIN_KEY && key !== 'manas2026') {
+        return res.status(401).send('<h1>Unauthorized</h1>');
+    }
+
+    try {
+        const recommendations = readRecommendations();
+        const index = recommendations.findIndex(r => r.id === id);
+
+        if (index === -1) {
+            return res.status(404).send('<h1>Recommendation not found</h1>');
+        }
+
+        recommendations[index].status = 'approved';
+        recommendations[index].approvedAt = new Date().toISOString();
+        saveRecommendations(recommendations);
+
+        console.log('✅ Recommendation approved:', recommendations[index].name);
+
+        res.send(`
+            <html>
+            <head><title>Recommendation Approved</title></head>
+            <body style="font-family: Arial; text-align: center; padding: 50px;">
+                <h1 style="color: green;">✅ Recommendation Approved!</h1>
+                <p>The recommendation from <strong>${recommendations[index].name}</strong> is now visible on your portfolio.</p>
+                <a href="https://www.manaskumarbehera.com/#recommendations">View on Portfolio</a>
+            </body>
+            </html>
+        `);
+
+    } catch (error) {
+        console.error('Error approving recommendation:', error);
+        res.status(500).send('<h1>Error approving recommendation</h1>');
+    }
+});
+
+// GET - Reject a recommendation
+app.get('/api/recommendations/reject', (req, res) => {
+    const { id, key } = req.query;
+
+    if (key !== process.env.ADMIN_KEY && key !== 'manas2026') {
+        return res.status(401).send('<h1>Unauthorized</h1>');
+    }
+
+    try {
+        const recommendations = readRecommendations();
+        const index = recommendations.findIndex(r => r.id === id);
+
+        if (index === -1) {
+            return res.status(404).send('<h1>Recommendation not found</h1>');
+        }
+
+        recommendations[index].status = 'rejected';
+        saveRecommendations(recommendations);
+
+        console.log('❌ Recommendation rejected:', recommendations[index].name);
+
+        res.send(`
+            <html>
+            <head><title>Recommendation Rejected</title></head>
+            <body style="font-family: Arial; text-align: center; padding: 50px;">
+                <h1 style="color: red;">❌ Recommendation Rejected</h1>
+                <p>The recommendation from <strong>${recommendations[index].name}</strong> has been rejected.</p>
+                <a href="https://www.manaskumarbehera.com">Back to Portfolio</a>
+            </body>
+            </html>
+        `);
+
+    } catch (error) {
+        console.error('Error rejecting recommendation:', error);
+        res.status(500).send('<h1>Error rejecting recommendation</h1>');
+    }
+});
+
 // Serve index.html for all routes (SPA support)
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));

@@ -384,5 +384,213 @@ document.addEventListener('DOMContentLoaded', function() {
     yearElements.forEach(el => {
         el.textContent = el.textContent.replace('2026', new Date().getFullYear());
     });
+
+    // Load recommendations on page load
+    loadRecommendations();
+
+    // Initialize rating stars
+    initRatingStars();
 });
+
+// ==================== RECOMMENDATIONS ====================
+
+// Load and display recommendations
+async function loadRecommendations() {
+    const container = document.getElementById('recommendationsList');
+
+    try {
+        const response = await fetch('/api/recommendations');
+        const data = await response.json();
+
+        if (data.success && data.recommendations.length > 0) {
+            container.innerHTML = data.recommendations.map(rec => createRecommendationCard(rec)).join('');
+        } else {
+            container.innerHTML = `
+                <div class="col-12">
+                    <div class="no-recommendations">
+                        <i class="fas fa-comments"></i>
+                        <h4>No Recommendations Yet</h4>
+                        <p>Be the first to write a recommendation!</p>
+                    </div>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading recommendations:', error);
+        container.innerHTML = `
+            <div class="col-12">
+                <div class="no-recommendations">
+                    <i class="fas fa-comments"></i>
+                    <h4>No Recommendations Yet</h4>
+                    <p>Be the first to write a recommendation!</p>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Create recommendation card HTML
+function createRecommendationCard(rec) {
+    const initials = rec.name.split(' ').map(n => n[0]).join('').toUpperCase();
+    const stars = '★'.repeat(rec.rating) + '☆'.repeat(5 - rec.rating);
+    const date = new Date(rec.timestamp).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short'
+    });
+
+    const linkedInLink = rec.linkedin
+        ? `<a href="${rec.linkedin}" target="_blank" title="View LinkedIn Profile"><i class="fab fa-linkedin"></i></a>`
+        : '';
+
+    return `
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="recommendation-card">
+                <div class="recommendation-header">
+                    <div class="recommendation-avatar">${initials}</div>
+                    <div class="recommendation-info">
+                        <h5>${rec.name} ${linkedInLink}</h5>
+                        <p>${rec.title}</p>
+                    </div>
+                    <div class="recommendation-rating">
+                        ${stars}
+                    </div>
+                </div>
+                <div class="recommendation-text">
+                    ${rec.message}
+                </div>
+                <div class="recommendation-footer">
+                    <span class="recommendation-relationship">${rec.relationship}</span>
+                    <span>${date}</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Initialize rating stars interaction
+function initRatingStars() {
+    const stars = document.querySelectorAll('.rating-star');
+    const ratingInput = document.getElementById('recRating');
+
+    // Set initial state (5 stars)
+    updateStars(5);
+
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = parseInt(this.dataset.rating);
+            ratingInput.value = rating;
+            updateStars(rating);
+        });
+
+        star.addEventListener('mouseenter', function() {
+            const rating = parseInt(this.dataset.rating);
+            highlightStars(rating);
+        });
+    });
+
+    document.getElementById('ratingInput')?.addEventListener('mouseleave', function() {
+        updateStars(parseInt(ratingInput.value));
+    });
+}
+
+function updateStars(rating) {
+    document.querySelectorAll('.rating-star').forEach((star, index) => {
+        star.classList.toggle('active', index < rating);
+    });
+}
+
+function highlightStars(rating) {
+    document.querySelectorAll('.rating-star').forEach((star, index) => {
+        star.classList.toggle('active', index < rating);
+    });
+}
+
+// Submit recommendation
+document.getElementById('submitRecommendation')?.addEventListener('click', async function() {
+    const form = document.getElementById('recommendationForm');
+    const submitBtn = this;
+
+    // Get form values
+    const name = document.getElementById('recName').value.trim();
+    const title = document.getElementById('recTitle').value.trim();
+    const email = document.getElementById('recEmail').value.trim();
+    const linkedin = document.getElementById('recLinkedIn').value.trim();
+    const relationship = document.getElementById('recRelationship').value;
+    const message = document.getElementById('recMessage').value.trim();
+    const rating = document.getElementById('recRating').value;
+
+    // Validate
+    if (!name || !title || !email || !relationship || !message) {
+        showRecommendationNotification('error', 'Please fill in all required fields.');
+        return;
+    }
+
+    if (message.length < 50) {
+        showRecommendationNotification('error', 'Recommendation must be at least 50 characters.');
+        return;
+    }
+
+    // Show loading state
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+    submitBtn.disabled = true;
+
+    try {
+        const response = await fetch('/api/recommendations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name,
+                title,
+                email,
+                linkedin,
+                relationship,
+                message,
+                rating
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('recommendationModal'));
+            modal.hide();
+
+            // Reset form
+            form.reset();
+            updateStars(5);
+            document.getElementById('recRating').value = 5;
+
+            // Show success notification
+            showNotification('success', result.message);
+        } else {
+            showRecommendationNotification('error', result.message || 'Failed to submit recommendation.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showRecommendationNotification('error', 'Failed to submit. Please try again.');
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+});
+
+// Show notification in modal
+function showRecommendationNotification(type, message) {
+    const existing = document.querySelector('.modal-notification');
+    if (existing) existing.remove();
+
+    const notification = document.createElement('div');
+    notification.className = `modal-notification alert alert-${type === 'success' ? 'success' : 'danger'} mt-3`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        ${message}
+    `;
+
+    document.querySelector('.modal-body').appendChild(notification);
+    setTimeout(() => notification.remove(), 5000);
+}
 

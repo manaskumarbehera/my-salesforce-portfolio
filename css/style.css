@@ -606,3 +606,129 @@ body {
     width: 3rem;
     height: 3rem;
 }
+
+/* Recommendations Section */
+.recommendation-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid var(--primary-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.recommendation-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.recommendation-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.recommendation-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-right: 1rem;
+}
+
+.recommendation-info h5 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--dark-color);
+}
+
+.recommendation-info p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.recommendation-rating {
+    margin-left: auto;
+    color: #ffc107;
+}
+
+.recommendation-text {
+    font-style: italic;
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+.recommendation-text::before {
+    content: '"';
+    font-size: 2rem;
+    color: var(--primary-color);
+    opacity: 0.3;
+    line-height: 0;
+    vertical-align: -0.5rem;
+    margin-right: 0.3rem;
+}
+
+.recommendation-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.recommendation-relationship {
+    background: var(--light-color);
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+}
+
+/* Rating Input Styles */
+.rating-input {
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+.rating-star {
+    color: #ddd;
+    transition: color 0.2s ease;
+    margin-right: 0.2rem;
+}
+
+.rating-star:hover,
+.rating-star.active {
+    color: #ffc107;
+}
+
+/* No Recommendations State */
+.no-recommendations {
+    text-align: center;
+    padding: 3rem;
+    color: #888;
+}
+
+.no-recommendations i {
+    font-size: 4rem;
+    color: #ddd;
+    margin-bottom: 1rem;
+}
+
+/* Pending Badge */
+.pending-badge {
+    background: #fff3cd;
+    color: #856404;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    margin-left: 0.5rem;
+}
+

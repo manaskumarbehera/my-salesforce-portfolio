@@ -879,6 +879,154 @@ describe('🔗 URL Consistency Tests', () => {
   });
 });
 
+describe('⭐ Recommendations Feature Tests', () => {
+  let serverContent;
+  let mainJsContent;
+  let indexContent;
+
+  beforeAll(() => {
+    serverContent = fs.readFileSync(path.join(rootDir, 'server.js'), 'utf-8');
+    mainJsContent = fs.readFileSync(path.join(jsDir, 'main.js'), 'utf-8');
+    indexContent = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf-8');
+  });
+
+  // Server API Tests
+  test('should have GET /api/recommendations endpoint', () => {
+    expect(serverContent).toContain("app.get('/api/recommendations'");
+  });
+
+  test('should have POST /api/recommendations endpoint', () => {
+    expect(serverContent).toContain("app.post('/api/recommendations'");
+  });
+
+  test('should have recommendation approval endpoint', () => {
+    expect(serverContent).toContain("/api/recommendations/approve");
+  });
+
+  test('should have recommendation rejection endpoint', () => {
+    expect(serverContent).toContain("/api/recommendations/reject");
+  });
+
+  test('should filter approved recommendations for public view', () => {
+    expect(serverContent).toContain("status === 'approved'");
+  });
+
+  test('should validate required recommendation fields', () => {
+    expect(serverContent).toContain('!name || !title || !email || !relationship || !message || !rating');
+  });
+
+  test('should validate minimum message length', () => {
+    expect(serverContent).toContain('message.length < 50');
+  });
+
+  test('should save recommendations to file', () => {
+    expect(serverContent).toContain('recommendations.json');
+    expect(serverContent).toContain('saveRecommendations');
+  });
+
+  test('should send email notification for new recommendations', () => {
+    expect(serverContent).toContain('[NEW RECOMMENDATION]');
+  });
+
+  test('should include approval link in email notification', () => {
+    expect(serverContent).toContain('Click to Approve');
+  });
+
+  // Frontend Tests
+  test('should have recommendations section in HTML', () => {
+    expect(indexContent).toContain('id="recommendations"');
+  });
+
+  test('should have recommendations navigation link', () => {
+    expect(indexContent).toContain('href="#recommendations"');
+  });
+
+  test('should have recommendation modal in HTML', () => {
+    expect(indexContent).toContain('id="recommendationModal"');
+  });
+
+  test('should have recommendation form fields', () => {
+    expect(indexContent).toContain('id="recName"');
+    expect(indexContent).toContain('id="recTitle"');
+    expect(indexContent).toContain('id="recEmail"');
+    expect(indexContent).toContain('id="recMessage"');
+    expect(indexContent).toContain('id="recRating"');
+  });
+
+  test('should have rating stars input', () => {
+    expect(indexContent).toContain('rating-star');
+    expect(indexContent).toContain('data-rating');
+  });
+
+  test('should have relationship selector', () => {
+    expect(indexContent).toContain('id="recRelationship"');
+    expect(indexContent).toContain('Colleague');
+    expect(indexContent).toContain('Manager');
+    expect(indexContent).toContain('Client');
+  });
+
+  // JavaScript Tests
+  test('should have loadRecommendations function', () => {
+    expect(mainJsContent).toContain('function loadRecommendations');
+    expect(mainJsContent).toContain('/api/recommendations');
+  });
+
+  test('should have createRecommendationCard function', () => {
+    expect(mainJsContent).toContain('function createRecommendationCard');
+  });
+
+  test('should have rating stars initialization', () => {
+    expect(mainJsContent).toContain('initRatingStars');
+    expect(mainJsContent).toContain('rating-star');
+  });
+
+  test('should have recommendation submission handler', () => {
+    expect(mainJsContent).toContain('submitRecommendation');
+    expect(mainJsContent).toContain('/api/recommendations');
+  });
+
+  test('should display recommendation avatars with initials', () => {
+    expect(mainJsContent).toContain('recommendation-avatar');
+    expect(mainJsContent).toContain('initials');
+  });
+
+  test('should show loading state when fetching recommendations', () => {
+    expect(indexContent).toContain('spinner-border');
+  });
+
+  test('should handle empty recommendations state', () => {
+    expect(mainJsContent).toContain('No Recommendations Yet');
+  });
+});
+
+describe('⭐ Recommendations CSS Tests', () => {
+  let cssContent;
+
+  beforeAll(() => {
+    cssContent = fs.readFileSync(path.join(cssDir, 'style.css'), 'utf-8');
+  });
+
+  test('should have recommendation card styles', () => {
+    expect(cssContent).toContain('.recommendation-card');
+  });
+
+  test('should have recommendation avatar styles', () => {
+    expect(cssContent).toContain('.recommendation-avatar');
+  });
+
+  test('should have rating star styles', () => {
+    expect(cssContent).toContain('.rating-star');
+  });
+
+  test('should have recommendation header styles', () => {
+    expect(cssContent).toContain('.recommendation-header');
+  });
+
+  test('should have no-recommendations state styles', () => {
+    expect(cssContent).toContain('.no-recommendations');
+  });
+});
+
 // Final summary
 afterAll(() => {
   console.log('');
