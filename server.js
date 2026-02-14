@@ -101,7 +101,7 @@ app.post('/api/contact', async (req, res) => {
             await transporter.sendMail({
                 from: `"Portfolio Lead" <${EMAIL_USER}>`,
                 to: EMAIL_USER,
-                subject: `🎯 New Lead: ${subject}`,
+                subject: `🎯 [PORTFOLIO LEAD] ${subject} - from ${name}`,
                 html: `
                     <h2>New Lead from Portfolio Website</h2>
                     <p><strong>Name:</strong> ${name}</p>
