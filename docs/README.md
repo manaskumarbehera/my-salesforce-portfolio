@@ -16,9 +16,12 @@ Welcome to your Salesforce Developer Portfolio documentation!
 4. **[TESTING.md](TESTING.md)** - Testing guide
 5. **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Fix common issues
 
+### Domain & Hosting
+- **[DOMAIN.md](DOMAIN.md)** - Domain configuration (manaskumarbehera.com) ⭐
+- **[DOMAIN_SETUP_GUIDE.md](DOMAIN_SETUP_GUIDE.md)** - Step-by-step domain setup
+
 ### Additional Guides
 - **[CUSTOMIZATION.md](CUSTOMIZATION.md)** - Customize your portfolio
-- **[DOMAIN_SETUP_GUIDE.md](DOMAIN_SETUP_GUIDE.md)** - Custom domain (coming soon)
 
 ---
 
