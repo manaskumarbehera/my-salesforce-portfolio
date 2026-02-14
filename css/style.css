@@ -728,6 +728,49 @@ body {
     color: #856404;
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
+}
+
+/* Hero Subtitle */
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    display: inline-block;
+}
+
+/* Open Source Banner */
+.open-source-banner {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    border-left: 4px solid #4caf50;
+}
+
+.open-source-banner h5 {
+    color: #2e7d32;
+    margin: 0;
+}
+
+/* Support Banner */
+.support-banner {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    border: 2px dashed #ffc107;
+}
+
+.support-banner h5 {
+    color: #f57c00;
+}
+
+/* Free Badge Styles */
+.badge.bg-success i,
+.badge.bg-primary i,
+.badge.bg-info i {
+    margin-right: 0.3rem;
+}
     font-size: 0.7rem;
     margin-left: 0.5rem;
 }

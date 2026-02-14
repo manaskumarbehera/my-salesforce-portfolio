@@ -116,6 +116,21 @@ describe('🌐 Portfolio Content Tests', () => {
     expect(indexContent).toContain('buymeacoffee.com/manaskumarbehera');
   });
 
+  test('should mention free and open-source in hero section', () => {
+    expect(indexContent).toContain('free');
+    expect(indexContent).toContain('open-source');
+  });
+
+  test('should have support banner with Buy Me a Coffee', () => {
+    expect(indexContent).toContain('support-banner');
+    expect(indexContent).toContain('Buy Me a Coffee');
+  });
+
+  test('should mention helping developers and admins', () => {
+    expect(indexContent).toContain('developers');
+    expect(indexContent).toContain('admins');
+  });
+
   test('should have GitHub profile link', () => {
     expect(indexContent).toContain('github.com/manaskumarbehera');
   });
