@@ -41,6 +41,9 @@ window.addEventListener('scroll', () => {
 // GitHub Repository Configuration
 const GITHUB_USERNAME = 'manaskumarbehera'; // Replace with your GitHub username
 
+// Set to false to temporarily hide the GitHub repos section
+const SHOW_GITHUB_REPOS = false;
+
 // Add the exact repo names you want to feature (leave empty to show all repos)
 const INCLUDED_REPOS = [
     'my-salesforce-portfolio',  // My Portfolio Project
@@ -76,6 +79,12 @@ const PROJECT_METADATA = {
 // Fetch GitHub Repositories
 async function fetchGitHubRepos() {
     const reposContainer = document.getElementById('github-repos');
+
+    // Hide section if SHOW_GITHUB_REPOS is false
+    if (!SHOW_GITHUB_REPOS) {
+        reposContainer.style.display = 'none';
+        return;
+    }
 
     try {
         const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100`);
