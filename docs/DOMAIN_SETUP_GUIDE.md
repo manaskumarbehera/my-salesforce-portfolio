@@ -180,6 +180,63 @@ If using Cloudflare DNS (recommended), use their free email routing:
 - ✅ Works with custom domains
 - ✅ Integrated with Cloudflare DNS
 
+### Fix Option 4: Use ImprovMX (Free - Works with Any DNS)
+
+ImprovMX is a free email forwarding service that works independently:
+
+1. Go to: https://improvmx.com/
+2. Enter domain: `manaskumarbehera.com`
+3. Add alias: `web` → `manaskumarbehera1@outlook.com`
+4. Get the MX records from ImprovMX
+
+**In Squarespace DNS:**
+1. Remove existing Squarespace Email Forwarding preset
+2. Add these MX records manually:
+
+| Type | Host | Priority | Data |
+|------|------|----------|------|
+| MX | `@` | 10 | `mx1.improvmx.com` |
+| MX | `@` | 20 | `mx2.improvmx.com` |
+
+3. Add SPF record:
+
+| Type | Host | Data |
+|------|------|------|
+| TXT | `@` | `v=spf1 include:spf.improvmx.com ~all` |
+
+4. Wait 15-30 minutes and test
+
+**Benefits of ImprovMX:**
+- ✅ Free (up to 25 aliases)
+- ✅ Works with any DNS provider
+- ✅ No account required for basic setup
+- ✅ Reliable service
+
+### Fix Option 5: Use Forward Email (Free & Open Source)
+
+1. Go to: https://forwardemail.net/
+2. Sign up (free)
+3. Add domain: `manaskumarbehera.com`
+4. Verify domain ownership
+5. Add forwarding: `web` → `manaskumarbehera1@outlook.com`
+
+**MX Records:**
+
+| Type | Host | Priority | Data |
+|------|------|----------|------|
+| MX | `@` | 10 | `mx1.forwardemail.net` |
+| MX | `@` | 20 | `mx2.forwardemail.net` |
+
+### Fix Option 6: Use Zoho Mail (Free - Full Email)
+
+If you want a real mailbox (not just forwarding):
+
+1. Go to: https://www.zoho.com/mail/
+2. Sign up for free plan (5 users)
+3. Add domain and verify
+4. Create `web@manaskumarbehera.com` mailbox
+5. Set up forwarding to Outlook within Zoho
+
 ---
 
 ### Verify Email Setup
