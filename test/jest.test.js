@@ -53,9 +53,9 @@ describe('⚙️ Configuration Files Tests', () => {
 
   test('should have all required npm scripts', () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf-8'));
-    expect(pkg.scripts.start).toBeDefined();
-    expect(pkg.scripts.test).toBeDefined();
-    expect(pkg.scripts.build).toBeDefined();
+    expect(pkg.scripts['local:start']).toBeDefined();
+    expect(pkg.scripts['local:test']).toBeDefined();
+    expect(pkg.scripts['git:push']).toBeDefined();
   });
 
   test('should have Procfile for Heroku', () => {
@@ -236,9 +236,9 @@ describe('🚀 Deployment Configuration Tests', () => {
 
   test('should have all required npm scripts for deployment', () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf-8'));
-    expect(pkg.scripts.start).toBeDefined();
-    expect(pkg.scripts.build).toBeDefined();
-    expect(pkg.scripts.deploy).toBeDefined();
+    expect(pkg.scripts['local:start']).toBeDefined();
+    expect(pkg.scripts['heroku:deploy']).toBeDefined();
+    expect(pkg.scripts['heroku:logs']).toBeDefined();
   });
 });
 
