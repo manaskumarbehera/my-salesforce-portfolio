@@ -215,6 +215,21 @@ body {
     border-radius: var(--border-radius);
 }
 
+.profile-photo {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid var(--primary-color);
+    box-shadow: 0 10px 30px rgba(0, 161, 224, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-photo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0, 161, 224, 0.4);
+}
+
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
