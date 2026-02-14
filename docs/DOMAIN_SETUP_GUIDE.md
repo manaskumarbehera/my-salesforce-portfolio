@@ -121,85 +121,70 @@ heroku logs --tail -a manaskumarbehera
 
 ## 📧 Email Forwarding Setup
 
-### Current DNS Configuration (Correct ✅)
-Your email DNS records are properly configured:
+### Current Configuration
+- **Email:** `web@manaskumarbehera.com`
+- **Forwards to:** `manaskumarbehera1@outlook.com`
+- **Provider:** Squarespace Email Forwarding
 
-| Host | Type | Priority | Data |
-|------|------|----------|------|
-| `@` | MX | 10 | `mxa.mailgun.org` |
-| `@` | MX | 10 | `mxb.mailgun.org` |
-| `@` | TXT | - | `v=spf1 include:mailgun.org ~all` |
-| `mailo._domainkey` | TXT | - | (DKIM key) |
+### ⚠️ Issue: MX Records Mismatch
 
----
+Your email forwarding is set up in Squarespace, but MX records still point to Mailgun:
 
-### ⚠️ Action Required: Configure Mailgun Route
+**Current (incorrect):**
+- `mxa.mailgun.org`
+- `mxb.mailgun.org`
 
-Your DNS is correct, but you need to set up a **forwarding route in Mailgun**:
-
-**Step 1: Log in to Mailgun**
-1. Go to: https://app.mailgun.com
-2. Sign in with your account
-
-**Step 2: Verify Domain is Active**
-1. Go to: **Sending** → **Domains**
-2. Find `manaskumarbehera.com`
-3. Status should be **Verified** (green checkmark)
-4. If not verified, click on the domain and follow verification steps
-
-**Step 3: Create Forwarding Route**
-1. Go to: **Receiving** → **Routes**
-2. Click **Create Route**
-3. Configure:
-   - **Expression Type:** Match Recipient
-   - **Recipient:** `web@manaskumarbehera.com`
-   - **Actions:** 
-     - ✅ Forward → `behera.manas98@gmail.com`
-     - ✅ Stop (to prevent further processing)
-   - **Priority:** 0 (or leave default)
-   - **Description:** Forward web@ to Gmail
-4. Click **Create Route**
-
-**Step 4: Test Email**
-Send a test email to `web@manaskumarbehera.com` and check your Gmail.
+**Required for Squarespace forwarding:**
+Squarespace's own MX servers
 
 ---
 
-### Alternative: Use Squarespace Email Forwarding
+### Fix: Update MX Records
 
-Squarespace has a built-in email forwarding feature:
+**Step 1: Go to Squarespace DNS**
+https://account.squarespace.com/domains/managed/manaskumarbehera.com/dns/dns-settings
 
-1. Go to: https://account.squarespace.com/domains/managed/manaskumarbehera.com/email
-2. Click **"Add Preset"** → **"Squarespace Email Forwarding"**
-3. Click **"Manage Rules"**
-4. Add forwarding rule:
-   - **From:** `web@manaskumarbehera.com`
-   - **To:** `behera.manas98@gmail.com`
+**Step 2: Delete Mailgun MX Records**
+Delete these records:
+- `@` MX `mxa.mailgun.org`
+- `@` MX `mxb.mailgun.org`
 
-**Note:** This may replace the Mailgun MX records with Squarespace's email servers.
+**Step 3: Add Squarespace Email Preset**
+1. Click **"Add Preset"**
+2. Select **"Squarespace Email Forwarding"**
+3. This will automatically add the correct MX records
+
+**Step 4: Delete Old TXT Records (Optional)**
+You can also delete these Mailgun-related records:
+- `v=spf1 include:mailgun.org ~all`
+- `mailo._domainkey` (DKIM for Mailgun)
+
+**Step 5: Wait for Propagation**
+Wait 15-30 minutes for DNS changes to propagate.
+
+**Step 6: Test Email**
+Send a test email to `web@manaskumarbehera.com` and check your Outlook inbox.
 
 ---
 
-### Troubleshooting Email Issues
+### Verify Email Setup
 
 ```bash
-# Check MX records
+# Check MX records (should show Squarespace servers after fix)
 dig manaskumarbehera.com MX +short
-# Expected: mxa.mailgun.org, mxb.mailgun.org
 
-# Check SPF record
-dig manaskumarbehera.com TXT +short
-# Expected: v=spf1 include:mailgun.org ~all
-
-# Check DKIM
-dig mailo._domainkey.manaskumarbehera.com TXT +short
+# Test email delivery
+# Send email to: web@manaskumarbehera.com
+# Should arrive at: manaskumarbehera1@outlook.com
 ```
 
-**Common Issues:**
-1. **Mailgun route not configured** - Create route in Mailgun dashboard
-2. **Domain not verified in Mailgun** - Complete domain verification
-3. **Emails going to spam** - Check SPF/DKIM records
-4. **DNS propagation** - Wait 15-30 minutes after changes
+---
+
+### Email Forwarding Rules (Configured ✅)
+
+| From | To | Status |
+|------|-----|--------|
+| `web@manaskumarbehera.com` | `manaskumarbehera1@outlook.com` | Active |
 
 ---
 
