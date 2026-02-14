@@ -1,218 +1,197 @@
-# Domain Recommendations for Manas Kumar Behera
+# Domain Setup Guide - manaskumarbehera.com
 
-## 🎯 Recommended Setup
+## ✅ Domain Purchased
 
-### Heroku App Name
-**Recommended:** `manas-behera-dev`
+**Domain:** `manaskumarbehera.com`  
+**Registrar:** Google Domains (domains.google.com)  
+**Heroku App:** `manas-behera-dev`
 
-**Command to create:**
+---
+
+## 🚀 Step-by-Step Setup (Google Domains + Heroku)
+
+### Step 1: Add Custom Domain to Heroku
+
+Open terminal and run these commands:
+
 ```bash
-heroku create manas-behera-dev
+# Add root domain
+heroku domains:add manaskumarbehera.com -a manas-behera-dev
+
+# Add www subdomain
+heroku domains:add www.manaskumarbehera.com -a manas-behera-dev
 ```
 
-**Your URL will be:** 
-https://manas-behera-dev.herokuapp.com
+### Step 2: Get Your Heroku DNS Targets
 
-### Alternative Heroku Names (if taken):
-- `manaskumarbehera`
-- `mkbehera-portfolio`
-- `manas-salesforce-dev`
-- `mkb-developer`
-
----
-
-## 🌐 Domain Name Strategy
-
-### Primary Recommendation
-**Domain:** `manaskumarbehera.com`
-**Why:** Professional, personal brand, easy to remember
-**Where to buy:** Namecheap.com
-**Cost:** ~$10-12/year
-
-### Check Availability
-Visit these sites to check if available:
-1. https://www.namecheap.com/domains/registration/results/?domain=manaskumarbehera.com
-2. https://domains.google.com/registrar/search?searchTerm=manaskumarbehera.com
-
-### Alternative Domains (if .com is taken)
-1. `manaskumarbehera.dev` - Perfect for developers! (~$12/year)
-2. `manasbehera.com` - Shorter version
-3. `manasbehera.io` - Tech-focused (~$35/year)
-4. `mkbehera.com` - Using initials
-5. `manasdev.com` - Developer focused
-
----
-
-## 💳 Where to Buy - Quick Comparison
-
-| Registrar | .com Price | .dev Price | Best For | Link |
-|-----------|-----------|-----------|----------|------|
-| **Namecheap** ⭐ | $8-10/yr | $12/yr | Best value | namecheap.com |
-| **Cloudflare** | $8-9/yr | $10/yr | Cheapest, tech users | cloudflare.com |
-| **Google Domains** | $12/yr | $12/yr | Easy to use | domains.google.com |
-| **Porkbun** | $9-11/yr | $12/yr | Good balance | porkbun.com |
-| **GoDaddy** | $12-20/yr | $15/yr | Popular choice | godaddy.com |
-
----
-
-## 📋 Step-by-Step Purchase Guide
-
-### Using Namecheap (Recommended)
-
-**Step 1: Check Availability**
-```
-1. Go to: https://www.namecheap.com
-2. Type in search: manaskumarbehera.com
-3. Click Search
-4. See if available (green checkmark)
-```
-
-**Step 2: Add to Cart**
-```
-1. Click "Add to Cart" on your chosen domain
-2. Select duration: 1 year (you can renew)
-3. FREE extras included:
-   - WhoisGuard (privacy protection) ✓
-   - Email forwarding ✓
-```
-
-**Step 3: Create Account & Checkout**
-```
-1. Create Namecheap account (or login)
-2. Enter payment details
-3. Total cost: ~$10-15 for first year
-4. Complete purchase
-```
-
-**Step 4: Configure for Heroku (After Purchase)**
-```
-Wait 24 hours, then follow these steps:
-1. Login to Namecheap
-2. Manage your domain
-3. Advanced DNS settings
-4. Add CNAME record pointing to Heroku
-   (Full instructions in DEPLOYMENT.md)
-```
-
----
-
-## 🚀 Quick Setup After Purchase
-
-### 1. Deploy to Heroku First
 ```bash
-cd /Users/manas/IdeaProjects/MyDeveloperProfile
-heroku create manas-behera-dev
-git push heroku main
+heroku domains -a manas-behera-dev
 ```
 
-### 2. Add Custom Domain to Heroku
+This will show something like:
+```
+Domain Name                  DNS Record Type  DNS Target
+───────────────────────────  ───────────────  ─────────────────────────────────
+manaskumarbehera.com         ALIAS or ANAME   sleepy-example-12345.herokudns.com
+www.manaskumarbehera.com     CNAME            sleepy-example-67890.herokudns.com
+```
+
+**Copy both DNS Target values** - you'll need them for Google Domains.
+
+### Step 3: Configure DNS in Google Domains
+
+1. Go to: https://domains.google.com/registrar/manaskumarbehera.com/dns
+2. Login to your Google account
+3. Click on **DNS** in the left sidebar
+4. Select **"Manage custom records"** or **"Custom records"**
+
+#### Add these DNS records:
+
+| Host Name | Type | TTL | Data |
+|-----------|------|-----|------|
+| `@` | A | 3600 | `75.2.60.5` |
+| `@` | A | 3600 | `99.80.186.122` |
+| `www` | CNAME | 3600 | `[your-www-dns-target].herokudns.com` |
+
+**Note:** Replace `[your-www-dns-target].herokudns.com` with the actual DNS target from Step 2.
+
+#### Alternative (if A records don't work):
+
+| Host Name | Type | TTL | Data |
+|-----------|------|-----|------|
+| `www` | CNAME | 3600 | `[your-www-dns-target].herokudns.com` |
+
+Then set up a redirect from `manaskumarbehera.com` to `www.manaskumarbehera.com` in Google Domains.
+
+### Step 4: Enable SSL on Heroku
+
 ```bash
-heroku domains:add www.manaskumarbehera.com
-heroku domains:add manaskumarbehera.com
+heroku certs:auto:enable -a manas-behera-dev
 ```
 
-### 3. Get DNS Target
+### Step 5: Wait for DNS Propagation
+
+DNS changes can take **15 minutes to 48 hours** to propagate worldwide.
+
+**Check propagation status:**
+- https://www.whatsmydns.net/#A/manaskumarbehera.com
+- https://www.whatsmydns.net/#CNAME/www.manaskumarbehera.com
+
+### Step 6: Verify Your Domain
+
 ```bash
-heroku domains
-# Copy the DNS target (looks like: xxx.herokudns.com)
+# Check if domain is configured correctly
+heroku domains -a manas-behera-dev
+
+# Check SSL certificate status
+heroku certs:auto -a manas-behera-dev
 ```
 
-### 4. Update Namecheap DNS
-```
-In Namecheap:
-- Add CNAME record: www → [your-heroku-dns-target]
-- Add ALIAS/ANAME: @ → [your-heroku-dns-target]
-```
+---
 
-### 5. Enable SSL (Automatic)
+## 🔧 Quick Commands Reference
+
 ```bash
-heroku certs:auto:enable
+# Add domains
+heroku domains:add manaskumarbehera.com -a manas-behera-dev
+heroku domains:add www.manaskumarbehera.com -a manas-behera-dev
+
+# View domains and DNS targets
+heroku domains -a manas-behera-dev
+
+# Enable automatic SSL
+heroku certs:auto:enable -a manas-behera-dev
+
+# Check SSL status
+heroku certs:auto -a manas-behera-dev
+
+# Remove a domain (if needed)
+heroku domains:remove manaskumarbehera.com -a manas-behera-dev
 ```
 
 ---
 
-## 💡 My Personal Recommendation
+## 📧 Set Up Email Forwarding (Optional)
 
-### For You (Manas Kumar Behera):
+Google Domains offers free email forwarding!
 
-**Heroku App Name:**
+1. Go to: https://domains.google.com/registrar/manaskumarbehera.com/email
+2. Click **"Email forwarding"**
+3. Add forwarding address:
+   - **Alias:** `web@manaskumarbehera.com`
+   - **Forward to:** `behera.manas98@gmail.com`
+4. Click **Add**
+5. Verify by clicking the link sent to your Gmail
+
+Now `web@manaskumarbehera.com` will forward to your Gmail!
+
+---
+
+## ✅ Checklist
+
+- [ ] Heroku domains added (`heroku domains:add`)
+- [ ] DNS targets copied from Heroku
+- [ ] A records added in Google Domains (pointing to Heroku IPs)
+- [ ] CNAME record added for www subdomain
+- [ ] SSL enabled (`heroku certs:auto:enable`)
+- [ ] Wait 15-48 hours for DNS propagation
+- [ ] Test https://manaskumarbehera.com
+- [ ] Test https://www.manaskumarbehera.com
+- [ ] (Optional) Email forwarding set up
+
+---
+
+## 🆘 Troubleshooting
+
+### Domain not working after 48 hours?
+
+1. **Check DNS records are correct:**
+   ```bash
+   dig manaskumarbehera.com
+   dig www.manaskumarbehera.com
+   ```
+
+2. **Verify Heroku configuration:**
+   ```bash
+   heroku domains -a manas-behera-dev
+   ```
+
+3. **Check SSL status:**
+   ```bash
+   heroku certs:auto -a manas-behera-dev
+   ```
+
+### SSL Certificate not issued?
+
+Make sure DNS is properly configured first. Heroku won't issue SSL until DNS is verified.
+
 ```bash
-heroku create manas-behera-dev
+# Check ACM (Automated Certificate Management) status
+heroku certs:auto -a manas-behera-dev
 ```
 
-**Domain Name to Buy:**
-**First Choice:** `manaskumarbehera.com`
-**Second Choice:** `manaskumarbehera.dev` (if .com taken)
+---
 
-**Where to Buy:**
-**Namecheap** - Best balance of price and features
+## 🔗 Useful Links
 
-**Budget:**
-- Domain: $10-12/year
-- Heroku: Free tier (or $7/month for Hobby dyno)
-- Total Year 1: ~$10-100 depending on Heroku tier
+- **Google Domains Dashboard:** https://domains.google.com/registrar/manaskumarbehera.com
+- **DNS Settings:** https://domains.google.com/registrar/manaskumarbehera.com/dns
+- **Email Forwarding:** https://domains.google.com/registrar/manaskumarbehera.com/email
+- **Heroku Custom Domains Docs:** https://devcenter.heroku.com/articles/custom-domains
+- **DNS Propagation Checker:** https://www.whatsmydns.net
 
 ---
 
-## ✅ Action Plan
+## 💰 Cost Summary
 
-**Right Now:**
-1. Check domain availability at Namecheap.com
-2. If available, purchase `manaskumarbehera.com`
-3. Enable WhoisGuard for privacy (free)
-
-**After Purchase:**
-1. Deploy to Heroku: `heroku create manas-behera-dev`
-2. Push code: `git push heroku main`
-3. Add custom domain: `heroku domains:add`
-4. Update DNS at Namecheap
-5. Wait 24-48 hours for DNS propagation
-6. Your site will be live at www.manaskumarbehera.com!
+| Item | Cost |
+|------|------|
+| Domain (manaskumarbehera.com) | ~$12/year |
+| Heroku (Eco Dynos) | $5/month |
+| SSL Certificate | FREE (via Heroku ACM) |
+| Email Forwarding | FREE (via Google Domains) |
 
 ---
 
-## 🔗 Quick Links
-
-**Check Domain Availability:**
-- https://www.namecheap.com/domains/registration/results/?domain=manaskumarbehera
-- https://domains.google.com/registrar/search?searchTerm=manaskumarbehera
-
-**Heroku Domain Setup Guide:**
-- See DEPLOYMENT.md in your project folder
-
-**DNS Propagation Check:**
-- https://www.whatsmydns.net (check if DNS is working worldwide)
-
----
-
-## 📞 Need Help?
-
-**Domain Questions:**
-- Namecheap Live Chat (24/7)
-- Their knowledge base is excellent
-
-**Heroku Questions:**
-- Check DEPLOYMENT.md
-- Heroku documentation: https://devcenter.heroku.com/articles/custom-domains
-
----
-
-## 💰 Estimated Costs
-
-**Setup (One-time):**
-- Domain registration: $10-15
-- Time investment: 30-60 minutes
-
-**Annual Costs:**
-- Domain renewal: $10-15/year
-- Heroku Free tier: $0
-- Heroku Hobby tier: $84/year ($7/month)
-
-**Total Year 1:**
-- Minimal: ~$10 (domain only, free Heroku)
-- Recommended: ~$95 (domain + Hobby Heroku)
-
----
-
-**Good luck, Manas! Your portfolio will look great at manaskumarbehera.com! 🚀**
+**Your site will be live at: https://manaskumarbehera.com** 🚀
 
