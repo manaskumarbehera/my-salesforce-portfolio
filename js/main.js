@@ -152,32 +152,15 @@ document.getElementById('contactForm')?.addEventListener('submit', function(e) {
     const subject = document.getElementById('subject').value;
     const message = document.getElementById('message').value;
 
-    // Here you can implement your form submission logic
-    // For now, we'll just show an alert
-    alert(`Thank you for your message, ${name}! This is a demo. To enable form submission, integrate with a backend service like Heroku, EmailJS, or Formspree.`);
+    // Build a mailto link to send the message via the user's mail client
+    const recipients = ['behera.manas98@gmail.com', 'manaskumarbehera1@outlook.com'];
+    const body = `Name: ${name}\nEmail: ${email}\n\n${message}`;
+    const mailtoUrl = `mailto:${recipients.join(',')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    // Reset form
+    window.location.href = mailtoUrl;
+
+    // Reset form after launching the mail client
     this.reset();
-
-    // Example: Send to backend endpoint (uncomment and configure)
-    /*
-    fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, subject, message })
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert('Message sent successfully!');
-        this.reset();
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to send message. Please try again.');
-    });
-    */
 });
 
 // Navbar background on scroll

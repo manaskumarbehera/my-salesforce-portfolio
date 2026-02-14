@@ -439,6 +439,10 @@ body {
     line-height: 1.6;
 }
 
+.contact-link {
+    font-size: 0.85rem;
+}
+
 .contact-item a:hover {
     text-decoration: underline;
 }
@@ -534,4 +538,3 @@ body {
     width: 3rem;
     height: 3rem;
 }
-
