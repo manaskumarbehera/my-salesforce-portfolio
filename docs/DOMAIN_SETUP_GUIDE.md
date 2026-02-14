@@ -121,92 +121,85 @@ heroku logs --tail -a manaskumarbehera
 
 ## 📧 Email Forwarding Setup
 
-### Current Issue
-Your MX records point to **Mailgun** but email forwarding may not be configured properly.
+### Current DNS Configuration (Correct ✅)
+Your email DNS records are properly configured:
 
-**Current MX Records (incorrect for Google forwarding):**
-- `mxa.mailgun.org`
-- `mxb.mailgun.org`
-
----
-
-### Option 1: Use Google Workspace Email Forwarding (Recommended)
-
-**Step 1: Update MX Records in Squarespace**
-
-Go to: https://account.squarespace.com/domains/managed/manaskumarbehera.com/dns/dns-settings
-
-**Delete** existing Mailgun MX records, then **Add** these:
-
-| Type | Host | Priority | Data |
+| Host | Type | Priority | Data |
 |------|------|----------|------|
-| MX | `@` | 5 | `gmr-smtp-in.l.google.com` |
-| MX | `@` | 10 | `alt1.gmr-smtp-in.l.google.com` |
-| MX | `@` | 20 | `alt2.gmr-smtp-in.l.google.com` |
-
-**Step 2: Set Up Forwarding in Google Domains**
-
-1. Go to: https://domains.google.com/registrar/manaskumarbehera.com/email
-2. Click **"Email forwarding"**
-3. Add forwarding address:
-   - **Alias:** `web`
-   - **Forward to:** `behera.manas98@gmail.com`
-4. Click **Add**
-5. Check your Gmail for verification email and click the link
+| `@` | MX | 10 | `mxa.mailgun.org` |
+| `@` | MX | 10 | `mxb.mailgun.org` |
+| `@` | TXT | - | `v=spf1 include:mailgun.org ~all` |
+| `mailo._domainkey` | TXT | - | (DKIM key) |
 
 ---
 
-### Option 2: Use Squarespace Email (Paid)
+### ⚠️ Action Required: Configure Mailgun Route
 
-Squarespace offers Google Workspace email integration:
-1. Go to: https://account.squarespace.com/domains/managed/manaskumarbehera.com/email
-2. Purchase Google Workspace subscription
-3. Set up `web@manaskumarbehera.com`
-
----
-
-### Option 3: Fix Mailgun Setup (If Keeping Mailgun)
-
-If you want to keep using Mailgun:
+Your DNS is correct, but you need to set up a **forwarding route in Mailgun**:
 
 **Step 1: Log in to Mailgun**
 1. Go to: https://app.mailgun.com
-2. Navigate to **Receiving** → **Routes**
+2. Sign in with your account
 
-**Step 2: Create Forwarding Route**
-1. Click **Create Route**
-2. Expression Type: **Match Recipient**
-3. Recipient: `web@manaskumarbehera.com`
-4. Actions: **Forward** → `behera.manas98@gmail.com`
-5. Click **Create Route**
+**Step 2: Verify Domain is Active**
+1. Go to: **Sending** → **Domains**
+2. Find `manaskumarbehera.com`
+3. Status should be **Verified** (green checkmark)
+4. If not verified, click on the domain and follow verification steps
 
-**Step 3: Add SPF Record in Squarespace DNS**
+**Step 3: Create Forwarding Route**
+1. Go to: **Receiving** → **Routes**
+2. Click **Create Route**
+3. Configure:
+   - **Expression Type:** Match Recipient
+   - **Recipient:** `web@manaskumarbehera.com`
+   - **Actions:** 
+     - ✅ Forward → `behera.manas98@gmail.com`
+     - ✅ Stop (to prevent further processing)
+   - **Priority:** 0 (or leave default)
+   - **Description:** Forward web@ to Gmail
+4. Click **Create Route**
 
-| Type | Host | Data |
-|------|------|------|
-| TXT | `@` | `v=spf1 include:mailgun.org ~all` |
+**Step 4: Test Email**
+Send a test email to `web@manaskumarbehera.com` and check your Gmail.
 
 ---
 
-### Verify Email Setup
+### Alternative: Use Squarespace Email Forwarding
 
-After making changes, wait 15-30 minutes, then:
+Squarespace has a built-in email forwarding feature:
+
+1. Go to: https://account.squarespace.com/domains/managed/manaskumarbehera.com/email
+2. Click **"Add Preset"** → **"Squarespace Email Forwarding"**
+3. Click **"Manage Rules"**
+4. Add forwarding rule:
+   - **From:** `web@manaskumarbehera.com`
+   - **To:** `behera.manas98@gmail.com`
+
+**Note:** This may replace the Mailgun MX records with Squarespace's email servers.
+
+---
+
+### Troubleshooting Email Issues
 
 ```bash
 # Check MX records
 dig manaskumarbehera.com MX +short
+# Expected: mxa.mailgun.org, mxb.mailgun.org
 
-# Expected output for Google forwarding:
-# 5 gmr-smtp-in.l.google.com.
-# 10 alt1.gmr-smtp-in.l.google.com.
-# 20 alt2.gmr-smtp-in.l.google.com.
+# Check SPF record
+dig manaskumarbehera.com TXT +short
+# Expected: v=spf1 include:mailgun.org ~all
+
+# Check DKIM
+dig mailo._domainkey.manaskumarbehera.com TXT +short
 ```
 
-**Test by sending an email to:** `web@manaskumarbehera.com`
-4. Click **Add**
-5. Verify by clicking the link sent to your Gmail
-
-Now `web@manaskumarbehera.com` will forward to your Gmail!
+**Common Issues:**
+1. **Mailgun route not configured** - Create route in Mailgun dashboard
+2. **Domain not verified in Mailgun** - Complete domain verification
+3. **Emails going to spam** - Check SPF/DKIM records
+4. **DNS propagation** - Wait 15-30 minutes after changes
 
 ---
 
