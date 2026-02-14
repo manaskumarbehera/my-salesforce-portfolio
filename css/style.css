@@ -129,6 +129,27 @@ body {
     color: white;
 }
 
+.social-icon-coffee:hover {
+    background: #FFDD00;
+    color: #000;
+}
+
+/* Buy Me a Coffee Button */
+.btn-warning {
+    background: #FFDD00;
+    border-color: #FFDD00;
+    color: #000;
+    font-weight: 600;
+}
+
+.btn-warning:hover {
+    background: #FFCC00;
+    border-color: #FFCC00;
+    color: #000;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(255, 221, 0, 0.3);
+}
+
 /* Section Padding */
 .section-padding {
     padding: 80px 0;
