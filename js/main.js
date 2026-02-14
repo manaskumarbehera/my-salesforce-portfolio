@@ -47,7 +47,7 @@ async function fetchGitHubRepos() {
     const reposContainer = document.getElementById('github-repos');
 
     try {
-        const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=6`);
+        const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=4`);
 
         if (!response.ok) {
             throw new Error('Failed to fetch repositories');
@@ -59,7 +59,7 @@ async function fetchGitHubRepos() {
         const filteredRepos = repos
             .filter(repo => !EXCLUDED_REPOS.includes(repo.name))
             .filter(repo => !repo.fork) // Optionally exclude forks
-            .slice(0, 6);
+            .slice(0, 4);
 
         if (filteredRepos.length === 0) {
             reposContainer.innerHTML = `
