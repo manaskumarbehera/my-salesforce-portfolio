@@ -28,15 +28,13 @@ heroku domains:add www.manaskumarbehera.com -a manas-behera-dev
 heroku domains -a manas-behera-dev
 ```
 
-This will show something like:
+**Your actual DNS Targets:**
 ```
 Domain Name                  DNS Record Type  DNS Target
-───────────────────────────  ───────────────  ─────────────────────────────────
-manaskumarbehera.com         ALIAS or ANAME   sleepy-example-12345.herokudns.com
-www.manaskumarbehera.com     CNAME            sleepy-example-67890.herokudns.com
+───────────────────────────  ───────────────  ─────────────────────────────────────────────────
+manaskumarbehera.com         ALIAS or ANAME   hidden-bug-2o45duap33xtispw1yl2xztu.herokudns.com
+www.manaskumarbehera.com     CNAME            agile-tuna-45cp10kx5dvfubdrmk3o66n1.herokudns.com
 ```
-
-**Copy both DNS Target values** - you'll need them for Google Domains.
 
 ### Step 3: Configure DNS in Google Domains
 
@@ -51,15 +49,13 @@ www.manaskumarbehera.com     CNAME            sleepy-example-67890.herokudns.com
 |-----------|------|-----|------|
 | `@` | A | 3600 | `75.2.60.5` |
 | `@` | A | 3600 | `99.80.186.122` |
-| `www` | CNAME | 3600 | `[your-www-dns-target].herokudns.com` |
-
-**Note:** Replace `[your-www-dns-target].herokudns.com` with the actual DNS target from Step 2.
+| `www` | CNAME | 3600 | `agile-tuna-45cp10kx5dvfubdrmk3o66n1.herokudns.com` |
 
 #### Alternative (if A records don't work):
 
 | Host Name | Type | TTL | Data |
 |-----------|------|-----|------|
-| `www` | CNAME | 3600 | `[your-www-dns-target].herokudns.com` |
+| `www` | CNAME | 3600 | `agile-tuna-45cp10kx5dvfubdrmk3o66n1.herokudns.com` |
 
 Then set up a redirect from `manaskumarbehera.com` to `www.manaskumarbehera.com` in Google Domains.
 
