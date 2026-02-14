@@ -9,7 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Email configuration - Set these in Heroku Config Vars
-const EMAIL_USER = process.env.EMAIL_USER || 'web@cloudwithmanas.com';
+const EMAIL_USER = process.env.EMAIL_USER || 'web@manaskumarbehera.com';
 const EMAIL_PASS = process.env.EMAIL_PASS || ''; // Set in Heroku Config Vars
 const EMAIL_HOST = process.env.EMAIL_HOST || 'smtp.gmail.com'; // Change based on your provider
 const EMAIL_PORT = process.env.EMAIL_PORT || 587;
@@ -22,6 +22,17 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: EMAIL_USER,
         pass: EMAIL_PASS
+    }
+});
+
+// Verify SMTP connection on startup
+transporter.verify((error, success) => {
+    if (error) {
+        console.error('❌ SMTP Connection Error:', error.message);
+        console.log('📧 Email Config: HOST=' + EMAIL_HOST + ', PORT=' + EMAIL_PORT + ', USER=' + EMAIL_USER);
+        console.log('⚠️ Check that EMAIL_PASS is set correctly in Heroku Config Vars');
+    } else {
+        console.log('✅ SMTP Server is ready to send emails');
     }
 });
 
@@ -136,7 +147,12 @@ app.post('/api/contact', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ Error sending email:', error);
+        console.error('❌ Error sending email:', error.message);
+        console.error('Error details:', {
+            code: error.code,
+            command: error.command,
+            responseCode: error.responseCode
+        });
         // Still return success since lead was saved
         res.json({
             success: true,
