@@ -3,23 +3,22 @@
 ## ✅ Domain Purchased
 
 **Domain:** `manaskumarbehera.com`  
-**Registrar:** Google Domains (domains.google.com)  
+**Registrar:** Squarespace Domains  
+**DNS Settings:** https://account.squarespace.com/domains/managed/manaskumarbehera.com/dns/dns-settings  
 **Heroku App:** `manaskumarbehera`  
 **Region:** EU (Europe) 🇪🇺
 
 ---
 
-## 🚨 ACTION REQUIRED: Update DNS in Google Domains
+## 🚨 ACTION REQUIRED: Update DNS in Squarespace
 
-### Step 1: Open Google Domains DNS Settings
+### Step 1: Open Squarespace DNS Settings
 
-1. Go to: **https://domains.google.com/registrar/manaskumarbehera.com/dns**
-2. Login with your Google account
-3. Scroll down to **"Custom records"** or **"Resource records"**
+Go to: **https://account.squarespace.com/domains/managed/manaskumarbehera.com/dns/dns-settings**
 
 ### Step 2: Add/Update DNS Records
 
-Add these **3 records** (delete any old ones first):
+Click **"Add Record"** and add these **3 records**:
 
 | Host Name | Type | TTL | Data |
 |-----------|------|-----|------|
@@ -27,30 +26,30 @@ Add these **3 records** (delete any old ones first):
 | `@` | A | 3600 | `99.80.186.122` |
 | `www` | CNAME | 3600 | `theoretical-ridge-1uiuylak162l9k9363hgnqk3.herokudns.com` |
 
-### Step 3: How to Add Records in Google Domains
+### Step 3: How to Add Records in Squarespace
 
-1. Click **"Manage custom records"** or **"Create new record"**
+1. Click **"Add Record"** button
 
 2. **For first A record:**
-   - Host name: Leave empty (or enter `@`)
+   - Host: `@`
    - Type: Select `A`
-   - TTL: `3600`
    - Data: `75.2.60.5`
-   - Click **Save**
+   - TTL: Leave default
+   - Click **Add**
 
 3. **For second A record:**
-   - Host name: Leave empty (or enter `@`)
+   - Host: `@`
    - Type: Select `A`
-   - TTL: `3600`
    - Data: `99.80.186.122`
-   - Click **Save**
+   - TTL: Leave default
+   - Click **Add**
 
 4. **For CNAME record:**
-   - Host name: `www`
+   - Host: `www`
    - Type: Select `CNAME`
-   - TTL: `3600`
    - Data: `theoretical-ridge-1uiuylak162l9k9363hgnqk3.herokudns.com`
-   - Click **Save**
+   - TTL: Leave default
+   - Click **Add**
 
 ### Step 4: Verify DNS Records
 
@@ -163,9 +162,8 @@ heroku certs:auto -a manaskumarbehera
 
 ## 🔗 Useful Links
 
-- **Google Domains Dashboard:** https://domains.google.com/registrar/manaskumarbehera.com
-- **DNS Settings:** https://domains.google.com/registrar/manaskumarbehera.com/dns
-- **Email Forwarding:** https://domains.google.com/registrar/manaskumarbehera.com/email
+- **Squarespace Domain Dashboard:** https://account.squarespace.com/domains/managed/manaskumarbehera.com
+- **DNS Settings:** https://account.squarespace.com/domains/managed/manaskumarbehera.com/dns/dns-settings
 - **Heroku Custom Domains Docs:** https://devcenter.heroku.com/articles/custom-domains
 - **DNS Propagation Checker:** https://www.whatsmydns.net
 

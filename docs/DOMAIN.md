@@ -9,7 +9,8 @@
 | Property | Value |
 |----------|-------|
 | **Domain Name** | `manaskumarbehera.com` |
-| **Registrar** | Google Domains (domains.google.com) |
+| **Registrar** | Squarespace Domains |
+| **DNS Management** | https://account.squarespace.com/domains/managed/manaskumarbehera.com/dns/dns-settings |
 | **Hosting** | Heroku |
 | **Heroku App** | `manaskumarbehera` |
 | **Region** | EU (Europe) 🇪🇺 |
