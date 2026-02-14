@@ -39,7 +39,7 @@ window.addEventListener('scroll', () => {
 });
 
 // GitHub Repository Configuration
-const GITHUB_USERNAME = 'manaskumarbehera'; // Replace with your GitHub username
+const GITHUB_USERNAME = 'manaskumarbehera';
 
 // Set to false to temporarily hide the GitHub repos section
 const SHOW_GITHUB_REPOS = false;
@@ -82,6 +82,7 @@ async function fetchGitHubRepos() {
 
     // Hide section if SHOW_GITHUB_REPOS is false
     if (!SHOW_GITHUB_REPOS) {
+        reposContainer.innerHTML = '';
         reposContainer.style.display = 'none';
         return;
     }
