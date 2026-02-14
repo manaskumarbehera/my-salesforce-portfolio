@@ -39,7 +39,7 @@ window.addEventListener('scroll', () => {
 });
 
 // GitHub Repository Configuration
-const GITHUB_USERNAME = 'yourusername'; // Replace with your GitHub username
+const GITHUB_USERNAME = 'manaskumarbehera'; // Replace with your GitHub username
 const EXCLUDED_REPOS = ['yourusername']; // Add repos to exclude
 
 // Fetch GitHub Repositories
