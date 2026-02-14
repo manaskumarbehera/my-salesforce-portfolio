@@ -9,42 +9,17 @@
 
 ---
 
-## 🚀 Step-by-Step Setup (Google Domains + Heroku)
+## 🚨 ACTION REQUIRED: Update DNS in Google Domains
 
-### Step 1: Add Custom Domain to Heroku
+### Step 1: Open Google Domains DNS Settings
 
-Open terminal and run these commands:
+1. Go to: **https://domains.google.com/registrar/manaskumarbehera.com/dns**
+2. Login with your Google account
+3. Scroll down to **"Custom records"** or **"Resource records"**
 
-```bash
-# Add root domain
-heroku domains:add manaskumarbehera.com -a manas-behera-dev
+### Step 2: Add/Update DNS Records
 
-# Add www subdomain
-heroku domains:add www.manaskumarbehera.com -a manas-behera-dev
-```
-
-### Step 2: Get Your Heroku DNS Targets
-
-```bash
-heroku domains -a manas-behera-dev
-```
-
-**Your actual DNS Targets:**
-```
-Domain Name                  DNS Record Type  DNS Target
-───────────────────────────  ───────────────  ─────────────────────────────────────────────────────────────
-manaskumarbehera.com         ALIAS or ANAME   computational-badlands-vqbas54dog957lhao8pf7fc1.herokudns.com
-www.manaskumarbehera.com     CNAME            theoretical-ridge-1uiuylak162l9k9363hgnqk3.herokudns.com
-```
-
-### Step 3: Configure DNS in Google Domains
-
-1. Go to: https://domains.google.com/registrar/manaskumarbehera.com/dns
-2. Login to your Google account
-3. Click on **DNS** in the left sidebar
-4. Select **"Manage custom records"** or **"Custom records"**
-
-#### Add these DNS records:
+Add these **3 records** (delete any old ones first):
 
 | Host Name | Type | TTL | Data |
 |-----------|------|-----|------|
@@ -52,58 +27,75 @@ www.manaskumarbehera.com     CNAME            theoretical-ridge-1uiuylak162l9k93
 | `@` | A | 3600 | `99.80.186.122` |
 | `www` | CNAME | 3600 | `theoretical-ridge-1uiuylak162l9k9363hgnqk3.herokudns.com` |
 
-#### Alternative (if A records don't work):
+### Step 3: How to Add Records in Google Domains
 
-| Host Name | Type | TTL | Data |
-|-----------|------|-----|------|
-| `www` | CNAME | 3600 | `theoretical-ridge-1uiuylak162l9k9363hgnqk3.herokudns.com` |
+1. Click **"Manage custom records"** or **"Create new record"**
 
-Then set up a redirect from `manaskumarbehera.com` to `www.manaskumarbehera.com` in Google Domains.
+2. **For first A record:**
+   - Host name: Leave empty (or enter `@`)
+   - Type: Select `A`
+   - TTL: `3600`
+   - Data: `75.2.60.5`
+   - Click **Save**
 
-### Step 4: Enable SSL on Heroku
+3. **For second A record:**
+   - Host name: Leave empty (or enter `@`)
+   - Type: Select `A`
+   - TTL: `3600`
+   - Data: `99.80.186.122`
+   - Click **Save**
 
-```bash
-heroku certs:auto:enable -a manas-behera-dev
+4. **For CNAME record:**
+   - Host name: `www`
+   - Type: Select `CNAME`
+   - TTL: `3600`
+   - Data: `theoretical-ridge-1uiuylak162l9k9363hgnqk3.herokudns.com`
+   - Click **Save**
+
+### Step 4: Verify DNS Records
+
+After adding, your records should look like this:
+
+```
+┌─────────────┬───────┬──────┬─────────────────────────────────────────────────────────────┐
+│ Host name   │ Type  │ TTL  │ Data                                                        │
+├─────────────┼───────┼──────┼─────────────────────────────────────────────────────────────┤
+│ @           │ A     │ 3600 │ 75.2.60.5                                                   │
+│ @           │ A     │ 3600 │ 99.80.186.122                                               │
+│ www         │ CNAME │ 3600 │ theoretical-ridge-1uiuylak162l9k9363hgnqk3.herokudns.com    │
+└─────────────┴───────┴──────┴─────────────────────────────────────────────────────────────┘
 ```
 
 ### Step 5: Wait for DNS Propagation
 
-DNS changes can take **15 minutes to 48 hours** to propagate worldwide.
+DNS changes take **15 minutes to 48 hours** to propagate worldwide.
 
 **Check propagation status:**
 - https://www.whatsmydns.net/#A/manaskumarbehera.com
 - https://www.whatsmydns.net/#CNAME/www.manaskumarbehera.com
 
-### Step 6: Verify Your Domain
+### Step 6: Test Your Domain
 
-```bash
-# Check if domain is configured correctly
-heroku domains -a manas-behera-dev
-
-# Check SSL certificate status
-heroku certs:auto -a manas-behera-dev
-```
+After propagation, test these URLs:
+- ✅ https://manaskumarbehera.com
+- ✅ https://www.manaskumarbehera.com
 
 ---
 
-## 🔧 Quick Commands Reference
+## 🔧 Heroku Commands Reference
 
 ```bash
-# Add domains
-heroku domains:add manaskumarbehera.com -a manas-behera-dev
-heroku domains:add www.manaskumarbehera.com -a manas-behera-dev
-
 # View domains and DNS targets
-heroku domains -a manas-behera-dev
-
-# Enable automatic SSL
-heroku certs:auto:enable -a manas-behera-dev
+heroku domains -a manaskumarbehera
 
 # Check SSL status
-heroku certs:auto -a manas-behera-dev
+heroku certs:auto -a manaskumarbehera
 
-# Remove a domain (if needed)
-heroku domains:remove manaskumarbehera.com -a manas-behera-dev
+# View app info
+heroku info -a manaskumarbehera
+
+# View logs
+heroku logs --tail -a manaskumarbehera
 ```
 
 ---
@@ -126,11 +118,11 @@ Now `web@manaskumarbehera.com` will forward to your Gmail!
 
 ## ✅ Checklist
 
-- [ ] Heroku domains added (`heroku domains:add`)
-- [ ] DNS targets copied from Heroku
-- [ ] A records added in Google Domains (pointing to Heroku IPs)
-- [ ] CNAME record added for www subdomain
-- [ ] SSL enabled (`heroku certs:auto:enable`)
+- [x] Heroku app created in EU region (`manaskumarbehera`)
+- [x] Custom domains added to Heroku
+- [x] SSL enabled (Heroku ACM)
+- [ ] **A records added in Google Domains** ⬅️ DO THIS NOW
+- [ ] **CNAME record added for www** ⬅️ DO THIS NOW
 - [ ] Wait 15-48 hours for DNS propagation
 - [ ] Test https://manaskumarbehera.com
 - [ ] Test https://www.manaskumarbehera.com
@@ -150,12 +142,12 @@ Now `web@manaskumarbehera.com` will forward to your Gmail!
 
 2. **Verify Heroku configuration:**
    ```bash
-   heroku domains -a manas-behera-dev
+   heroku domains -a manaskumarbehera
    ```
 
 3. **Check SSL status:**
    ```bash
-   heroku certs:auto -a manas-behera-dev
+   heroku certs:auto -a manaskumarbehera
    ```
 
 ### SSL Certificate not issued?
@@ -164,7 +156,7 @@ Make sure DNS is properly configured first. Heroku won't issue SSL until DNS is 
 
 ```bash
 # Check ACM (Automated Certificate Management) status
-heroku certs:auto -a manas-behera-dev
+heroku certs:auto -a manaskumarbehera
 ```
 
 ---
