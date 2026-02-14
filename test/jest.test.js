@@ -104,6 +104,14 @@ describe('🌐 Portfolio Content Tests', () => {
     expect(indexContent).toContain('Manas Kumar Behera');
   });
 
+  test('should have hero buttons with all section links', () => {
+    expect(indexContent).toContain('href="#projects"');
+    expect(indexContent).toContain('href="#skills"');
+    expect(indexContent).toContain('href="#tools"');
+    expect(indexContent).toContain('href="#recommendations"');
+    expect(indexContent).toContain('href="#contact"');
+  });
+
   test('should have Buy Me a Coffee link integrated', () => {
     expect(indexContent).toContain('buymeacoffee.com/manaskumarbehera');
   });
