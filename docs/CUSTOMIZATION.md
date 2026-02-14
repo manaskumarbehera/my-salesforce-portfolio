@@ -53,7 +53,7 @@ const EXCLUDED_REPOS = ['yourusername', 'private-repo']; // Add repos to hide
 
 ### 3. Projects Section (index.html)
 
-**Lines 189-223: Featured Projects**
+**Lines 186-279: Featured Projects (4 projects)**
 
 Update each project card with your actual projects:
 
