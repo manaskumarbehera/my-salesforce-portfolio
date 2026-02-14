@@ -143,7 +143,7 @@ This will open a browser window. Click "Log in" to authenticate.
 
 ```bash
 # Create app (choose a unique name)
-heroku create manas-behera-dev
+heroku create manaskumarbehera
 
 # Or let Heroku generate a random name
 heroku create
@@ -156,7 +156,7 @@ heroku create
 
 ✅ **Your Heroku app is created!**
 
-**Your app URL:** https://manas-behera-dev.herokuapp.com (or whatever name you chose)
+**Your app URL:** https://manaskumarbehera.herokuapp.com (or whatever name you chose)
 
 ---
 
@@ -168,7 +168,7 @@ This is the magic step! Once connected, every push to GitHub automatically deplo
 
 1. **Go to Heroku Dashboard:**
    - Visit: https://dashboard.heroku.com/apps
-   - Click on your app (`manas-behera-dev`)
+   - Click on your app (`manaskumarbehera`)
 
 2. **Navigate to Deploy Tab:**
    - Click **"Deploy"** tab at the top
@@ -194,7 +194,7 @@ This is the magic step! Once connected, every push to GitHub automatically deplo
 
 7. **View Your Site:**
    - Click **"View"** button at the top
-   - Or visit: https://manas-behera-dev.herokuapp.com
+   - Or visit: https://manaskumarbehera.herokuapp.com
 
 ✅ **Pipeline is set up!** Now every push to GitHub will automatically deploy!
 
@@ -204,7 +204,7 @@ If you prefer command line:
 
 ```bash
 # Link your Heroku app to GitHub repo
-heroku git:remote -a manas-behera-dev
+heroku git:remote -a manaskumarbehera
 
 # Set up to deploy from GitHub (requires GitHub Actions)
 # Note: Dashboard method is easier for GitHub integration
@@ -234,11 +234,11 @@ git push origin main
 
 ### Watch Automatic Deployment
 
-1. Go to Heroku Dashboard: https://dashboard.heroku.com/apps/manas-behera-dev
+1. Go to Heroku Dashboard: https://dashboard.heroku.com/apps/manaskumarbehera
 2. Click **"Activity"** tab
 3. You'll see "Build in progress" - this happens automatically!
 4. Wait 1-2 minutes for build to complete
-5. Visit your site: https://manas-behera-dev.herokuapp.com
+5. Visit your site: https://manaskumarbehera.herokuapp.com
 
 🎉 **It works! Your GitHub to Heroku pipeline is live!**
 
@@ -367,7 +367,7 @@ cat ~/.ssh/id_ed25519.pub
 **Solution:**
 ```bash
 # Check Heroku logs
-heroku logs --tail -a manas-behera-dev
+heroku logs --tail -a manaskumarbehera
 
 # Common fixes:
 # 1. Ensure package.json has correct engines
@@ -445,11 +445,11 @@ See `DOMAIN_SETUP_GUIDE.md` for recommendations.
 
 ```bash
 # Add your domain
-heroku domains:add www.manaskumarbehera.com -a manas-behera-dev
-heroku domains:add manaskumarbehera.com -a manas-behera-dev
+heroku domains:add www.manaskumarbehera.com -a manaskumarbehera
+heroku domains:add manaskumarbehera.com -a manaskumarbehera
 
 # Get DNS target
-heroku domains -a manas-behera-dev
+heroku domains -a manaskumarbehera
 ```
 
 You'll see something like: `www.manaskumarbehera.com → xxx-123.herokudns.com`
@@ -481,7 +481,7 @@ You'll see something like: `www.manaskumarbehera.com → xxx-123.herokudns.com`
 
 ```bash
 # Enable automatic SSL certificates
-heroku certs:auto:enable -a manas-behera-dev
+heroku certs:auto:enable -a manaskumarbehera
 ```
 
 SSL certificates are free and automatically managed by Heroku!
@@ -510,34 +510,34 @@ After propagation:
 
 ```bash
 # Real-time logs
-heroku logs --tail -a manas-behera-dev
+heroku logs --tail -a manaskumarbehera
 
 # Last 100 lines
-heroku logs -n 100 -a manas-behera-dev
+heroku logs -n 100 -a manaskumarbehera
 
 # Filter for errors
-heroku logs --tail -a manas-behera-dev | grep -i error
+heroku logs --tail -a manaskumarbehera | grep -i error
 ```
 
 ### Check App Status
 
 ```bash
 # Dyno status
-heroku ps -a manas-behera-dev
+heroku ps -a manaskumarbehera
 
 # App info
-heroku info -a manas-behera-dev
+heroku info -a manaskumarbehera
 ```
 
 ### Restart App
 
 ```bash
-heroku restart -a manas-behera-dev
+heroku restart -a manaskumarbehera
 ```
 
 ### Check Build History
 
-Visit: https://dashboard.heroku.com/apps/manas-behera-dev/activity
+Visit: https://dashboard.heroku.com/apps/manaskumarbehera/activity
 
 ---
 
@@ -594,7 +594,7 @@ git push origin develop
 
 ```bash
 # Create production app
-heroku create manas-behera-dev --remote production
+heroku create manaskumarbehera --remote production
 
 # Connect to GitHub (use Dashboard method)
 # Set to auto-deploy from "main" branch
@@ -648,7 +648,7 @@ git push origin main
 
 **Upgrade:**
 ```bash
-heroku dyno:type hobby -a manas-behera-dev
+heroku dyno:type hobby -a manaskumarbehera
 ```
 
 ---
@@ -771,7 +771,7 @@ Your portfolio is now live with professional CI/CD pipeline!
 
 **Your URLs:**
 - **GitHub Repo:** https://github.com/YOUR_USERNAME/my-salesforce-portfolio
-- **Live Site:** https://manas-behera-dev.herokuapp.com
+- **Live Site:** https://manaskumarbehera.herokuapp.com
 - **Custom Domain:** https://www.manaskumarbehera.com (after setup)
 
 **Next Steps:**

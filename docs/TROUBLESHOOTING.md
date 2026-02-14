@@ -190,7 +190,7 @@ Build failed!
 
 **Check Heroku logs:**
 ```bash
-heroku logs --tail -a manas-behera-dev
+heroku logs --tail -a manaskumarbehera
 ```
 
 **Common fixes:**

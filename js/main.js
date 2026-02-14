@@ -56,7 +56,7 @@ const INCLUDED_REPOS = [
 const PROJECT_METADATA = {
     'my-salesforce-portfolio': {
         displayName: 'My Portfolio',
-        liveUrl: 'https://manas-behera-dev-5a0040c069c1.herokuapp.com/',
+        liveUrl: 'https://manaskumarbehera-5a0040c069c1.herokuapp.com/',
         type: 'web'
     },
     'sf-audit-extractor': {

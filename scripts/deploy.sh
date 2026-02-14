@@ -20,7 +20,7 @@ GITHUB_REPO="https://github.com/manaskumarbehera/my-salesforce-portfolio"
 BRANCH="main"
 
 # Heroku Configuration (Optional - Separate Deployment)
-HEROKU_APP_NAME="manas-behera-dev"
+HEROKU_APP_NAME="manaskumarbehera"
 HEROKU_URL="https://${HEROKU_APP_NAME}-5a0040c069c1.herokuapp.com/"
 
 # Check if git is clean

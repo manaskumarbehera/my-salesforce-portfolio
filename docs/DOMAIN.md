@@ -72,7 +72,7 @@ https://domains.google.com/registrar/manaskumarbehera.com/email
 
 ### Check SSL Status
 ```bash
-heroku certs:auto -a manas-behera-dev
+heroku certs:auto -a manaskumarbehera
 ```
 
 ---
@@ -81,27 +81,27 @@ heroku certs:auto -a manas-behera-dev
 
 ### View Domains
 ```bash
-heroku domains -a manas-behera-dev
+heroku domains -a manaskumarbehera
 ```
 
 ### Add New Domain
 ```bash
-heroku domains:add subdomain.manaskumarbehera.com -a manas-behera-dev
+heroku domains:add subdomain.manaskumarbehera.com -a manaskumarbehera
 ```
 
 ### Remove Domain
 ```bash
-heroku domains:remove subdomain.manaskumarbehera.com -a manas-behera-dev
+heroku domains:remove subdomain.manaskumarbehera.com -a manaskumarbehera
 ```
 
 ### Check SSL Status
 ```bash
-heroku certs:auto -a manas-behera-dev
+heroku certs:auto -a manaskumarbehera
 ```
 
 ### Enable SSL
 ```bash
-heroku certs:auto:enable -a manas-behera-dev
+heroku certs:auto:enable -a manaskumarbehera
 ```
 
 ---
@@ -113,7 +113,7 @@ heroku certs:auto:enable -a manas-behera-dev
 | **Google Domains Dashboard** | https://domains.google.com/registrar/manaskumarbehera.com |
 | **Google Domains DNS** | https://domains.google.com/registrar/manaskumarbehera.com/dns |
 | **Google Domains Email** | https://domains.google.com/registrar/manaskumarbehera.com/email |
-| **Heroku Dashboard** | https://dashboard.heroku.com/apps/manas-behera-dev |
+| **Heroku Dashboard** | https://dashboard.heroku.com/apps/manaskumarbehera |
 | **DNS Propagation Check** | https://www.whatsmydns.net/#A/manaskumarbehera.com |
 
 ---
@@ -155,12 +155,12 @@ heroku certs:auto:enable -a manas-behera-dev
 
 2. **Check Heroku Domains:**
    ```bash
-   heroku domains -a manas-behera-dev
+   heroku domains -a manaskumarbehera
    ```
 
 3. **Check SSL:**
    ```bash
-   heroku certs:auto -a manas-behera-dev
+   heroku certs:auto -a manaskumarbehera
    ```
 
 4. **Online DNS Check:**
@@ -171,7 +171,7 @@ heroku certs:auto:enable -a manas-behera-dev
 
 1. Ensure DNS is properly configured first
 2. Wait for DNS propagation (up to 48 hours)
-3. Run: `heroku certs:auto -a manas-behera-dev`
+3. Run: `heroku certs:auto -a manaskumarbehera`
 
 ### Email Not Forwarding?
 
@@ -186,7 +186,7 @@ heroku certs:auto:enable -a manas-behera-dev
 | Date | Change |
 |------|--------|
 | Feb 14, 2026 | Domain purchased from Google Domains |
-| Feb 14, 2026 | Added to Heroku app `manas-behera-dev` |
+| Feb 14, 2026 | Added to Heroku app `manaskumarbehera` |
 | Feb 14, 2026 | SSL enabled via Heroku ACM |
 | Feb 14, 2026 | DNS configured in Google Domains |
 
@@ -206,10 +206,10 @@ If you want to add subdomains in the future:
 ### To Add a Subdomain:
 ```bash
 # 1. Add to Heroku
-heroku domains:add blog.manaskumarbehera.com -a manas-behera-dev
+heroku domains:add blog.manaskumarbehera.com -a manaskumarbehera
 
 # 2. Get DNS target
-heroku domains -a manas-behera-dev
+heroku domains -a manaskumarbehera
 
 # 3. Add CNAME in Google Domains
 # Host: blog
