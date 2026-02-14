@@ -9,16 +9,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Email configuration - Set these in Heroku Config Vars
-const EMAIL_USER = process.env.EMAIL_USER || 'web@manaskumarbehera.com';
+const EMAIL_USER = process.env.EMAIL_USER || 'manaskumarbehera1@outlook.com';
 const EMAIL_PASS = process.env.EMAIL_PASS || ''; // Set in Heroku Config Vars
-const EMAIL_HOST = process.env.EMAIL_HOST || 'smtp.gmail.com'; // Change based on your provider
+const EMAIL_HOST = process.env.EMAIL_HOST || 'smtp-mail.outlook.com'; // Outlook SMTP
 const EMAIL_PORT = process.env.EMAIL_PORT || 587;
 
 // Create email transporter
 const transporter = nodemailer.createTransport({
     host: EMAIL_HOST,
     port: EMAIL_PORT,
-    secure: false, // true for 465, false for other ports
+    secure: EMAIL_PORT == 465, // true for 465, false for other ports
     auth: {
         user: EMAIL_USER,
         pass: EMAIL_PASS
