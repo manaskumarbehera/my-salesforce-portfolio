@@ -40,14 +40,45 @@ window.addEventListener('scroll', () => {
 
 // GitHub Repository Configuration
 const GITHUB_USERNAME = 'manaskumarbehera'; // Replace with your GitHub username
-const EXCLUDED_REPOS = ['manaskumarbehera']; // Add repos to exclude
+
+// Add the exact repo names you want to feature (leave empty to show all repos)
+const INCLUDED_REPOS = [
+    'my-salesforce-portfolio',  // My Portfolio Project
+    'sf-audit-extractor',       // TrackForce Pro Chrome Extension
+    'CurrentWeek',              // Week Number Chrome Extension
+    'MetaForce'                 // MetaForce Chrome Extension
+];
+
+// Project metadata with live links and Chrome Web Store URLs
+const PROJECT_METADATA = {
+    'my-salesforce-portfolio': {
+        displayName: 'My Portfolio',
+        liveUrl: 'https://manas-behera-dev-5a0040c069c1.herokuapp.com/',
+        type: 'web'
+    },
+    'sf-audit-extractor': {
+        displayName: 'TrackForce Pro',
+        storeUrl: 'https://chromewebstore.google.com/detail/trackforcepro/eombeiphccjbnndbabnkimdlkpaooipk',
+        type: 'extension'
+    },
+    'CurrentWeek': {
+        displayName: 'Week Number',
+        storeUrl: 'https://chromewebstore.google.com/detail/week-number/hjbeeopedbnpahgbkndkemigkcellibm',
+        type: 'extension'
+    },
+    'MetaForce': {
+        displayName: 'MetaForce',
+        storeUrl: 'https://chromewebstore.google.com/detail/metaforce/hclbblgimnkmlmnkekmbclfemhdgmjep',
+        type: 'extension'
+    }
+};
 
 // Fetch GitHub Repositories
 async function fetchGitHubRepos() {
     const reposContainer = document.getElementById('github-repos');
 
     try {
-        const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=4`);
+        const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100`);
 
         if (!response.ok) {
             throw new Error('Failed to fetch repositories');
@@ -55,11 +86,10 @@ async function fetchGitHubRepos() {
 
         const repos = await response.json();
 
-        // Filter out excluded repos and select featured ones
-        const filteredRepos = repos
-            .filter(repo => !EXCLUDED_REPOS.includes(repo.name))
-            .filter(repo => !repo.fork) // Optionally exclude forks
-            .slice(0, 4);
+        // Filter to only include specified repos (if list is not empty)
+        const filteredRepos = INCLUDED_REPOS.length > 0
+            ? repos.filter(repo => INCLUDED_REPOS.includes(repo.name))
+            : repos.filter(repo => !repo.fork).slice(0, 4); // Fallback: show first 4 non-fork repos
 
         if (filteredRepos.length === 0) {
             reposContainer.innerHTML = `
@@ -87,18 +117,43 @@ async function fetchGitHubRepos() {
 
 // Create Repository Card HTML
 function createRepoCard(repo) {
+    const metadata = PROJECT_METADATA[repo.name] || {};
+    const displayName = metadata.displayName || repo.name;
     const description = repo.description || 'No description available';
     const language = repo.language || 'Unknown';
     const stars = repo.stargazers_count || 0;
     const forks = repo.forks_count || 0;
 
+    // Build action buttons based on project type
+    let actionButtons = `
+        <a href="${repo.html_url}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
+            <i class="fab fa-github"></i> View Code
+        </a>
+    `;
+
+    if (metadata.liveUrl) {
+        actionButtons += `
+            <a href="${metadata.liveUrl}" target="_blank" class="btn btn-sm btn-primary mt-2 ms-2">
+                <i class="fas fa-external-link-alt"></i> Live Demo
+            </a>
+        `;
+    }
+
+    if (metadata.storeUrl) {
+        actionButtons += `
+            <a href="${metadata.storeUrl}" target="_blank" class="btn btn-sm btn-success mt-2 ms-2">
+                <i class="fab fa-chrome"></i> Chrome Store
+            </a>
+        `;
+    }
+
     return `
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="repo-card">
                 <h5>
-                    <i class="fab fa-github"></i>
+                    ${metadata.type === 'extension' ? '<i class="fab fa-chrome"></i>' : '<i class="fab fa-github"></i>'}
                     <a href="${repo.html_url}" target="_blank" style="text-decoration: none; color: inherit;">
-                        ${repo.name}
+                        ${displayName}
                     </a>
                 </h5>
                 <p class="repo-description">${description}</p>
@@ -118,9 +173,9 @@ function createRepoCard(repo) {
                         </span>
                     </div>
                 </div>
-                <a href="${repo.html_url}" target="_blank" class="btn btn-sm btn-outline-primary mt-3">
-                    <i class="fas fa-external-link-alt"></i> View Repository
-                </a>
+                <div class="repo-actions">
+                    ${actionButtons}
+                </div>
             </div>
         </div>
     `;
