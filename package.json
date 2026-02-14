@@ -43,6 +43,10 @@
     "check:docs": "find docs -name '*.md' | wc -l",
     "prepare": "[ -d .git/hooks ] && cp scripts/hooks/* .git/hooks/ 2>/dev/null || true"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/manaskumarbehera/my-salesforce-portfolio.git"
+  },
   "keywords": [
     "salesforce",
     "developer",

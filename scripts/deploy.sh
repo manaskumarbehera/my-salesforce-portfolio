@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Deployment script for portfolio
-# Automates the deployment process to Heroku
+# Pushes to GitHub (primary) and optionally deploys to Heroku
 
 set -e  # Exit on error
 
@@ -77,20 +77,36 @@ if [ "$CURRENT_BRANCH" != "$BRANCH" ]; then
     fi
 fi
 
-# Push to Heroku
+# Push to GitHub (primary repository)
+echo "${CYAN}📤 Pushing to GitHub...${NC}"
+echo ""
+
+git push origin $BRANCH || {
+    echo "${RED}✗ GitHub push failed${NC}"
+    exit 1
+}
+echo "${GREEN}✓ Code pushed to GitHub${NC}"
+echo ""
+
+# Optionally push to Heroku
 echo "${CYAN}📤 Deploying to Heroku...${NC}"
 echo ""
 
 if git remote | grep -q heroku; then
-    echo "Pushing to Heroku..."
-    git push heroku $BRANCH || {
-        echo "${RED}✗ Heroku deployment failed${NC}"
-        exit 1
-    }
+    read -p "Do you want to deploy to Heroku as well? (y/N) " -n 1 -r
+    echo ""
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "Pushing to Heroku..."
+        git push heroku $BRANCH || {
+            echo "${RED}✗ Heroku deployment failed${NC}"
+            exit 1
+        }
+        echo "${GREEN}✓ Deployed to Heroku${NC}"
+    else
+        echo "${YELLOW}⚠️  Skipping Heroku deployment${NC}"
+    fi
 else
-    echo "${RED}✗ Heroku remote not found${NC}"
-    echo "Add it with: heroku git:remote -a $HEROKU_APP"
-    exit 1
+    echo "${YELLOW}⚠️  Heroku remote not found, skipping...${NC}"
 fi
 
 echo ""
@@ -98,13 +114,17 @@ echo "${GREEN}━━━━━━━━━━━━━━━━━━━━━━
 echo "${GREEN}✓ Deployment completed successfully!${NC}"
 echo "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-echo "Your portfolio is live at:"
+echo "Your code is pushed to GitHub:"
+echo "${CYAN}https://github.com/manaskumarbehera/my-salesforce-portfolio${NC}"
+echo ""
+echo "Heroku (if deployed):"
 echo "${CYAN}https://$HEROKU_APP-5a0040c069c1.herokuapp.com/${NC}"
 echo ""
 echo "Useful commands:"
-echo "  heroku logs --tail -a $HEROKU_APP    # View logs"
-echo "  heroku open -a $HEROKU_APP           # Open in browser"
-echo "  heroku ps -a $HEROKU_APP             # Check status"
+echo "  git push origin main                 # Push to GitHub"
+echo "  git push heroku main                 # Deploy to Heroku"
+echo "  heroku logs --tail -a $HEROKU_APP    # View Heroku logs"
+echo "  heroku open -a $HEROKU_APP           # Open Heroku in browser"
 echo ""
 
 exit 0
