@@ -4,11 +4,21 @@
 
 ### Local Development
 ```bash
-# Start server
+# Start server (recommended - auto-fixes port conflicts)
+./server-manager.sh start
+
+# Or use npm directly
 npm start
 
 # Stop server
-Ctrl+C (or Cmd+C on Mac)
+./server-manager.sh stop
+# or Ctrl+C (or Cmd+C on Mac)
+
+# Restart server
+./server-manager.sh restart
+
+# Check server status
+./server-manager.sh status
 
 # Install dependencies
 npm install

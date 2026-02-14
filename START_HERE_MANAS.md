@@ -55,33 +55,65 @@ Open this file: `index.html`
 
 ---
 
-### **Step 3: Deploy to Heroku (8 minutes)**
+### **Step 3: Deploy to Heroku via GitHub (10 minutes)**
 
-Open terminal and run these commands:
+#### 3a. Create GitHub Repository
+
+1. **Go to:** https://github.com/new
+2. **Repository name:** `my-salesforce-portfolio` or `manaskumarbehera-portfolio`
+3. **Visibility:** Public
+4. **DO NOT** check "Initialize with README"
+5. Click **"Create repository"**
+
+#### 3b. Push Code to GitHub
+
+Open terminal and run:
 
 ```bash
 # Navigate to your project
 cd /Users/manas/IdeaProjects/MyDeveloperProfile
 
-# Initialize Git (if not already done)
+# Initialize Git
 git init
+git branch -M main
 git add .
-git commit -m "Manas Behera portfolio - initial setup"
+git commit -m "Initial commit - Manas Behera Portfolio"
 
+# Connect to GitHub (replace YOUR_USERNAME with your GitHub username)
+git remote add origin https://github.com/YOUR_USERNAME/my-salesforce-portfolio.git
+
+# Push to GitHub
+git push -u origin main
+```
+
+**If prompted for password:** Use a Personal Access Token from https://github.com/settings/tokens
+
+#### 3c. Create Heroku App
+
+```bash
 # Login to Heroku (will open browser)
 heroku login
 
 # Create your Heroku app
 heroku create manas-behera-dev
-
-# Deploy to Heroku
-git push heroku main
-
-# Open your live site!
-heroku open
 ```
 
-**Your site will be live at:** https://manas-behera-dev.herokuapp.com
+#### 3d. Connect GitHub to Heroku (Dashboard - Easiest!)
+
+1. **Go to:** https://dashboard.heroku.com/apps/manas-behera-dev
+2. Click **"Deploy"** tab
+3. Under "Deployment method", click **"GitHub"**
+4. Click **"Connect to GitHub"** and authorize
+5. Search for your repository: `my-salesforce-portfolio`
+6. Click **"Connect"**
+7. Scroll to "Automatic deploys" → Select branch **main**
+8. Click **"Enable Automatic Deploys"**
+9. Scroll to "Manual deploy" → Click **"Deploy Branch"**
+10. Wait 1-2 minutes → Click **"View"**
+
+**Your site is now live at:** https://manas-behera-dev.herokuapp.com
+
+**🎉 From now on, every push to GitHub will automatically deploy to Heroku!**
 
 ---
 
@@ -161,12 +193,17 @@ Then visit: http://localhost:3000
 ### Stop Server
 Press `Ctrl+C` in the terminal
 
-### Deploy to Heroku
+### Deploy to Heroku (via GitHub)
 ```bash
 cd /Users/manas/IdeaProjects/MyDeveloperProfile
+
+# Make your changes, then:
 git add .
 git commit -m "Update portfolio"
-git push heroku main
+git push origin main
+
+# Heroku automatically deploys from GitHub!
+# Wait 1-2 minutes, then visit your site
 ```
 
 ### View Heroku Logs

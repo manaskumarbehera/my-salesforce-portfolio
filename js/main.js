@@ -40,7 +40,7 @@ window.addEventListener('scroll', () => {
 
 // GitHub Repository Configuration
 const GITHUB_USERNAME = 'manaskumarbehera'; // Replace with your GitHub username
-const EXCLUDED_REPOS = ['yourusername']; // Add repos to exclude
+const EXCLUDED_REPOS = ['manaskumarbehera']; // Add repos to exclude
 
 // Fetch GitHub Repositories
 async function fetchGitHubRepos() {
