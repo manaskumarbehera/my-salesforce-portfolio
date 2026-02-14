@@ -7,9 +7,7 @@
     "local:start": "node server.js",
     "local:dev": "nodemon server.js",
     "local:test": "jest --verbose",
-
     "git:push": "git add -A && git commit && git push origin main",
-
     "heroku:deploy": "git push heroku main",
     "heroku:logs": "heroku logs --tail -a manas-behera-dev",
     "heroku:status": "heroku ps -a manas-behera-dev",
@@ -34,7 +32,8 @@
   "dependencies": {
     "compression": "^1.7.4",
     "express": "^4.18.2",
-    "helmet": "^7.1.0"
+    "helmet": "^7.1.0",
+    "nodemailer": "^8.0.1"
   },
   "devDependencies": {
     "jest": "^29.7.0",

@@ -2,9 +2,28 @@ const express = require('express');
 const compression = require('compression');
 const helmet = require('helmet');
 const path = require('path');
+const nodemailer = require('nodemailer');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Email configuration - Set these in Heroku Config Vars
+const EMAIL_USER = process.env.EMAIL_USER || 'web@cloudwithmanas.com';
+const EMAIL_PASS = process.env.EMAIL_PASS || ''; // Set in Heroku Config Vars
+const EMAIL_HOST = process.env.EMAIL_HOST || 'smtp.gmail.com'; // Change based on your provider
+const EMAIL_PORT = process.env.EMAIL_PORT || 587;
+
+// Create email transporter
+const transporter = nodemailer.createTransport({
+    host: EMAIL_HOST,
+    port: EMAIL_PORT,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: EMAIL_USER,
+        pass: EMAIL_PASS
+    }
+});
 
 // Security middleware
 app.use(helmet({
@@ -33,20 +52,97 @@ app.use(express.static(path.join(__dirname), {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// API endpoint for contact form (example)
-app.post('/api/contact', (req, res) => {
+// API endpoint for contact form - Lead Capture
+app.post('/api/contact', async (req, res) => {
     const { name, email, subject, message } = req.body;
+    const timestamp = new Date().toISOString();
 
-    // Here you can implement email sending logic
-    // For example, using SendGrid, Mailgun, or AWS SES
+    // Validate input
+    if (!name || !email || !subject || !message) {
+        return res.status(400).json({
+            success: false,
+            message: 'All fields are required.'
+        });
+    }
 
-    console.log('Contact form submission:', { name, email, subject, message });
+    // Log the lead
+    console.log('📧 New Lead Captured:', { name, email, subject, timestamp });
 
-    // For now, just return success
-    res.json({
-        success: true,
-        message: 'Thank you for your message! I will get back to you soon.'
-    });
+    // Save lead to file (backup)
+    const lead = { name, email, subject, message, timestamp };
+    const leadsFile = path.join(__dirname, 'leads.json');
+
+    try {
+        let leads = [];
+        if (fs.existsSync(leadsFile)) {
+            leads = JSON.parse(fs.readFileSync(leadsFile, 'utf-8'));
+        }
+        leads.push(lead);
+        fs.writeFileSync(leadsFile, JSON.stringify(leads, null, 2));
+    } catch (err) {
+        console.error('Error saving lead to file:', err);
+    }
+
+    // Send email notification to you
+    try {
+        if (EMAIL_PASS) {
+            // Email to yourself (lead notification)
+            await transporter.sendMail({
+                from: `"Portfolio Lead" <${EMAIL_USER}>`,
+                to: EMAIL_USER,
+                subject: `🎯 New Lead: ${subject}`,
+                html: `
+                    <h2>New Lead from Portfolio Website</h2>
+                    <p><strong>Name:</strong> ${name}</p>
+                    <p><strong>Email:</strong> ${email}</p>
+                    <p><strong>Subject:</strong> ${subject}</p>
+                    <p><strong>Message:</strong></p>
+                    <p>${message.replace(/\n/g, '<br>')}</p>
+                    <hr>
+                    <p><small>Received: ${timestamp}</small></p>
+                `
+            });
+
+            // Auto-reply to the visitor
+            await transporter.sendMail({
+                from: `"Manas Kumar Behera" <${EMAIL_USER}>`,
+                to: email,
+                subject: `Re: ${subject} - Thank you for reaching out!`,
+                html: `
+                    <h2>Thank you for contacting me, ${name}!</h2>
+                    <p>I have received your message and will get back to you within 24-48 hours.</p>
+                    <p><strong>Your message:</strong></p>
+                    <blockquote style="border-left: 3px solid #0d6efd; padding-left: 15px; color: #666;">
+                        ${message.replace(/\n/g, '<br>')}
+                    </blockquote>
+                    <hr>
+                    <p>Best regards,<br><strong>Manas Kumar Behera</strong><br>Salesforce Developer</p>
+                    <p>
+                        <a href="https://github.com/manaskumarbehera">GitHub</a> | 
+                        <a href="https://linkedin.com/in/manas-behera-68607547">LinkedIn</a> |
+                        <a href="https://cloudwithmanas.com">Website</a>
+                    </p>
+                `
+            });
+
+            console.log('✅ Emails sent successfully');
+        } else {
+            console.log('⚠️ EMAIL_PASS not set - emails not sent');
+        }
+
+        res.json({
+            success: true,
+            message: 'Thank you for your message! I will get back to you soon.'
+        });
+
+    } catch (error) {
+        console.error('❌ Error sending email:', error);
+        // Still return success since lead was saved
+        res.json({
+            success: true,
+            message: 'Thank you for your message! I will get back to you soon.'
+        });
+    }
 });
 
 // Serve index.html for all routes (SPA support)

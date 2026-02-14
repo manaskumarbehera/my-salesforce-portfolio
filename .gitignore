@@ -28,6 +28,7 @@ build-info.json
 .cache/
 .tmp/
 coverage/
+leads.json
 
 ## OS Files
 .DS_Store

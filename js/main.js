@@ -208,25 +208,70 @@ function getLanguageColor(language) {
     return colors[language] || '#888';
 }
 
-// Contact Form Handling
-document.getElementById('contactForm')?.addEventListener('submit', function(e) {
+// Contact Form Handling - Lead Capture
+document.getElementById('contactForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const subject = document.getElementById('subject').value;
-    const message = document.getElementById('message').value;
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
 
-    // Build a mailto link to send the message via the user's mail client
-    const recipients = ['behera.manas98@gmail.com', 'manaskumarbehera1@outlook.com'];
-    const body = `Name: ${name}\nEmail: ${email}\n\n${message}`;
-    const mailtoUrl = `mailto:${recipients.join(',')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    // Show loading state
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    submitBtn.disabled = true;
 
-    window.location.href = mailtoUrl;
+    const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        subject: document.getElementById('subject').value,
+        message: document.getElementById('message').value
+    };
 
-    // Reset form after launching the mail client
-    this.reset();
+    try {
+        const response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Show success message
+            showNotification('success', result.message);
+            this.reset();
+        } else {
+            showNotification('error', result.message || 'Something went wrong. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('error', 'Failed to send message. Please try again or email directly.');
+    } finally {
+        // Restore button
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
 });
+
+// Notification helper
+function showNotification(type, message) {
+    // Remove existing notification
+    const existing = document.querySelector('.form-notification');
+    if (existing) existing.remove();
+
+    const notification = document.createElement('div');
+    notification.className = `form-notification alert alert-${type === 'success' ? 'success' : 'danger'} mt-3`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        ${message}
+    `;
+
+    document.getElementById('contactForm').appendChild(notification);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => notification.remove(), 5000);
+}
 
 // Navbar background on scroll
 window.addEventListener('scroll', function() {
