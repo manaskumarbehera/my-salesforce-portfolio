@@ -15,9 +15,13 @@ RED='\033[0;31m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# Configuration
-HEROKU_APP="manas-behera-dev"
+# GitHub Configuration (Primary)
+GITHUB_REPO="https://github.com/manaskumarbehera/my-salesforce-portfolio"
 BRANCH="main"
+
+# Heroku Configuration (Optional - Separate Deployment)
+HEROKU_APP_NAME="manas-behera-dev"
+HEROKU_URL="https://${HEROKU_APP_NAME}-5a0040c069c1.herokuapp.com/"
 
 # Check if git is clean
 if [[ -n $(git status -s) ]]; then
@@ -115,16 +119,16 @@ echo "${GREEN}✓ Deployment completed successfully!${NC}"
 echo "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 echo "Your code is pushed to GitHub:"
-echo "${CYAN}https://github.com/manaskumarbehera/my-salesforce-portfolio${NC}"
+echo "${CYAN}${GITHUB_REPO}${NC}"
 echo ""
 echo "Heroku (if deployed):"
-echo "${CYAN}https://$HEROKU_APP-5a0040c069c1.herokuapp.com/${NC}"
+echo "${CYAN}${HEROKU_URL}${NC}"
 echo ""
 echo "Useful commands:"
-echo "  git push origin main                 # Push to GitHub"
-echo "  git push heroku main                 # Deploy to Heroku"
-echo "  heroku logs --tail -a $HEROKU_APP    # View Heroku logs"
-echo "  heroku open -a $HEROKU_APP           # Open Heroku in browser"
+echo "  git push origin main                        # Push to GitHub"
+echo "  git push heroku main                        # Deploy to Heroku"
+echo "  heroku logs --tail -a $HEROKU_APP_NAME      # View Heroku logs"
+echo "  heroku open -a $HEROKU_APP_NAME             # Open Heroku in browser"
 echo ""
 
 exit 0
