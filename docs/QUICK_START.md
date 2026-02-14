@@ -53,7 +53,13 @@ heroku restart
 # Initialize repository
 git init
 
-# Stage all changes
+# Rename to main branch
+git branch -M main
+
+# Push to GitHub
+git push origin main
+
+# Push to Heroku (if using direct deployment)
 git add .
 
 # Commit changes

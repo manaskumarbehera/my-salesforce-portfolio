@@ -2,6 +2,17 @@
 
 A professional portfolio website showcasing Salesforce development projects, tools, and expertise. Designed to be hosted on Heroku with custom domain support.
 
+## 📚 Documentation
+
+All comprehensive guides are in the **`docs/`** directory:
+
+- **[START_HERE_MANAS.md](docs/START_HERE_MANAS.md)** ⭐ - Personalized quick start
+- **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** - GitHub to Heroku deployment
+- **[QUICK_START.md](docs/QUICK_START.md)** - Quick commands reference
+- **[TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** - Fix common issues
+- **[CUSTOMIZATION.md](docs/CUSTOMIZATION.md)** - Customize everything
+- **[DOCUMENTATION_INDEX.md](docs/DOCUMENTATION_INDEX.md)** - Full docs navigation
+
 ## 🚀 Features
 
 - **Responsive Design**: Mobile-friendly layout using Bootstrap 5
