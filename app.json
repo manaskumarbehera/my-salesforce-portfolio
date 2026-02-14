@@ -1,0 +1,26 @@
+{
+  "name": "Salesforce Developer Portfolio",
+  "description": "Professional portfolio website for Salesforce developers",
+  "repository": "https://github.com/yourusername/developer-portfolio",
+  "keywords": ["node", "express", "portfolio", "salesforce", "heroku"],
+  "image": "heroku/nodejs",
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "NODE_ENV": {
+      "description": "Environment mode",
+      "value": "production"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "addons": []
+}
+
