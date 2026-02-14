@@ -124,58 +124,77 @@ heroku logs --tail -a manaskumarbehera
 ### Current Configuration
 - **Email:** `web@manaskumarbehera.com`
 - **Forwards to:** `manaskumarbehera1@outlook.com`
-- **Provider:** Squarespace Email Forwarding
+- **Provider:** Squarespace Email Forwarding (uses Mailgun)
 
-### ⚠️ Issue: MX Records Mismatch
+### Current DNS Records (Squarespace Email Forwarding Preset)
 
-Your email forwarding is set up in Squarespace, but MX records still point to Mailgun:
+| Host | Type | Priority | Data |
+|------|------|----------|------|
+| `@` | MX | 10 | `mxa.mailgun.org` |
+| `@` | MX | 10 | `mxb.mailgun.org` |
+| `@` | TXT | 0 | `v=spf1 include:mailgun.org ~all` |
+| `k1._domainkey` | TXT | 0 | (DKIM key) |
 
-**Current (incorrect):**
-- `mxa.mailgun.org`
-- `mxb.mailgun.org`
-
-**Required for Squarespace forwarding:**
-Squarespace's own MX servers
+**Note:** These MX records are correct - Squarespace uses Mailgun for email forwarding.
 
 ---
 
-### Fix: Update MX Records
+### ⚠️ Error: "Message not delivered - remote server is misconfigured"
 
-**Step 1: Go to Squarespace DNS**
-https://account.squarespace.com/domains/managed/manaskumarbehera.com/dns/dns-settings
+This error indicates an issue with Squarespace/Mailgun configuration.
 
-**Step 2: Delete Mailgun MX Records**
-Delete these records:
-- `@` MX `mxa.mailgun.org`
-- `@` MX `mxb.mailgun.org`
+### Fix Option 1: Reset Email Forwarding Preset
 
-**Step 3: Add Squarespace Email Preset**
-1. Click **"Add Preset"**
-2. Select **"Squarespace Email Forwarding"**
-3. This will automatically add the correct MX records
+1. Go to: https://account.squarespace.com/domains/managed/manaskumarbehera.com/dns/dns-settings
+2. Find **"Squarespace Email Forwarding"** preset
+3. Click **Remove Preset** (removes all email records)
+4. Wait 30 seconds
+5. Click **"Add Preset"** → **"Squarespace Email Forwarding"**
+6. Go to **"Manage Rules"** and re-add:
+   - From: `web@manaskumarbehera.com`
+   - To: `manaskumarbehera1@outlook.com`
+7. Wait 15-30 minutes for DNS propagation
+8. Test by sending email to `web@manaskumarbehera.com`
 
-**Step 4: Delete Old TXT Records (Optional)**
-You can also delete these Mailgun-related records:
-- `v=spf1 include:mailgun.org ~all`
-- `mailo._domainkey` (DKIM for Mailgun)
+### Fix Option 2: Contact Squarespace Support
 
-**Step 5: Wait for Propagation**
-Wait 15-30 minutes for DNS changes to propagate.
+If resetting doesn't work, contact Squarespace:
+- **Support:** https://support.squarespace.com/
+- **Issue:** "Email forwarding not working - getting 'remote server misconfigured' error for web@manaskumarbehera.com"
 
-**Step 6: Test Email**
-Send a test email to `web@manaskumarbehera.com` and check your Outlook inbox.
+### Fix Option 3: Use Cloudflare Email Routing (Alternative)
+
+If using Cloudflare DNS (recommended), use their free email routing:
+
+1. In Cloudflare dashboard → **Email** → **Email Routing**
+2. Click **Get Started** or **Add Route**
+3. Add custom address:
+   - **Custom address:** `web`
+   - **Destination:** `manaskumarbehera1@outlook.com`
+4. Verify destination email (check Outlook for verification link)
+5. Cloudflare automatically adds required MX records
+
+**Benefits of Cloudflare Email Routing:**
+- ✅ Free
+- ✅ Reliable
+- ✅ Works with custom domains
+- ✅ Integrated with Cloudflare DNS
 
 ---
 
 ### Verify Email Setup
 
 ```bash
-# Check MX records (should show Squarespace servers after fix)
+# Check MX records
 dig manaskumarbehera.com MX +short
+# Expected: mxa.mailgun.org, mxb.mailgun.org (for Squarespace)
+# Or Cloudflare MX servers (if using Cloudflare email)
 
-# Test email delivery
-# Send email to: web@manaskumarbehera.com
-# Should arrive at: manaskumarbehera1@outlook.com
+# Check SPF record
+dig manaskumarbehera.com TXT +short
+
+# Check DKIM
+dig k1._domainkey.manaskumarbehera.com TXT +short
 ```
 
 ---
@@ -184,7 +203,7 @@ dig manaskumarbehera.com MX +short
 
 | From | To | Status |
 |------|-----|--------|
-| `web@manaskumarbehera.com` | `manaskumarbehera1@outlook.com` | Active |
+| `web@manaskumarbehera.com` | `manaskumarbehera1@outlook.com` | Active (check if working) |
 
 ---
 
