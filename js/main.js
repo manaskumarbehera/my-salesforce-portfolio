@@ -435,6 +435,311 @@ function showNotification(type, message) {
 }
 
 // ============================================
+// Chatbot Functionality
+// ============================================
+
+// Chatbot knowledge base
+const chatbotKnowledge = {
+    greetings: ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'hola'],
+    skills: ['skills', 'expertise', 'technologies', 'tech stack', 'what can you do', 'programming'],
+    projects: ['projects', 'work', 'portfolio', 'built', 'created', 'developed'],
+    tools: ['tools', 'extensions', 'chrome', 'trackforce', 'metaforce', 'week number'],
+    contact: ['contact', 'email', 'reach', 'hire', 'connect', 'linkedin'],
+    experience: ['experience', 'years', 'background', 'career', 'work history'],
+    salesforce: ['salesforce', 'apex', 'lwc', 'lightning', 'soql', 'trailblazer'],
+    help: ['help', 'support', 'assist', 'what can you', 'options'],
+    thanks: ['thank', 'thanks', 'appreciate', 'helpful'],
+    coffee: ['coffee', 'donate', 'support', 'buy me']
+};
+
+const chatbotResponses = {
+    greetings: [
+        "Hi there! 👋 I'm Manas's virtual assistant. How can I help you today?",
+        "Hello! Welcome to Manas's portfolio. Feel free to ask me anything about his work!",
+        "Hey! 😊 Great to see you here. What would you like to know about Manas?"
+    ],
+    skills: [
+        "Manas is a skilled **Salesforce Developer** with expertise in:\n\n" +
+        "☁️ **Salesforce:** Apex, LWC, Visualforce, SOQL/SOSL, Triggers, Batch Apex\n" +
+        "🔗 **APIs:** REST, SOAP, Tooling API, GraphQL\n" +
+        "💻 **Frontend:** JavaScript, HTML5, CSS3, React, Chrome Extensions\n" +
+        "🔧 **DevOps:** Git, Copado, AutoRABIT, CI/CD\n" +
+        "☁️ **Cloud:** Heroku, Azure, Node.js\n\n" +
+        "Want to know more about a specific skill?"
+    ],
+    projects: [
+        "Manas has built several awesome projects! Here are the highlights:\n\n" +
+        "🔹 **TrackForce Pro** - Chrome extension for Salesforce audit trail analysis\n" +
+        "🔹 **MetaForce** - Salesforce metadata management extension\n" +
+        "🔹 **Week Number** - Simple week number display extension\n" +
+        "🔹 **This Portfolio** - Built with Bootstrap & Node.js\n\n" +
+        "All projects are **100% free and open-source**! Check out the Projects section for more details."
+    ],
+    tools: [
+        "Manas has created several **free Chrome extensions** for the Salesforce community:\n\n" +
+        "🛡️ **TrackForce Pro** - Extract and analyze Salesforce audit trails\n" +
+        "📊 **MetaForce** - Manage Salesforce metadata efficiently\n" +
+        "📅 **Week Number** - Display current week number\n\n" +
+        "All available on the Chrome Web Store! Would you like links to install them?"
+    ],
+    contact: [
+        "You can reach Manas through:\n\n" +
+        "📧 **Email:** behera.manas98@gmail.com\n" +
+        "💼 **LinkedIn:** linkedin.com/in/manas-behera-68607547\n" +
+        "💻 **GitHub:** github.com/manaskumarbehera\n" +
+        "🌟 **Trailblazer:** salesforce.com/trailblazer/manasbehera1990\n\n" +
+        "Feel free to connect for collaborations or projects!"
+    ],
+    experience: [
+        "Manas is an experienced **Salesforce Developer & Architect** with expertise in:\n\n" +
+        "✅ Custom Salesforce application development\n" +
+        "✅ Lightning Web Components (LWC)\n" +
+        "✅ API integrations (Genesys CTI, Auth0, Azure)\n" +
+        "✅ DevOps & CI/CD implementation\n" +
+        "✅ Chrome extension development\n\n" +
+        "He's passionate about building **free tools** to help the developer community!"
+    ],
+    salesforce: [
+        "Manas specializes in the **Salesforce ecosystem**:\n\n" +
+        "⚡ **Development:** Apex, LWC, Visualforce, Aura Components\n" +
+        "🔍 **Queries:** SOQL, SOSL, GraphQL API\n" +
+        "🔗 **Integration:** REST API, SOAP API, Tooling API\n" +
+        "🎯 **CTI:** Genesys integration with Salesforce\n" +
+        "🛠️ **Tools:** SFDX, VS Code, Developer Console\n\n" +
+        "Check out his Trailblazer profile for certifications!"
+    ],
+    help: [
+        "I can help you with:\n\n" +
+        "💼 **Skills** - Learn about Manas's technical expertise\n" +
+        "🚀 **Projects** - Explore his portfolio and Chrome extensions\n" +
+        "🔧 **Tools** - Discover free Salesforce tools he's built\n" +
+        "📧 **Contact** - Get in touch with Manas\n" +
+        "☁️ **Salesforce** - His Salesforce expertise\n\n" +
+        "Just type your question or click on a topic!"
+    ],
+    thanks: [
+        "You're welcome! 😊 Is there anything else you'd like to know?",
+        "Happy to help! Feel free to ask more questions or explore the portfolio.",
+        "Glad I could assist! Don't forget to check out the free Chrome extensions! 🚀"
+    ],
+    coffee: [
+        "That's so kind! ☕ If Manas's tools have helped you, you can support his work:\n\n" +
+        "👉 **Buy Me a Coffee:** buymeacoffee.com/manaskumarbehera\n\n" +
+        "Your support helps keep these tools free for everyone! 💙"
+    ],
+    default: [
+        "I'm not sure I understood that. Could you try rephrasing? Or ask about:\n• Skills\n• Projects\n• Tools\n• Contact\n• Salesforce",
+        "Hmm, I didn't quite catch that. Try asking about Manas's projects, skills, or how to contact him!",
+        "I'm still learning! Try asking about specific topics like 'projects', 'skills', or 'contact'."
+    ]
+};
+
+// Quick reply options
+const quickReplies = [
+    { text: "👨‍💻 Skills", query: "skills" },
+    { text: "🚀 Projects", query: "projects" },
+    { text: "🔧 Tools", query: "tools" },
+    { text: "📧 Contact", query: "contact" }
+];
+
+// Initialize chatbot
+function initChatbot() {
+    const toggle = document.getElementById('chatbotToggle');
+    const container = document.getElementById('chatbotContainer');
+    const input = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('chatSendBtn');
+    const messages = document.getElementById('chatMessages');
+    const badge = document.getElementById('chatBadge');
+
+    if (!toggle || !container) return;
+
+    // Show welcome badge after 3 seconds
+    setTimeout(() => {
+        if (!container.classList.contains('active')) {
+            badge.style.display = 'flex';
+        }
+    }, 3000);
+
+    // Toggle chatbot
+    toggle.addEventListener('click', () => {
+        const isActive = container.classList.toggle('active');
+        toggle.classList.toggle('active');
+        badge.style.display = 'none';
+
+        if (isActive && messages.children.length === 0) {
+            // Send welcome message
+            setTimeout(() => {
+                addBotMessage("Hi there! 👋 I'm Manas's virtual assistant. How can I help you learn about his work?", true);
+            }, 500);
+        }
+
+        if (isActive) {
+            input.focus();
+        }
+    });
+
+    // Send message on button click
+    sendBtn.addEventListener('click', () => sendMessage());
+
+    // Send message on Enter key
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    // Track chatbot usage
+    toggle.addEventListener('click', () => {
+        trackEvent('chatbot_opened', { icon: 'fa-comments' });
+    });
+}
+
+// Send user message and get response
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    // Add user message
+    addUserMessage(message);
+    input.value = '';
+
+    // Track message
+    trackEvent('chatbot_message', { message: message.substring(0, 50) });
+
+    // Show typing indicator
+    showTypingIndicator();
+
+    // Process and respond after delay
+    setTimeout(() => {
+        removeTypingIndicator();
+        const response = getResponse(message);
+        addBotMessage(response);
+    }, 800 + Math.random() * 700);
+}
+
+// Add user message to chat
+function addUserMessage(text) {
+    const messages = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'chat-message user';
+    messageDiv.innerHTML = `
+        <div class="chat-message-avatar">
+            <i class="fas fa-user"></i>
+        </div>
+        <div class="chat-message-content">${escapeHtml(text)}</div>
+    `;
+    messages.appendChild(messageDiv);
+    scrollToBottom();
+}
+
+// Add bot message to chat
+function addBotMessage(text, showQuickReplies = false) {
+    const messages = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'chat-message bot';
+
+    // Convert markdown-style formatting
+    let formattedText = text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+
+    let quickRepliesHtml = '';
+    if (showQuickReplies) {
+        quickRepliesHtml = `
+            <div class="quick-replies">
+                ${quickReplies.map(qr => 
+                    `<button class="quick-reply-btn" onclick="handleQuickReply('${qr.query}')">${qr.text}</button>`
+                ).join('')}
+            </div>
+        `;
+    }
+
+    messageDiv.innerHTML = `
+        <div class="chat-message-avatar">
+            <i class="fab fa-salesforce"></i>
+        </div>
+        <div class="chat-message-content">
+            ${formattedText}
+            ${quickRepliesHtml}
+        </div>
+    `;
+    messages.appendChild(messageDiv);
+    scrollToBottom();
+}
+
+// Handle quick reply button clicks
+function handleQuickReply(query) {
+    const input = document.getElementById('chatInput');
+    input.value = query;
+    sendMessage();
+}
+
+// Show typing indicator
+function showTypingIndicator() {
+    const messages = document.getElementById('chatMessages');
+    const indicator = document.createElement('div');
+    indicator.className = 'chat-message bot';
+    indicator.id = 'typingIndicator';
+    indicator.innerHTML = `
+        <div class="chat-message-avatar">
+            <i class="fab fa-salesforce"></i>
+        </div>
+        <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    `;
+    messages.appendChild(indicator);
+    scrollToBottom();
+}
+
+// Remove typing indicator
+function removeTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) indicator.remove();
+}
+
+// Get response based on user input
+function getResponse(input) {
+    const lowerInput = input.toLowerCase();
+
+    // Check each category
+    for (const [category, keywords] of Object.entries(chatbotKnowledge)) {
+        if (keywords.some(keyword => lowerInput.includes(keyword))) {
+            const responses = chatbotResponses[category];
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+    }
+
+    // Default response
+    return chatbotResponses.default[Math.floor(Math.random() * chatbotResponses.default.length)];
+}
+
+// Scroll chat to bottom
+function scrollToBottom() {
+    const messages = document.getElementById('chatMessages');
+    messages.scrollTop = messages.scrollHeight;
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Make handleQuickReply globally available
+window.handleQuickReply = handleQuickReply;
+
+// Initialize chatbot on DOM load
+document.addEventListener('DOMContentLoaded', () => {
+    initChatbot();
+});
+
+// ============================================
 // Analytics Dashboard Display
 // ============================================
 
