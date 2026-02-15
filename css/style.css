@@ -1294,22 +1294,24 @@ body {
 /* No Recommendations State */
 .no-recommendations {
     text-align: center;
-    padding: 3rem;
-    color: #888;
+    padding: 3rem 2rem;
+    background: var(--light-color);
+    border-radius: var(--border-radius);
 }
 
 .no-recommendations i {
-    font-size: 4rem;
-    color: #ddd;
+    display: block;
     margin-bottom: 1rem;
+    color: #ccc;
 }
 
-/* Pending Badge */
-.pending-badge {
-    background: #fff3cd;
-    color: #856404;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
+.no-recommendations h4 {
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+}
+
+.no-recommendations p {
+    margin: 0;
 }
 
 /* Hero Subtitle */
@@ -1834,5 +1836,73 @@ body {
     .chatbot-input button {
         width: 40px;
         height: 40px;
+    }
+}
+
+/* ============================================
+   Extension Stats Banner
+   ============================================ */
+
+.extension-stats-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #e8f4fc 0%, #f0f7ff 100%);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary-color);
+    font-size: 0.9rem;
+    color: var(--dark-color);
+}
+
+.extension-stats-banner i {
+    font-size: 1.2rem;
+}
+
+#totalExtensionUsers {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* No Recommendations Styling */
+.no-recommendations {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--light-color);
+    border-radius: var(--border-radius);
+}
+
+.no-recommendations i {
+    display: block;
+    margin-bottom: 1rem;
+    color: #ccc;
+}
+
+.no-recommendations h4 {
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+}
+
+.no-recommendations p {
+    margin: 0;
+}
+
+/* Mobile adjustments for extension stats */
+@media (max-width: 576px) {
+    .extension-stats-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.25rem;
+        padding: 0.6rem;
+        font-size: 0.8rem;
+    }
+
+    .tool-features .badge {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.4rem;
+    }
+
+    .no-recommendations {
+        padding: 2rem 1rem;
     }
 }

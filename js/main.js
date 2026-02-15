@@ -982,9 +982,9 @@ async function loadRecommendations() {
             container.innerHTML = `
                 <div class="col-12">
                     <div class="no-recommendations">
-                        <i class="fas fa-comments"></i>
+                        <i class="fas fa-comments fa-3x text-muted mb-3"></i>
                         <h4>No Recommendations Yet</h4>
-                        <p>Be the first to write a recommendation!</p>
+                        <p class="text-muted">Be the first to write a recommendation!</p>
                     </div>
                 </div>
             `;
@@ -994,9 +994,9 @@ async function loadRecommendations() {
         container.innerHTML = `
             <div class="col-12">
                 <div class="no-recommendations">
-                    <i class="fas fa-comments"></i>
+                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
                     <h4>No Recommendations Yet</h4>
-                    <p>Be the first to write a recommendation!</p>
+                    <p class="text-muted">Be the first to write a recommendation!</p>
                 </div>
             </div>
         `;
@@ -1175,3 +1175,53 @@ function showRecommendationNotification(type, message) {
     setTimeout(() => notification.remove(), 5000);
 }
 
+// ============================================
+// Chrome Extension Stats Loading
+// ============================================
+
+// Load Chrome extension user stats
+async function loadExtensionStats() {
+    const banner = document.getElementById('extensionStatsBanner');
+    const totalUsersEl = document.getElementById('totalExtensionUsers');
+
+    try {
+        const response = await fetch('/api/extensions/stats');
+        const data = await response.json();
+
+        if (data.success && data.data) {
+            const stats = data.data;
+
+            // Update total users
+            if (totalUsersEl) {
+                totalUsersEl.textContent = stats.totalUsersFormatted || stats.totalUsers || '0';
+            }
+
+            // Update individual extension counts
+            for (const [key, ext] of Object.entries(stats.extensions)) {
+                const userBadge = document.getElementById(`${key}-users`);
+                if (userBadge) {
+                    userBadge.textContent = ext.usersFormatted || ext.users || 'N/A';
+                }
+            }
+
+            // Show the banner
+            if (banner) {
+                banner.style.display = 'flex';
+            }
+        }
+    } catch (error) {
+        console.log('Extension stats not available:', error);
+        // Hide the banner if stats can't be loaded
+        if (banner) {
+            banner.style.display = 'none';
+        }
+        if (totalUsersEl) {
+            totalUsersEl.textContent = 'N/A';
+        }
+    }
+}
+
+// Initialize extension stats on page load
+document.addEventListener('DOMContentLoaded', () => {
+    loadExtensionStats();
+});

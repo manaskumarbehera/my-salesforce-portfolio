@@ -4,6 +4,8 @@ const helmet = require('helmet');
 const path = require('path');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
+const axios = require('axios');
+const cheerio = require('cheerio');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -263,6 +265,170 @@ function getSimpleResponse(message) {
         return `${PORTFOLIO_CONTEXT.name} specializes in Salesforce development including Apex, LWC, and API integrations.`;
     }
     return `I can help you learn about ${PORTFOLIO_CONTEXT.name}'s skills, projects, or how to get in touch. What would you like to know?`;
+}
+
+// ============================================
+// Chrome Extension User Count API
+// ============================================
+
+// Cache for extension stats to avoid rate limiting
+const extensionStatsCache = {
+    data: null,
+    lastFetched: null,
+    cacheDuration: 3600000 // 1 hour in milliseconds
+};
+
+// Chrome extension IDs
+const CHROME_EXTENSIONS = {
+    trackforcepro: {
+        id: 'eombeiphccjbnndbabnkimdlkpaooipk',
+        name: 'TrackForce Pro',
+        storeUrl: 'https://chromewebstore.google.com/detail/trackforcepro/eombeiphccjbnndbabnkimdlkpaooipk'
+    },
+    weeknumber: {
+        id: 'hjbeeopedbnpahgbkndkemigkcellibm',
+        name: 'Week Number',
+        storeUrl: 'https://chromewebstore.google.com/detail/week-number/hjbeeopedbnpahgbkndkemigkcellibm'
+    },
+    metaforce: {
+        id: 'hclbblgimnkmlmnkekmbclfemhdgmjep',
+        name: 'MetaForce',
+        storeUrl: 'https://chromewebstore.google.com/detail/metaforce/hclbblgimnkmlmnkekmbclfemhdgmjep'
+    }
+};
+
+// Fetch user count for a single extension
+async function fetchExtensionUserCount(extensionId) {
+    try {
+        const url = `https://chrome.google.com/webstore/detail/${extensionId}`;
+        const response = await axios.get(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5'
+            },
+            timeout: 10000
+        });
+
+        const $ = cheerio.load(response.data);
+
+        // Try multiple selectors to find user count
+        let userCount = null;
+
+        // Look for text containing "users" in various elements
+        $('*').each((i, elem) => {
+            const text = $(elem).text();
+            const match = text.match(/(\d+[\d,]*)\s*(?:\+\s*)?users?/i);
+            if (match && !userCount) {
+                userCount = match[1].replace(/,/g, '');
+            }
+        });
+
+        return userCount ? parseInt(userCount) : null;
+    } catch (error) {
+        console.error(`Error fetching extension ${extensionId}:`, error.message);
+        return null;
+    }
+}
+
+// API endpoint to get all extension stats
+app.get('/api/extensions/stats', async (req, res) => {
+    try {
+        // Check cache
+        const now = Date.now();
+        if (extensionStatsCache.data && extensionStatsCache.lastFetched &&
+            (now - extensionStatsCache.lastFetched) < extensionStatsCache.cacheDuration) {
+            return res.json({
+                success: true,
+                cached: true,
+                data: extensionStatsCache.data
+            });
+        }
+
+        // Fetch fresh data
+        const stats = {};
+        let totalUsers = 0;
+
+        for (const [key, ext] of Object.entries(CHROME_EXTENSIONS)) {
+            const userCount = await fetchExtensionUserCount(ext.id);
+            stats[key] = {
+                name: ext.name,
+                id: ext.id,
+                storeUrl: ext.storeUrl,
+                users: userCount,
+                usersFormatted: userCount ? formatUserCount(userCount) : 'N/A'
+            };
+            if (userCount) totalUsers += userCount;
+        }
+
+        const result = {
+            extensions: stats,
+            totalUsers: totalUsers,
+            totalUsersFormatted: formatUserCount(totalUsers),
+            fetchedAt: new Date().toISOString()
+        };
+
+        // Update cache
+        extensionStatsCache.data = result;
+        extensionStatsCache.lastFetched = now;
+
+        res.json({
+            success: true,
+            cached: false,
+            data: result
+        });
+
+    } catch (error) {
+        console.error('Error fetching extension stats:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch extension stats',
+            error: error.message
+        });
+    }
+});
+
+// API endpoint for a single extension
+app.get('/api/extensions/:extensionKey/stats', async (req, res) => {
+    const { extensionKey } = req.params;
+    const extension = CHROME_EXTENSIONS[extensionKey.toLowerCase()];
+
+    if (!extension) {
+        return res.status(404).json({
+            success: false,
+            message: 'Extension not found. Valid keys: ' + Object.keys(CHROME_EXTENSIONS).join(', ')
+        });
+    }
+
+    try {
+        const userCount = await fetchExtensionUserCount(extension.id);
+        res.json({
+            success: true,
+            data: {
+                name: extension.name,
+                id: extension.id,
+                storeUrl: extension.storeUrl,
+                users: userCount,
+                usersFormatted: userCount ? formatUserCount(userCount) : 'N/A',
+                fetchedAt: new Date().toISOString()
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch extension stats'
+        });
+    }
+});
+
+// Format user count (e.g., 1500 -> "1.5K")
+function formatUserCount(count) {
+    if (count >= 1000000) {
+        return (count / 1000000).toFixed(1) + 'M';
+    } else if (count >= 1000) {
+        return (count / 1000).toFixed(1) + 'K';
+    }
+    return count.toString();
 }
 
 // Helper function to read recommendations

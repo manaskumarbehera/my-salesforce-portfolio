@@ -8,7 +8,7 @@
     "local:dev": "nodemon server.js",
     "local:test": "jest --verbose",
     "git:push": "git add -A && git commit && git push origin main",
-    "heroku:deploy": "git push heroku-eu main",
+    "heroku:deploy": "git push heroku main",
     "heroku:logs": "heroku logs --tail -a manaskumarbehera",
     "heroku:status": "heroku ps -a manaskumarbehera",
     "heroku:restart": "heroku restart -a manaskumarbehera",
@@ -30,6 +30,8 @@
     "npm": "10.x"
   },
   "dependencies": {
+    "axios": "^1.13.5",
+    "cheerio": "^1.2.0",
     "compression": "^1.7.4",
     "express": "^4.18.2",
     "helmet": "^7.1.0",

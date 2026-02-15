@@ -375,10 +375,17 @@
                             <h4>Chrome Extensions</h4>
                         </div>
                         <p>Productivity extensions for Salesforce and developer workflows, published on the Chrome Web Store.</p>
+
+                        <!-- Extension Stats -->
+                        <div class="extension-stats-banner mb-3" id="extensionStatsBanner">
+                            <i class="fas fa-users text-primary"></i>
+                            <span id="totalExtensionUsers">Loading...</span> total users across all extensions
+                        </div>
+
                         <ul class="tool-features">
-                            <li><i class="fas fa-check"></i> TrackForce Pro (Audit Logs)</li>
-                            <li><i class="fas fa-check"></i> Week Number</li>
-                            <li><i class="fas fa-check"></i> MetaForce (Metadata)</li>
+                            <li><i class="fas fa-check"></i> TrackForce Pro (Audit Logs) <span class="badge bg-info ms-2" id="trackforcepro-users">--</span></li>
+                            <li><i class="fas fa-check"></i> Week Number <span class="badge bg-info ms-2" id="weeknumber-users">--</span></li>
+                            <li><i class="fas fa-check"></i> MetaForce (Metadata) <span class="badge bg-info ms-2" id="metaforce-users">--</span></li>
                         </ul>
                         <div class="tool-links">
                             <a href="https://chromewebstore.google.com/detail/trackforcepro/eombeiphccjbnndbabnkimdlkpaooipk?authuser=0&hl=en-GB" target="_blank" class="btn btn-sm btn-outline-success me-2">
