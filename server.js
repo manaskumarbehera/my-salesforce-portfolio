@@ -320,6 +320,92 @@ function getSimpleResponse(message) {
 }
 
 // ============================================
+// Portfolio Configuration API
+// ============================================
+
+// Load portfolio config from env or file
+function loadPortfolioConfig() {
+    let config = { projects: [], chromeExtensions: [], source: 'default' };
+
+    // Try environment variables first
+    try {
+        if (process.env.PORTFOLIO_PROJECTS) {
+            config.projects = JSON.parse(process.env.PORTFOLIO_PROJECTS);
+            config.source = 'env';
+            console.log(`📦 Loaded ${config.projects.length} projects from PORTFOLIO_PROJECTS env`);
+        }
+        if (process.env.CHROME_EXTENSIONS) {
+            config.chromeExtensions = JSON.parse(process.env.CHROME_EXTENSIONS);
+            config.source = 'env';
+            console.log(`🔌 Loaded ${config.chromeExtensions.length} extensions from CHROME_EXTENSIONS env`);
+        }
+    } catch (err) {
+        console.error('❌ Failed to parse portfolio config from env:', err.message);
+    }
+
+    // Fallback to file if env not set
+    if (config.projects.length === 0 || config.chromeExtensions.length === 0) {
+        try {
+            const configFile = path.join(__dirname, 'portfolio-config.json');
+            if (fs.existsSync(configFile)) {
+                const fileConfig = JSON.parse(fs.readFileSync(configFile, 'utf-8'));
+                if (config.projects.length === 0 && fileConfig.projects) {
+                    config.projects = fileConfig.projects;
+                    console.log(`📦 Loaded ${config.projects.length} projects from portfolio-config.json`);
+                }
+                if (config.chromeExtensions.length === 0 && fileConfig.chromeExtensions) {
+                    config.chromeExtensions = fileConfig.chromeExtensions;
+                    console.log(`🔌 Loaded ${config.chromeExtensions.length} extensions from portfolio-config.json`);
+                }
+                if (config.source === 'default') config.source = 'file';
+            }
+        } catch (err) {
+            console.error('❌ Failed to load portfolio-config.json:', err.message);
+        }
+    }
+
+    return config;
+}
+
+// Load config at startup
+const portfolioConfig = loadPortfolioConfig();
+
+// API: Get all projects
+app.get('/api/portfolio/projects', (req, res) => {
+    res.json({
+        success: true,
+        source: portfolioConfig.source,
+        count: portfolioConfig.projects.length,
+        projects: portfolioConfig.projects
+    });
+});
+
+// API: Get featured projects only
+app.get('/api/portfolio/projects/featured', (req, res) => {
+    const featured = portfolioConfig.projects.filter(p => p.featured);
+    res.json({
+        success: true,
+        source: portfolioConfig.source,
+        count: featured.length,
+        projects: featured
+    });
+});
+
+// API: Get full portfolio configuration
+app.get('/api/portfolio/config', (req, res) => {
+    res.json({
+        success: true,
+        source: portfolioConfig.source,
+        data: {
+            projects: portfolioConfig.projects,
+            chromeExtensions: portfolioConfig.chromeExtensions,
+            totalProjects: portfolioConfig.projects.length,
+            totalExtensions: portfolioConfig.chromeExtensions.length
+        }
+    });
+});
+
+// ============================================
 // Chrome Extension User Count API
 // ============================================
 
@@ -330,24 +416,47 @@ const extensionStatsCache = {
     cacheDuration: 3600000 // 1 hour in milliseconds
 };
 
-// Chrome extension IDs
-const CHROME_EXTENSIONS = {
-    trackforcepro: {
-        id: 'eombeiphccjbnndbabnkimdlkpaooipk',
-        name: 'TrackForce Pro',
-        storeUrl: 'https://chromewebstore.google.com/detail/trackforcepro/eombeiphccjbnndbabnkimdlkpaooipk'
-    },
-    weeknumber: {
-        id: 'hjbeeopedbnpahgbkndkemigkcellibm',
-        name: 'Week Number',
-        storeUrl: 'https://chromewebstore.google.com/detail/week-number/hjbeeopedbnpahgbkndkemigkcellibm'
-    },
-    metaforce: {
-        id: 'hclbblgimnkmlmnkekmbclfemhdgmjep',
-        name: 'MetaForce',
-        storeUrl: 'https://chromewebstore.google.com/detail/metaforce/hclbblgimnkmlmnkekmbclfemhdgmjep'
+// Build Chrome extensions object from config
+function buildChromeExtensionsMap() {
+    const extensionsMap = {};
+    portfolioConfig.chromeExtensions.forEach(ext => {
+        extensionsMap[ext.key] = {
+            id: ext.id,
+            name: ext.name,
+            storeUrl: ext.storeUrl,
+            icon: ext.icon || 'fab fa-chrome'
+        };
+    });
+
+    // Fallback defaults if no config loaded
+    if (Object.keys(extensionsMap).length === 0) {
+        return {
+            trackforcepro: {
+                id: 'eombeiphccjbnndbabnkimdlkpaooipk',
+                name: 'TrackForce Pro',
+                storeUrl: 'https://chromewebstore.google.com/detail/trackforcepro/eombeiphccjbnndbabnkimdlkpaooipk'
+            },
+            weeknumber: {
+                id: 'hjbeeopedbnpahgbkndkemigkcellibm',
+                name: 'Week Number',
+                storeUrl: 'https://chromewebstore.google.com/detail/week-number/hjbeeopedbnpahgbkndkemigkcellibm'
+            },
+            metaforce: {
+                id: 'hclbblgimnkmlmnkekmbclfemhdgmjep',
+                name: 'MetaForce',
+                storeUrl: 'https://chromewebstore.google.com/detail/metaforce/hclbblgimnkmlmnkekmbclfemhdgmjep'
+            }
+        };
     }
-};
+
+    return extensionsMap;
+}
+
+const CHROME_EXTENSIONS = buildChromeExtensionsMap();
+
+// Log loaded extensions
+console.log(`🔌 Chrome Extensions configured: ${Object.keys(CHROME_EXTENSIONS).join(', ')}`);
+
 
 // Fetch user count for a single extension
 async function fetchExtensionUserCount(extensionId) {

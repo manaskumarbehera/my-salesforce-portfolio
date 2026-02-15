@@ -1,0 +1,75 @@
+{
+  "projects": [
+    {
+      "key": "portfolio",
+      "name": "My Portfolio",
+      "description": "Professional Salesforce Developer portfolio website showcasing projects, skills, and Chrome extensions. Built with Bootstrap & Node.js.",
+      "icon": "fas fa-briefcase",
+      "tags": ["Portfolio", "Bootstrap", "Node.js"],
+      "github": "https://github.com/manaskumarbehera/my-salesforce-portfolio",
+      "live": "https://www.manaskumarbehera.com/",
+      "featured": true
+    },
+    {
+      "key": "trackforcepro",
+      "name": "TrackForce Pro",
+      "description": "Chrome extension to extract and analyze Salesforce audit trail data with comprehensive reporting and insights for compliance monitoring.",
+      "icon": "fab fa-chrome",
+      "tags": ["Chrome Extension", "Salesforce", "Audit Logs"],
+      "github": "https://github.com/manaskumarbehera/sf-audit-extractor",
+      "chromeStore": "https://chromewebstore.google.com/detail/trackforcepro/eombeiphccjbnndbabnkimdlkpaooipk",
+      "featured": true,
+      "extensionId": "eombeiphccjbnndbabnkimdlkpaooipk"
+    },
+    {
+      "key": "weeknumber",
+      "name": "Week Number",
+      "description": "Chrome extension that displays current week number with customizable date formats and ISO week calculations from browser toolbar.",
+      "icon": "fab fa-chrome",
+      "tags": ["Chrome Extension", "JavaScript", "Productivity"],
+      "github": "https://github.com/manaskumarbehera/CurrentWeek",
+      "chromeStore": "https://chromewebstore.google.com/detail/week-number/hjbeeopedbnpahgbkndkemigkcellibm",
+      "featured": true,
+      "extensionId": "hjbeeopedbnpahgbkndkemigkcellibm"
+    },
+    {
+      "key": "metaforce",
+      "name": "MetaForce",
+      "description": "Powerful Salesforce metadata browser extension for developers. View, search, and navigate org metadata directly from your browser.",
+      "icon": "fab fa-chrome",
+      "tags": ["Chrome Extension", "Salesforce", "Metadata"],
+      "github": "https://github.com/manaskumarbehera/metaforce",
+      "chromeStore": "https://chromewebstore.google.com/detail/metaforce/hclbblgimnkmlmnkekmbclfemhdgmjep",
+      "featured": true,
+      "extensionId": "hclbblgimnkmlmnkekmbclfemhdgmjep"
+    }
+  ],
+  "chromeExtensions": [
+    {
+      "key": "trackforcepro",
+      "id": "eombeiphccjbnndbabnkimdlkpaooipk",
+      "name": "TrackForce Pro",
+      "storeUrl": "https://chromewebstore.google.com/detail/trackforcepro/eombeiphccjbnndbabnkimdlkpaooipk",
+      "icon": "fab fa-chrome"
+    },
+    {
+      "key": "weeknumber",
+      "id": "hjbeeopedbnpahgbkndkemigkcellibm",
+      "name": "Week Number",
+      "storeUrl": "https://chromewebstore.google.com/detail/week-number/hjbeeopedbnpahgbkndkemigkcellibm",
+      "icon": "fab fa-chrome"
+    },
+    {
+      "key": "metaforce",
+      "id": "hclbblgimnkmlmnkekmbclfemhdgmjep",
+      "name": "MetaForce",
+      "storeUrl": "https://chromewebstore.google.com/detail/metaforce/hclbblgimnkmlmnkekmbclfemhdgmjep",
+      "icon": "fab fa-chrome"
+    }
+  ],
+  "metadata": {
+    "lastUpdated": "2026-02-15",
+    "version": "1.0.0"
+  }
+}
+

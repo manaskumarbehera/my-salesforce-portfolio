@@ -115,6 +115,8 @@ Your portfolio has several API endpoints:
 | `/api/recommendations` | GET | Get approved recommendations |
 | `/api/recommendations` | POST | Submit new recommendation |
 | `/api/extensions/stats` | GET | Get Chrome extension user counts |
+| `/api/portfolio/projects` | GET | Get all configured projects 🆕 |
+| `/api/portfolio/config` | GET | Get full portfolio config 🆕 |
 
 ### Test the APIs locally:
 
@@ -131,6 +133,9 @@ curl -X POST http://localhost:3000/api/chat \
 
 # Test extension stats
 curl http://localhost:3000/api/extensions/stats
+
+# Test portfolio projects
+curl http://localhost:3000/api/portfolio/projects
 ```
 
 ---
@@ -139,6 +144,7 @@ curl http://localhost:3000/api/extensions/stats
 
 Set these in Heroku Config Vars:
 
+### Email Configuration
 | Variable | Purpose | Example |
 |----------|---------|---------|
 | `EMAIL_USER` | SMTP email for sending | manaskumarbehera1@outlook.com |
@@ -147,6 +153,23 @@ Set these in Heroku Config Vars:
 | `EMAIL_PORT` | SMTP port | 587 |
 | `ADMIN_KEY` | Approve recommendations | manas2026 |
 | `ASTRATIS_URL` | Analytics API key | (optional) |
+
+### 🆕 Portfolio Data Configuration
+| Variable | Purpose | Format |
+|----------|---------|--------|
+| `PORTFOLIO_PROJECTS` | Configure projects via env | JSON array |
+| `CHROME_EXTENSIONS` | Configure extensions via env | JSON array |
+
+**See [PORTFOLIO_DATA.md](PORTFOLIO_DATA.md) for full configuration guide.**
+
+**Quick example:**
+```bash
+# Set projects
+heroku config:set PORTFOLIO_PROJECTS='[{"key":"myproject","name":"My Project","description":"Description","icon":"fas fa-code","tags":["Tag1"],"github":"https://github.com/...","featured":true}]' -a manaskumarbehera
+
+# Set Chrome extensions
+heroku config:set CHROME_EXTENSIONS='[{"key":"myext","id":"chrome-extension-id","name":"My Extension","storeUrl":"https://chromewebstore.google.com/..."}]' -a manaskumarbehera
+```
 
 **Set a variable:**
 ```bash

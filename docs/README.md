@@ -27,6 +27,7 @@ Welcome to your Salesforce Developer Portfolio documentation!
 
 ### Configuration & Features
 - **[CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md)** - Environment variables & API setup
+- **[PORTFOLIO_DATA.md](PORTFOLIO_DATA.md)** - Projects & Chrome extensions config ⭐ NEW
 - **[API.md](API.md)** - Complete API reference
 - **[CUSTOMIZATION.md](CUSTOMIZATION.md)** - Customize your portfolio
 

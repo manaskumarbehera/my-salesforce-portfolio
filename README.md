@@ -85,8 +85,25 @@ A professional portfolio website showcasing Salesforce development projects, too
 | `/api/chat` | POST | Chat with AI assistant |
 | `/api/recommendations` | GET | Get approved recommendations |
 | `/api/recommendations` | POST | Submit new recommendation |
+| `/api/portfolio/projects` | GET | Get all projects (from config) 🆕 |
+| `/api/portfolio/projects/featured` | GET | Get featured projects only 🆕 |
+| `/api/portfolio/config` | GET | Get full portfolio config 🆕 |
 | `/api/extensions/stats` | GET | Get all Chrome extension user counts |
 | `/api/extensions/:key/stats` | GET | Get single extension stats |
+
+### 🆕 Configuration via Environment Variables
+
+Projects and Chrome extensions can now be configured via environment variables for easy updates without code changes:
+
+```bash
+# Set projects via environment variable
+heroku config:set PORTFOLIO_PROJECTS='[{"key":"myproject","name":"My Project","description":"Description","icon":"fas fa-code","tags":["Tag1"],"github":"https://github.com/...","featured":true}]'
+
+# Set Chrome extensions
+heroku config:set CHROME_EXTENSIONS='[{"key":"myextension","id":"chrome-extension-id","name":"My Extension","storeUrl":"https://chromewebstore.google.com/..."}]'
+```
+
+**Full Configuration Guide:** [docs/PORTFOLIO_DATA.md](docs/PORTFOLIO_DATA.md)
 
 ### Example: Get Extension Stats
 ```bash

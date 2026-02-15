@@ -257,6 +257,108 @@ curl "https://www.manaskumarbehera.com/api/recommendations/reject?id=17079840000
 
 ---
 
+## 📦 Portfolio Configuration API
+
+### GET /api/portfolio/projects
+
+Get all configured projects. Projects can be configured via `PORTFOLIO_PROJECTS` environment variable or `portfolio-config.json` file.
+
+**Request:**
+```bash
+curl https://www.manaskumarbehera.com/api/portfolio/projects
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "source": "env",
+  "count": 4,
+  "projects": [
+    {
+      "key": "portfolio",
+      "name": "My Portfolio",
+      "description": "Professional Salesforce Developer portfolio website...",
+      "icon": "fas fa-briefcase",
+      "tags": ["Portfolio", "Bootstrap", "Node.js"],
+      "github": "https://github.com/manaskumarbehera/my-salesforce-portfolio",
+      "live": "https://www.manaskumarbehera.com/",
+      "featured": true
+    },
+    {
+      "key": "trackforcepro",
+      "name": "TrackForce Pro",
+      "description": "Chrome extension to extract and analyze Salesforce audit trail...",
+      "icon": "fab fa-chrome",
+      "tags": ["Chrome Extension", "Salesforce"],
+      "chromeStore": "https://chromewebstore.google.com/detail/...",
+      "featured": true,
+      "extensionId": "eombeiphccjbnndbabnkimdlkpaooipk"
+    }
+  ]
+}
+```
+
+**Source values:**
+- `env` - Loaded from environment variables
+- `file` - Loaded from portfolio-config.json
+- `default` - Using built-in defaults
+
+### GET /api/portfolio/projects/featured
+
+Get only featured projects (where `featured: true`).
+
+**Request:**
+```bash
+curl https://www.manaskumarbehera.com/api/portfolio/projects/featured
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "source": "env",
+  "count": 3,
+  "projects": [...]
+}
+```
+
+### GET /api/portfolio/config
+
+Get full portfolio configuration including projects and Chrome extensions.
+
+**Request:**
+```bash
+curl https://www.manaskumarbehera.com/api/portfolio/config
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "source": "env",
+  "data": {
+    "projects": [...],
+    "chromeExtensions": [...],
+    "totalProjects": 4,
+    "totalExtensions": 3
+  }
+}
+```
+
+**Configuration via Environment Variables:**
+```bash
+# Set projects
+heroku config:set PORTFOLIO_PROJECTS='[{"key":"myproject","name":"My Project",...}]'
+
+# Set Chrome extensions  
+heroku config:set CHROME_EXTENSIONS='[{"key":"myext","id":"extension-id",...}]'
+```
+
+**Full Configuration Guide:** [PORTFOLIO_DATA.md](PORTFOLIO_DATA.md)
+
+---
+
 ## 📊 Chrome Extension Stats API
 
 ### GET /api/extensions/stats
