@@ -223,6 +223,7 @@ body {
     border: 5px solid var(--primary-color);
     box-shadow: 0 10px 30px rgba(0, 161, 224, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    max-width: 100%;
 }
 
 .profile-photo:hover {
@@ -566,6 +567,32 @@ body {
 }
 
 /* Responsive Design */
+
+/* Large tablets and small desktops */
+@media (max-width: 992px) {
+    .navbar-tech-icons {
+        display: none !important;
+    }
+
+    .hero-section h1 {
+        font-size: 2.8rem;
+    }
+
+    .hero-section .lead {
+        font-size: 1.3rem;
+    }
+
+    .section-padding {
+        padding: 60px 0;
+    }
+
+    .tool-links .btn {
+        margin-bottom: 0.5rem;
+        display: inline-block;
+    }
+}
+
+/* Tablets */
 @media (max-width: 768px) {
     .hero-section {
         padding: 100px 0 50px;
@@ -573,16 +600,33 @@ body {
     }
 
     .hero-section h1 {
-        font-size: 2.5rem;
+        font-size: 2rem;
     }
 
     .hero-section .lead {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.95rem;
+        padding: 0.6rem 1rem;
     }
 
     .stats-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+    }
+
+    .stat-item {
+        padding: 1rem;
+    }
+
+    .stat-number {
+        font-size: 1.8rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
     }
 
     .section-padding {
@@ -590,9 +634,547 @@ body {
     }
 
     .hero-buttons .btn {
-        display: block;
+        display: inline-block;
+        width: auto;
+        margin: 0.3rem;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .about-image {
+        padding: 1.5rem;
+    }
+
+    .profile-photo {
+        width: 180px;
+        height: 180px;
+        border-width: 4px;
+    }
+
+    /* Skill Badges - horizontal scroll on tablet */
+    .skill-badges {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 1rem;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .skill-badge {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.9rem;
+    }
+
+    /* Cards */
+    .skill-card,
+    .project-card,
+    .tool-card,
+    .recommendation-card {
+        padding: 1.5rem;
+    }
+
+    .skill-icon,
+    .project-icon {
+        font-size: 2.5rem;
+    }
+
+    /* Tool card links */
+    .tool-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .tool-links .btn {
+        flex: 1 1 auto;
+        min-width: fit-content;
+    }
+
+    /* Contact items */
+    .contact-item {
+        padding: 1.5rem;
+    }
+
+    /* Social icons */
+    .social-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+    }
+
+    /* Recommendation header */
+    .recommendation-header {
+        flex-wrap: wrap;
+    }
+
+    .recommendation-rating {
+        margin-left: 0;
+        margin-top: 0.5rem;
         width: 100%;
-        margin: 0.5rem 0;
+    }
+
+    /* Footer */
+    .footer {
+        text-align: center;
+    }
+
+    /* Modal */
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+}
+
+/* Small phones */
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+
+    .hero-section {
+        padding: 90px 0 40px;
+    }
+
+    .hero-section h1 {
+        font-size: 1.6rem;
+        line-height: 1.3;
+    }
+
+    .hero-section .lead {
+        font-size: 1rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.8rem;
+        display: block;
+        margin: 0 1rem;
+    }
+
+    .hero-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .hero-buttons .btn {
+        flex: 1 1 calc(50% - 0.5rem);
+        min-width: 140px;
+        max-width: calc(50% - 0.25rem);
+        margin: 0;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .hero-buttons .btn i {
+        margin-right: 0.3rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+    }
+
+    .stat-item {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.7rem;
+    }
+
+    .section-padding {
+        padding: 40px 0;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .section-title::after {
+        width: 40px;
+        height: 3px;
+    }
+
+    .about-image {
+        padding: 1rem;
+    }
+
+    .profile-photo {
+        width: 120px;
+        height: 120px;
+        border-width: 3px;
+    }
+
+    .open-source-banner {
+        padding: 1rem;
+    }
+
+    .open-source-banner .d-flex {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .open-source-banner .fa-2x {
+        margin-right: 0 !important;
+        margin-bottom: 0.75rem;
+    }
+
+    /* Skill Badges - smaller on mobile */
+    .skill-badges {
+        text-align: left;
+        padding: 0 0.5rem 1rem;
+    }
+
+    .skill-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.7rem;
+        margin: 0.2rem;
+    }
+
+    /* Skill cards */
+    .skill-card {
+        padding: 1.25rem;
+    }
+
+    .skill-card h4 {
+        font-size: 1.1rem;
+    }
+
+    .skill-icon {
+        font-size: 2rem;
+    }
+
+    .skill-list li {
+        font-size: 0.9rem;
+        padding: 0.4rem 0;
+    }
+
+    /* Project cards */
+    .project-card {
+        padding: 1.25rem;
+    }
+
+    .project-card h4 {
+        font-size: 1.1rem;
+    }
+
+    .project-icon {
+        font-size: 2rem;
+    }
+
+    .project-card p {
+        font-size: 0.9rem;
+    }
+
+    .project-tags .badge {
+        font-size: 0.7rem;
+        padding: 0.35rem 0.6rem;
+    }
+
+    .project-links .btn {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.6rem;
+    }
+
+    /* Repo cards */
+    .repo-card {
+        padding: 1.25rem;
+    }
+
+    .repo-card h5 {
+        font-size: 1rem;
+    }
+
+    .repo-description {
+        font-size: 0.85rem;
+    }
+
+    .repo-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .repo-stats {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    /* Tool cards */
+    .tool-card {
+        padding: 1.25rem;
+    }
+
+    .tool-header i {
+        font-size: 2rem;
+    }
+
+    .tool-header h4 {
+        font-size: 1.1rem;
+    }
+
+    .tool-card p {
+        font-size: 0.9rem;
+    }
+
+    .tool-features li {
+        font-size: 0.9rem;
+    }
+
+    .tool-links {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .tool-links .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Support banner */
+    .support-banner {
+        padding: 1.5rem 1rem;
+    }
+
+    .support-banner h5 {
+        font-size: 1.1rem;
+    }
+
+    .support-banner .btn-lg {
+        padding: 0.6rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    /* Recommendations */
+    .recommendation-card {
+        padding: 1.25rem;
+    }
+
+    .recommendation-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .recommendation-info h5 {
+        font-size: 1rem;
+    }
+
+    .recommendation-info p {
+        font-size: 0.8rem;
+    }
+
+    .recommendation-text {
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .recommendation-text::before {
+        font-size: 1.5rem;
+    }
+
+    .recommendation-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    /* Contact section */
+    .contact-item {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .contact-item i {
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .contact-link {
+        font-size: 0.8rem;
+    }
+
+    .contact-form {
+        padding: 1.25rem;
+    }
+
+    /* Social icons */
+    .social-links {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .social-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+        margin: 0;
+    }
+
+    /* Footer */
+    .footer {
+        padding: 1.5rem 0;
+        margin-top: 2rem;
+    }
+
+    .footer p {
+        font-size: 0.85rem;
+    }
+
+    /* Modal adjustments */
+    .modal-dialog {
+        margin: 0.25rem;
+        max-width: calc(100% - 0.5rem);
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .modal-body .form-label {
+        font-size: 0.9rem;
+    }
+
+    .modal-body .form-control,
+    .modal-body .form-select {
+        font-size: 0.9rem;
+        padding: 0.6rem;
+    }
+
+    .rating-input {
+        font-size: 1.5rem;
+    }
+
+    /* Buttons in modal */
+    .modal-footer .btn {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+
+    /* Navbar collapse */
+    .navbar-collapse {
+        background: rgba(0, 0, 0, 0.95);
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        margin-top: 0.5rem;
+    }
+
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar-nav .nav-item:last-child .nav-link {
+        border-bottom: none;
+    }
+}
+
+/* Extra small phones (less than 360px) */
+@media (max-width: 360px) {
+    .hero-section h1 {
+        font-size: 1.4rem;
+    }
+
+    .hero-section .lead {
+        font-size: 0.9rem;
+    }
+
+    .hero-buttons .btn {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-item {
+        padding: 1rem;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+    }
+
+    .profile-photo {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+/* Landscape mode adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero-section {
+        padding: 80px 0 30px;
+        min-height: auto;
+    }
+
+    .hero-section h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .hero-section .lead {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .hero-subtitle {
+        display: none;
+    }
+
+    .hero-buttons {
+        margin-top: 0.5rem;
+    }
+
+    .social-links {
+        margin-top: 0.5rem !important;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .skill-card:hover,
+    .project-card:hover,
+    .tool-card:hover,
+    .repo-card:hover,
+    .recommendation-card:hover,
+    .stat-item:hover {
+        transform: none;
+    }
+
+    .hero-buttons .btn:hover {
+        transform: none;
+    }
+
+    .social-icon:hover {
+        transform: none;
+    }
+
+    /* Better tap targets */
+    .btn {
+        min-height: 44px;
+    }
+
+    .nav-link {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
     }
 }
 
@@ -770,8 +1352,5 @@ body {
 .badge.bg-primary i,
 .badge.bg-info i {
     margin-right: 0.3rem;
-}
-    font-size: 0.7rem;
-    margin-left: 0.5rem;
 }
 
