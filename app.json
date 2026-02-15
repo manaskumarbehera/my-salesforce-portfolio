@@ -21,6 +21,11 @@
       "size": "basic"
     }
   },
-  "addons": []
+  "addons": [
+    {
+      "plan": "astratisglobal:free",
+      "as": "ASTRATIS"
+    }
+  ]
 }
 

@@ -10,6 +10,18 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="css/style.css" rel="stylesheet">
+
+    <!-- Astratis Global Analytics -->
+    <script>
+        window.astratisConfig = {
+            trackPageViews: true,
+            trackClicks: true,
+            trackForms: true,
+            trackScrollDepth: true,
+            customEvents: true
+        };
+    </script>
+    <script async src="https://cdn.astratis.io/analytics.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -582,6 +594,36 @@
                     <i class="fas fa-coffee"></i>
                 </a>
             </div>
+
+            <!-- Analytics Dashboard with Custom Icons -->
+            <div class="footer-analytics" id="analyticsSection">
+                <p class="footer-analytics-title">
+                    <i class="fas fa-chart-line"></i> Site Analytics
+                </p>
+                <div class="d-flex flex-wrap justify-content-center">
+                    <span class="analytics-badge" title="Page Views">
+                        <i class="fas fa-eye"></i>
+                        <span id="pageViewCount">--</span> views
+                    </span>
+                    <span class="analytics-badge" title="Visitors">
+                        <i class="fas fa-users"></i>
+                        <span id="visitorCount">--</span> visitors
+                    </span>
+                    <span class="analytics-badge" title="Projects Viewed">
+                        <i class="fas fa-code"></i>
+                        <span id="projectViews">--</span> project clicks
+                    </span>
+                    <span class="analytics-badge" title="Tools Downloaded">
+                        <i class="fab fa-chrome"></i>
+                        <span id="toolClicks">--</span> tool installs
+                    </span>
+                </div>
+            </div>
+
+            <p class="mb-0 mt-3">&copy; 2025 Manas Kumar Behera. All rights reserved.</p>
+            <p class="small text-muted mt-2">
+                <i class="fas fa-heart text-danger"></i> Built with passion for the Salesforce community
+            </p>
         </div>
     </footer>
 

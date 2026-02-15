@@ -1354,3 +1354,77 @@ body {
     margin-right: 0.3rem;
 }
 
+/* Analytics Icons & Dashboard Styles */
+.analytics-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.analytics-badge:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.analytics-badge i {
+    font-size: 1rem;
+    color: var(--primary-color);
+}
+
+.analytics-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    font-size: 0.9rem;
+    margin-right: 0.5rem;
+}
+
+.analytics-stat {
+    text-align: center;
+    padding: 1rem;
+}
+
+.analytics-stat .stat-icon {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.analytics-stat .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.analytics-stat .stat-label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Footer Analytics Section */
+.footer-analytics {
+    padding: 1rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 1rem;
+}
+
+.footer-analytics-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.75rem;
+}
+

@@ -14,6 +14,9 @@ const EMAIL_PASS = process.env.EMAIL_PASS || ''; // Set in Heroku Config Vars
 const EMAIL_HOST = process.env.EMAIL_HOST || 'smtp-mail.outlook.com'; // Outlook SMTP
 const EMAIL_PORT = process.env.EMAIL_PORT || 587;
 
+// Astratis Global Analytics Configuration
+const ASTRATIS_API_KEY = process.env.ASTRATIS_URL || process.env.ASTRATIS_API_KEY || '';
+
 // Create email transporter
 const transporter = nodemailer.createTransport({
     host: EMAIL_HOST,
@@ -42,10 +45,10 @@ app.use(helmet({
         directives: {
             defaultSrc: ["'self'"],
             styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
-            scriptSrc: ["'self'", "'unsafe-inline'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.astratis.io"],
             imgSrc: ["'self'", "data:", "https:"],
             fontSrc: ["'self'", "https://cdnjs.cloudflare.com"],
-            connectSrc: ["'self'", "https://api.github.com"]
+            connectSrc: ["'self'", "https://api.github.com", "https://api.astratis.io", "https://*.astratis.io"]
         }
     }
 }));

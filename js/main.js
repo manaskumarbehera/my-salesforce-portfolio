@@ -1,9 +1,164 @@
+// ============================================
+// Astratis Global Analytics Integration
+// ============================================
+
+// Analytics helper function
+const trackEvent = (eventName, eventData = {}) => {
+    if (window.astratis && typeof window.astratis.track === 'function') {
+        window.astratis.track(eventName, {
+            ...eventData,
+            timestamp: new Date().toISOString(),
+            page: window.location.pathname
+        });
+    }
+    // Fallback logging for development
+    if (window.location.hostname === 'localhost') {
+        console.log('📊 Analytics Event:', eventName, eventData);
+    }
+};
+
+// Track page sections viewed
+const trackSectionView = (sectionId) => {
+    trackEvent('section_viewed', {
+        section: sectionId,
+        icon: getSectionIcon(sectionId)
+    });
+};
+
+// Get icon for each section (for analytics dashboard)
+const getSectionIcon = (sectionId) => {
+    const icons = {
+        'home': 'fa-home',
+        'about': 'fa-user',
+        'skills': 'fa-cogs',
+        'projects': 'fa-code',
+        'tools': 'fa-tools',
+        'recommendations': 'fa-star',
+        'contact': 'fa-envelope'
+    };
+    return icons[sectionId] || 'fa-circle';
+};
+
+// Track external link clicks
+const trackExternalLink = (url, linkType) => {
+    trackEvent('external_link_click', {
+        url: url,
+        type: linkType,
+        icon: getLinkIcon(linkType)
+    });
+};
+
+// Get icon for link types
+const getLinkIcon = (linkType) => {
+    const icons = {
+        'github': 'fab fa-github',
+        'linkedin': 'fab fa-linkedin',
+        'chrome-store': 'fab fa-chrome',
+        'salesforce': 'fab fa-salesforce',
+        'coffee': 'fas fa-coffee',
+        'email': 'fas fa-envelope',
+        'live-demo': 'fas fa-globe'
+    };
+    return icons[linkType] || 'fas fa-external-link-alt';
+};
+
+// Track button clicks
+const trackButtonClick = (buttonName, buttonCategory) => {
+    trackEvent('button_click', {
+        button: buttonName,
+        category: buttonCategory
+    });
+};
+
+// Track form submissions
+const trackFormSubmission = (formName, success) => {
+    trackEvent('form_submission', {
+        form: formName,
+        success: success,
+        icon: success ? 'fa-check-circle' : 'fa-times-circle'
+    });
+};
+
+// Track scroll depth
+let maxScrollDepth = 0;
+const trackScrollDepth = () => {
+    const scrollPercent = Math.round(
+        (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100
+    );
+    if (scrollPercent > maxScrollDepth) {
+        maxScrollDepth = scrollPercent;
+        if (maxScrollDepth % 25 === 0 && maxScrollDepth > 0) {
+            trackEvent('scroll_depth', {
+                depth: maxScrollDepth,
+                icon: 'fa-arrow-down'
+            });
+        }
+    }
+};
+
+// Initialize analytics tracking
+document.addEventListener('DOMContentLoaded', () => {
+    // Track page load
+    trackEvent('page_load', {
+        referrer: document.referrer,
+        userAgent: navigator.userAgent,
+        screenSize: `${window.innerWidth}x${window.innerHeight}`,
+        icon: 'fa-eye'
+    });
+
+    // Track external link clicks
+    document.querySelectorAll('a[target="_blank"]').forEach(link => {
+        link.addEventListener('click', () => {
+            const url = link.href;
+            let linkType = 'other';
+
+            if (url.includes('github.com')) linkType = 'github';
+            else if (url.includes('linkedin.com')) linkType = 'linkedin';
+            else if (url.includes('chromewebstore.google.com')) linkType = 'chrome-store';
+            else if (url.includes('salesforce.com') || url.includes('trailblazer')) linkType = 'salesforce';
+            else if (url.includes('buymeacoffee.com')) linkType = 'coffee';
+
+            trackExternalLink(url, linkType);
+        });
+    });
+
+    // Track scroll depth
+    window.addEventListener('scroll', trackScrollDepth);
+
+    // Track CTA button clicks
+    document.querySelectorAll('.hero-buttons .btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const buttonText = btn.textContent.trim();
+            trackButtonClick(buttonText, 'hero_cta');
+        });
+    });
+
+    // Track tool/project card interactions
+    document.querySelectorAll('.project-card, .tool-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const cardTitle = card.querySelector('h4')?.textContent || 'Unknown';
+            trackEvent('card_interaction', {
+                card: cardTitle,
+                icon: 'fa-mouse-pointer'
+            });
+        });
+    });
+});
+
+// ============================================
+// Main Application Code
+// ============================================
+
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
+            // Track section navigation
+            const sectionId = this.getAttribute('href').replace('#', '');
+            trackSectionView(sectionId);
+
             target.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start'
@@ -238,14 +393,20 @@ document.getElementById('contactForm')?.addEventListener('submit', async functio
         const result = await response.json();
 
         if (result.success) {
+            // Track successful form submission
+            trackFormSubmission('contact_form', true);
             // Show success message
             showNotification('success', result.message);
             this.reset();
         } else {
+            // Track failed form submission
+            trackFormSubmission('contact_form', false);
             showNotification('error', result.message || 'Something went wrong. Please try again.');
         }
     } catch (error) {
         console.error('Error:', error);
+        // Track error in form submission
+        trackFormSubmission('contact_form', false);
         showNotification('error', 'Failed to send message. Please try again or email directly.');
     } finally {
         // Restore button
@@ -273,123 +434,148 @@ function showNotification(type, message) {
     setTimeout(() => notification.remove(), 5000);
 }
 
-// Navbar background on scroll
-window.addEventListener('scroll', function() {
-    const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 50) {
-        navbar.style.background = 'rgba(33, 37, 41, 0.95)';
-        navbar.style.backdropFilter = 'blur(10px)';
-    } else {
-        navbar.style.background = '';
-        navbar.style.backdropFilter = '';
-    }
-});
+// ============================================
+// Analytics Dashboard Display
+// ============================================
 
-// Animate elements on scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
+// Fetch and display analytics stats
+async function loadAnalyticsStats() {
+    const analyticsSection = document.getElementById('analyticsSection');
+    if (!analyticsSection) return;
 
-const observer = new IntersectionObserver(function(entries) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
+    try {
+        // Try to fetch from Astratis API
+        if (window.astratis && typeof window.astratis.getStats === 'function') {
+            const stats = await window.astratis.getStats();
+            updateAnalyticsDisplay(stats);
+        } else {
+            // Fallback: Use local storage for basic counting
+            updateLocalAnalytics();
         }
-    });
-}, observerOptions);
-
-// Observe skill cards, project cards, etc.
-document.addEventListener('DOMContentLoaded', function() {
-    const animatedElements = document.querySelectorAll('.skill-card, .project-card, .tool-card, .repo-card');
-    animatedElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
-
-    // Fetch GitHub repos on page load
-    fetchGitHubRepos();
-});
-
-// Typing effect for hero section (optional enhancement)
-function typeWriter(element, text, speed = 100) {
-    let i = 0;
-    element.innerHTML = '';
-
-    function type() {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        }
-    }
-
-    type();
-}
-
-// Add particle effect to hero section (optional)
-function createParticles() {
-    const hero = document.querySelector('.hero-section');
-    const particleCount = 50;
-
-    for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.cssText = `
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            left: ${Math.random() * 100}%;
-            top: ${Math.random() * 100}%;
-            animation: float ${5 + Math.random() * 10}s linear infinite;
-            animation-delay: ${Math.random() * 5}s;
-        `;
-        hero.appendChild(particle);
+    } catch (error) {
+        console.log('Analytics stats not available:', error);
+        // Show placeholder or hide section
+        updateLocalAnalytics();
     }
 }
 
-// Add CSS for particle animation
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes float {
-        0%, 100% {
-            transform: translateY(0) translateX(0);
-            opacity: 0;
-        }
-        10% {
-            opacity: 1;
-        }
-        90% {
-            opacity: 1;
-        }
-        100% {
-            transform: translateY(-100vh) translateX(${Math.random() * 100 - 50}px);
-            opacity: 0;
-        }
+// Update analytics display with data
+function updateAnalyticsDisplay(stats) {
+    const pageViewEl = document.getElementById('pageViewCount');
+    const visitorEl = document.getElementById('visitorCount');
+    const projectEl = document.getElementById('projectViews');
+    const toolEl = document.getElementById('toolClicks');
+
+    if (pageViewEl && stats.pageViews) {
+        pageViewEl.textContent = formatNumber(stats.pageViews);
     }
-`;
-document.head.appendChild(style);
+    if (visitorEl && stats.visitors) {
+        visitorEl.textContent = formatNumber(stats.visitors);
+    }
+    if (projectEl && stats.projectClicks) {
+        projectEl.textContent = formatNumber(stats.projectClicks);
+    }
+    if (toolEl && stats.toolClicks) {
+        toolEl.textContent = formatNumber(stats.toolClicks);
+    }
+}
 
-// Initialize particles (uncomment to enable)
-// createParticles();
+// Local analytics fallback using localStorage
+function updateLocalAnalytics() {
+    // Increment page view count
+    let pageViews = parseInt(localStorage.getItem('portfolio_pageviews') || '0');
+    pageViews++;
+    localStorage.setItem('portfolio_pageviews', pageViews.toString());
 
-// Update copyright year
-document.addEventListener('DOMContentLoaded', function() {
-    const yearElements = document.querySelectorAll('.footer p');
-    yearElements.forEach(el => {
-        el.textContent = el.textContent.replace('2026', new Date().getFullYear());
+    // Track unique visitors using a simple cookie/localStorage approach
+    let isNewVisitor = !localStorage.getItem('portfolio_visitor_id');
+    if (isNewVisitor) {
+        localStorage.setItem('portfolio_visitor_id', generateVisitorId());
+    }
+
+    let visitors = parseInt(localStorage.getItem('portfolio_visitors') || '0');
+    if (isNewVisitor) {
+        visitors++;
+        localStorage.setItem('portfolio_visitors', visitors.toString());
+    }
+
+    // Get project and tool clicks from localStorage
+    let projectClicks = parseInt(localStorage.getItem('portfolio_project_clicks') || '0');
+    let toolClicks = parseInt(localStorage.getItem('portfolio_tool_clicks') || '0');
+
+    // Update display
+    updateAnalyticsDisplay({
+        pageViews: pageViews,
+        visitors: visitors,
+        projectClicks: projectClicks,
+        toolClicks: toolClicks
+    });
+}
+
+// Track project clicks locally
+function trackProjectClick() {
+    let clicks = parseInt(localStorage.getItem('portfolio_project_clicks') || '0');
+    clicks++;
+    localStorage.setItem('portfolio_project_clicks', clicks.toString());
+
+    const projectEl = document.getElementById('projectViews');
+    if (projectEl) {
+        projectEl.textContent = formatNumber(clicks);
+    }
+}
+
+// Track tool clicks locally
+function trackToolClick() {
+    let clicks = parseInt(localStorage.getItem('portfolio_tool_clicks') || '0');
+    clicks++;
+    localStorage.setItem('portfolio_tool_clicks', clicks.toString());
+
+    const toolEl = document.getElementById('toolClicks');
+    if (toolEl) {
+        toolEl.textContent = formatNumber(clicks);
+    }
+}
+
+// Format large numbers
+function formatNumber(num) {
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K';
+    }
+    return num.toString();
+}
+
+// Generate unique visitor ID
+function generateVisitorId() {
+    return 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+// Initialize analytics dashboard on page load
+document.addEventListener('DOMContentLoaded', () => {
+    loadAnalyticsStats();
+
+    // Track clicks on project links
+    document.querySelectorAll('.project-card a, .repo-card a').forEach(link => {
+        link.addEventListener('click', () => {
+            trackProjectClick();
+            trackEvent('project_link_click', {
+                url: link.href,
+                icon: 'fa-code'
+            });
+        });
     });
 
-    // Load recommendations on page load
-    loadRecommendations();
-
-    // Initialize rating stars
-    initRatingStars();
+    // Track clicks on tool/extension links
+    document.querySelectorAll('.tool-card a, a[href*="chromewebstore"]').forEach(link => {
+        link.addEventListener('click', () => {
+            trackToolClick();
+            trackEvent('tool_install_click', {
+                url: link.href,
+                icon: 'fab fa-chrome'
+            });
+        });
+    });
 });
 
 // ==================== RECOMMENDATIONS ====================
@@ -555,6 +741,9 @@ document.getElementById('submitRecommendation')?.addEventListener('click', async
         const result = await response.json();
 
         if (result.success) {
+            // Track successful recommendation submission
+            trackFormSubmission('recommendation_form', true);
+
             // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('recommendationModal'));
             modal.hide();
@@ -567,10 +756,14 @@ document.getElementById('submitRecommendation')?.addEventListener('click', async
             // Show success notification
             showNotification('success', result.message);
         } else {
+            // Track failed recommendation submission
+            trackFormSubmission('recommendation_form', false);
             showRecommendationNotification('error', result.message || 'Failed to submit recommendation.');
         }
     } catch (error) {
         console.error('Error:', error);
+        // Track error in recommendation submission
+        trackFormSubmission('recommendation_form', false);
         showRecommendationNotification('error', 'Failed to submit. Please try again.');
     } finally {
         submitBtn.innerHTML = originalText;
