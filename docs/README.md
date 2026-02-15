@@ -4,6 +4,7 @@ Welcome to your Salesforce Developer Portfolio documentation!
 
 ## 🌟 What's New (2026)
 
+- **📧 Email System Upgrade** - Custom domain email support (SMTP/Forward modes)
 - **🤖 AI Chatbot** - Interactive assistant to answer visitor questions
 - **⭐ Recommendations System** - Collect and display testimonials
 - **📊 Chrome Extension Stats API** - Real-time user counts from Web Store
@@ -20,12 +21,13 @@ Welcome to your Salesforce Developer Portfolio documentation!
 1. **[START_HERE.md](START_HERE.md)** - Quick setup & getting started
 2. **[INTELLIJ.md](INTELLIJ.md)** - IntelliJ setup & one-click commands
 3. **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deploy to Heroku
-4. **[TESTING.md](TESTING.md)** - Testing guide
-5. **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Fix common issues
+4. **[EMAIL_SETUP.md](EMAIL_SETUP.md)** - Email DNS & SMTP configuration ⭐ NEW
+5. **[TESTING.md](TESTING.md)** - Testing guide
+6. **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Fix common issues
 
 ### Configuration & Features
 - **[CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md)** - Environment variables & API setup
-- **[API.md](API.md)** - Complete API reference ⭐ NEW
+- **[API.md](API.md)** - Complete API reference
 - **[CUSTOMIZATION.md](CUSTOMIZATION.md)** - Customize your portfolio
 
 ### Domain & Hosting

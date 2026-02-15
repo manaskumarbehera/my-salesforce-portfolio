@@ -114,11 +114,32 @@ Response:
 - **Frontend**: HTML5, CSS3, JavaScript, Bootstrap 5
 - **Backend**: Node.js, Express.js
 - **Icons**: Font Awesome 6
-- **Email**: Nodemailer (Outlook SMTP)
-- **Security**: Helmet.js, CSP Headers
+- **Email**: Nodemailer (supports SMTP & custom domain)
+- **Security**: Helmet.js, CSP Headers, Rate Limiting
 - **Scraping**: Axios, Cheerio (for Chrome Web Store)
 - **Analytics**: Astratis Global (optional)
 - **Hosting**: Heroku with custom domain
+
+## 📧 Email Configuration
+
+The portfolio supports sending emails from your custom domain. Two modes available:
+
+| Mode | Description | Best For |
+|------|-------------|----------|
+| `smtp` | Real mailbox (Google Workspace/M365/Zoho) | Production use |
+| `forward_only` | Uses personal email as From | Quick setup |
+
+**Quick Setup:**
+```bash
+heroku config:set EMAIL_MODE=smtp -a manaskumarbehera
+heroku config:set EMAIL_HOST=smtp.gmail.com -a manaskumarbehera
+heroku config:set EMAIL_PORT=587 -a manaskumarbehera
+heroku config:set EMAIL_USER=your-email -a manaskumarbehera
+heroku config:set EMAIL_PASS=your-app-password -a manaskumarbehera
+heroku config:set EMAIL_TO=your-notification-email -a manaskumarbehera
+```
+
+**Full Guide:** [docs/EMAIL_SETUP.md](docs/EMAIL_SETUP.md)
 
 ## 📦 Local Development
 

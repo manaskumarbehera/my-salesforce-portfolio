@@ -2,43 +2,66 @@ const express = require('express');
 const compression = require('compression');
 const helmet = require('helmet');
 const path = require('path');
-const nodemailer = require('nodemailer');
 const fs = require('fs');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const rateLimit = require('express-rate-limit');
+
+// Import email modules
+const {
+    getEmailConfig,
+    verifyConnection,
+    isEmailConfigured,
+    getEmailHealthStatus,
+    maskEmail
+} = require('./src/config/email');
+const {
+    sendContactNotification,
+    sendAutoReply,
+    sendRecommendationNotification,
+    getTransporter
+} = require('./src/services/emailService');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Email configuration - Set these in Heroku Config Vars
-const EMAIL_USER = process.env.EMAIL_USER || 'manaskumarbehera1@outlook.com';
-const EMAIL_PASS = process.env.EMAIL_PASS || ''; // Set in Heroku Config Vars
-const EMAIL_HOST = process.env.EMAIL_HOST || 'smtp-mail.outlook.com'; // Outlook SMTP
-const EMAIL_PORT = process.env.EMAIL_PORT || 587;
-
 // Astratis Global Analytics Configuration
 const ASTRATIS_API_KEY = process.env.ASTRATIS_URL || process.env.ASTRATIS_API_KEY || '';
 
-// Create email transporter
-const transporter = nodemailer.createTransport({
-    host: EMAIL_HOST,
-    port: EMAIL_PORT,
-    secure: EMAIL_PORT == 465, // true for 465, false for other ports
-    auth: {
-        user: EMAIL_USER,
-        pass: EMAIL_PASS
-    }
-});
-
-// Verify SMTP connection on startup
-transporter.verify((error, success) => {
-    if (error) {
-        console.error('❌ SMTP Connection Error:', error.message);
-        console.log('📧 Email Config: HOST=' + EMAIL_HOST + ', PORT=' + EMAIL_PORT + ', USER=' + EMAIL_USER);
-        console.log('⚠️ Check that EMAIL_PASS is set correctly in Heroku Config Vars');
+// Initialize email on startup
+(async () => {
+    if (isEmailConfigured()) {
+        try {
+            const config = getEmailConfig();
+            const transporter = getTransporter();
+            const result = await verifyConnection(transporter);
+            if (result.success) {
+                console.log(`✅ SMTP Server is ready (Mode: ${config.mode})`);
+                console.log(`📧 From: ${maskEmail(config.from)} → To: ${maskEmail(config.to)}`);
+            } else {
+                console.error(`❌ SMTP Connection Error: ${result.error}`);
+            }
+        } catch (error) {
+            console.error('❌ Email config error:', error.message);
+        }
     } else {
-        console.log('✅ SMTP Server is ready to send emails');
+        console.log('⚠️ Email not configured - set EMAIL_* environment variables');
     }
+})();
+
+// Rate limiter for contact form
+const contactRateLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10, // 10 requests per 15 minutes per IP
+    message: {
+        success: false,
+        message: 'Too many requests. Please try again later.',
+        retryAfter: '15 minutes'
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+    // Use validate: false to disable the IPv6 warning in development
+    validate: { xForwardedForHeader: false }
 });
 
 // Security middleware
@@ -69,23 +92,36 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // API endpoint for contact form - Lead Capture
-app.post('/api/contact', async (req, res) => {
+app.post('/api/contact', contactRateLimiter, async (req, res) => {
     const { name, email, subject, message } = req.body;
     const timestamp = new Date().toISOString();
+    const userAgent = req.headers['user-agent'] || null;
+    const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.ip;
 
-    // Validate input
-    if (!name || !email || !subject || !message) {
+    // Validate required fields (subject is optional)
+    if (!name || !email || !message) {
         return res.status(400).json({
+            ok: false,
             success: false,
-            message: 'All fields are required.'
+            message: 'Name, email, and message are required.'
         });
     }
 
-    // Log the lead
-    console.log('📧 New Lead Captured:', { name, email, subject, timestamp });
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({
+            ok: false,
+            success: false,
+            message: 'Please provide a valid email address.'
+        });
+    }
+
+    // Log the lead (no sensitive data)
+    console.log('📧 New Lead Captured:', { name, timestamp });
 
     // Save lead to file (backup)
-    const lead = { name, email, subject, message, timestamp };
+    const lead = { name, email, subject: subject || 'Contact Form', message, timestamp };
     const leadsFile = path.join(__dirname, 'leads.json');
 
     try {
@@ -96,74 +132,90 @@ app.post('/api/contact', async (req, res) => {
         leads.push(lead);
         fs.writeFileSync(leadsFile, JSON.stringify(leads, null, 2));
     } catch (err) {
-        console.error('Error saving lead to file:', err);
+        console.error('Error saving lead to file:', err.message);
     }
 
-    // Send email notification to you
+    // Send email notification using new email service
     try {
-        if (EMAIL_PASS) {
-            // Email to yourself (lead notification)
-            await transporter.sendMail({
-                from: `"Portfolio Lead" <${EMAIL_USER}>`,
-                to: EMAIL_USER,
-                subject: `🎯 [PORTFOLIO LEAD] ${subject} - from ${name}`,
-                html: `
-                    <h2>New Lead from Portfolio Website</h2>
-                    <p><strong>Name:</strong> ${name}</p>
-                    <p><strong>Email:</strong> ${email}</p>
-                    <p><strong>Subject:</strong> ${subject}</p>
-                    <p><strong>Message:</strong></p>
-                    <p>${message.replace(/\n/g, '<br>')}</p>
-                    <hr>
-                    <p><small>Received: ${timestamp}</small></p>
-                `
-            });
+        const notificationResult = await sendContactNotification({
+            name,
+            email,
+            subject: subject || 'Contact Form Submission',
+            message,
+            timestamp,
+            userAgent,
+            ip
+        });
 
-            // Auto-reply to the visitor
-            await transporter.sendMail({
-                from: `"Manas Kumar Behera" <${EMAIL_USER}>`,
-                to: email,
-                subject: `Re: ${subject} - Thank you for reaching out!`,
-                html: `
-                    <h2>Thank you for contacting me, ${name}!</h2>
-                    <p>I have received your message and will get back to you within 24-48 hours.</p>
-                    <p><strong>Your message:</strong></p>
-                    <blockquote style="border-left: 3px solid #0d6efd; padding-left: 15px; color: #666;">
-                        ${message.replace(/\n/g, '<br>')}
-                    </blockquote>
-                    <hr>
-                    <p>Best regards,<br><strong>Manas Kumar Behera</strong><br>Salesforce Developer</p>
-                    <p>
-                        <a href="https://github.com/manaskumarbehera">GitHub</a> | 
-                        <a href="https://linkedin.com/in/manas-behera-68607547">LinkedIn</a> |
-                        <a href="https://cloudwithmanas.com">Website</a>
-                    </p>
-                `
-            });
-
+        if (notificationResult.success) {
+            // Send auto-reply to the visitor
+            await sendAutoReply({ name, email, subject, message });
             console.log('✅ Emails sent successfully');
         } else {
-            console.log('⚠️ EMAIL_PASS not set - emails not sent');
+            console.log('⚠️ Email notification skipped:', notificationResult.error);
         }
 
         res.json({
+            ok: true,
             success: true,
             message: 'Thank you for your message! I will get back to you soon.'
         });
 
     } catch (error) {
-        console.error('❌ Error sending email:', error.message);
-        console.error('Error details:', {
-            code: error.code,
-            command: error.command,
-            responseCode: error.responseCode
-        });
+        console.error('❌ Error in contact form:', error.message);
         // Still return success since lead was saved
         res.json({
+            ok: true,
             success: true,
             message: 'Thank you for your message! I will get back to you soon.'
         });
     }
+});
+
+// Email health check endpoint
+app.get('/api/email/health', async (req, res) => {
+    const status = getEmailHealthStatus();
+
+    if (!status.configured) {
+        return res.json({
+            ok: false,
+            configured: false,
+            error: status.error
+        });
+    }
+
+    // Optionally verify connection (if ?verify=true)
+    if (req.query.verify === 'true') {
+        try {
+            const transporter = getTransporter();
+            const result = await verifyConnection(transporter);
+            return res.json({
+                ok: result.success,
+                configured: true,
+                mode: status.mode,
+                host: status.host,
+                verified: result.success,
+                error: result.error || undefined
+            });
+        } catch (error) {
+            return res.json({
+                ok: false,
+                configured: true,
+                mode: status.mode,
+                verified: false,
+                error: 'Verification failed'
+            });
+        }
+    }
+
+    res.json({
+        ok: true,
+        configured: true,
+        mode: status.mode,
+        host: status.host,
+        port: status.port,
+        secure: status.secure
+    });
 });
 
 // Recommendations file path
@@ -522,34 +574,7 @@ app.post('/api/recommendations', async (req, res) => {
         console.log('⭐ New Recommendation Received:', { name, title, relationship, timestamp });
 
         // Send email notification about new recommendation
-        if (EMAIL_PASS) {
-            try {
-                await transporter.sendMail({
-                    from: `"Portfolio Recommendation" <${EMAIL_USER}>`,
-                    to: EMAIL_USER,
-                    subject: `⭐ [NEW RECOMMENDATION] from ${name}`,
-                    html: `
-                        <h2>New Recommendation Submitted!</h2>
-                        <p><strong>From:</strong> ${name}</p>
-                        <p><strong>Title:</strong> ${title}</p>
-                        <p><strong>Email:</strong> ${email}</p>
-                        <p><strong>LinkedIn:</strong> ${linkedin || 'Not provided'}</p>
-                        <p><strong>Relationship:</strong> ${relationship}</p>
-                        <p><strong>Rating:</strong> ${'⭐'.repeat(rating)}</p>
-                        <p><strong>Recommendation:</strong></p>
-                        <blockquote style="border-left: 3px solid #ffc107; padding-left: 15px; color: #666;">
-                            ${message}
-                        </blockquote>
-                        <hr>
-                        <p><strong>To approve this recommendation, visit:</strong></p>
-                        <p><a href="https://www.manaskumarbehera.com/api/recommendations/approve?id=${recommendation.id}&key=manas2026">Click to Approve</a></p>
-                        <p><small>Received: ${timestamp}</small></p>
-                    `
-                });
-            } catch (emailError) {
-                console.error('Error sending recommendation notification:', emailError.message);
-            }
-        }
+        await sendRecommendationNotification(recommendation);
 
         res.json({
             success: true,

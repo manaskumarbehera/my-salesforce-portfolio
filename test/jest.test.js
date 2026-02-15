@@ -647,7 +647,10 @@ describe('📝 Lead Capture Tests', () => {
   });
 
   test('should store lead object with all fields', () => {
-    expect(serverContent).toContain('const lead = { name, email, subject, message, timestamp }');
+    // Updated: subject now has default value
+    expect(serverContent).toContain('const lead = {');
+    expect(serverContent).toContain('name, email');
+    expect(serverContent).toContain('message, timestamp');
   });
 
   test('should read existing leads before appending', () => {
@@ -767,30 +770,41 @@ describe('⚡ Performance Configuration Tests', () => {
 
 describe('🔄 SMTP Configuration Tests', () => {
   let serverContent;
+  let emailConfigContent;
 
   beforeAll(() => {
     const serverPath = path.join(rootDir, 'server.js');
     serverContent = fs.readFileSync(serverPath, 'utf-8');
+    const emailConfigPath = path.join(rootDir, 'src/config/email.js');
+    emailConfigContent = fs.readFileSync(emailConfigPath, 'utf-8');
   });
 
   test('should support dynamic secure mode based on port', () => {
-    expect(serverContent).toContain('EMAIL_PORT == 465');
+    // Email config module handles secure mode based on port 465
+    expect(emailConfigContent).toContain('port === 465');
   });
 
   test('should use environment variables for email config', () => {
-    expect(serverContent).toContain('process.env.EMAIL_USER');
-    expect(serverContent).toContain('process.env.EMAIL_PASS');
-    expect(serverContent).toContain('process.env.EMAIL_HOST');
-    expect(serverContent).toContain('process.env.EMAIL_PORT');
+    expect(emailConfigContent).toContain('process.env.EMAIL_USER');
+    expect(emailConfigContent).toContain('process.env.EMAIL_PASS');
+    expect(emailConfigContent).toContain('process.env.EMAIL_HOST');
+    expect(emailConfigContent).toContain('process.env.EMAIL_PORT');
   });
 
-  test('should have fallback default values', () => {
-    expect(serverContent).toContain("|| 'smtp-mail.outlook.com'");
-    expect(serverContent).toContain('|| 587');
+  test('should have email mode configuration', () => {
+    expect(emailConfigContent).toContain('EMAIL_MODE');
+    expect(emailConfigContent).toContain('smtp');
+    expect(emailConfigContent).toContain('forward_only');
   });
 
-  test('should log email configuration on error', () => {
-    expect(serverContent).toContain('Email Config: HOST=');
+  test('should have email health endpoint', () => {
+    expect(serverContent).toContain('/api/email/health');
+    expect(serverContent).toContain('getEmailHealthStatus');
+  });
+
+  test('should import email modules', () => {
+    expect(serverContent).toContain("require('./src/config/email')");
+    expect(serverContent).toContain("require('./src/services/emailService')");
   });
 });
 

@@ -12,6 +12,8 @@ Complete API reference for the Salesforce Developer Portfolio.
 
 Submit a contact form message. Sends email notification and auto-reply.
 
+**Rate Limit:** 10 requests per 15 minutes per IP
+
 **Request:**
 ```bash
 curl -X POST https://www.manaskumarbehera.com/api/contact \
@@ -24,19 +26,103 @@ curl -X POST https://www.manaskumarbehera.com/api/contact \
   }'
 ```
 
+**Required Fields:**
+- `name` - Sender's name
+- `email` - Sender's email (must be valid)
+- `message` - Message content
+
+**Optional Fields:**
+- `subject` - Message subject (defaults to "Contact Form Submission")
+
 **Response (Success):**
 ```json
 {
+  "ok": true,
   "success": true,
   "message": "Thank you for your message! I will get back to you soon."
 }
 ```
 
-**Response (Error):**
+**Response (Error - Validation):**
+```json
+{
+  "ok": false,
+  "success": false,
+  "message": "Name, email, and message are required."
+}
+```
+
+**Response (Error - Rate Limit):**
 ```json
 {
   "success": false,
-  "message": "All fields are required."
+  "message": "Too many requests. Please try again later.",
+  "retryAfter": "15 minutes"
+}
+```
+
+---
+
+## 📧 Email Health API
+
+### GET /api/email/health
+
+Check email configuration status.
+
+**Request:**
+```bash
+curl https://www.manaskumarbehera.com/api/email/health
+```
+
+**Response (Configured):**
+```json
+{
+  "ok": true,
+  "configured": true,
+  "mode": "smtp",
+  "host": "smtp.gmail.com",
+  "port": 587,
+  "secure": false
+}
+```
+
+**Response (Not Configured):**
+```json
+{
+  "ok": false,
+  "configured": false,
+  "error": "Missing required email config: EMAIL_HOST, EMAIL_USER"
+}
+```
+
+### GET /api/email/health?verify=true
+
+Verify SMTP connection is working.
+
+**Request:**
+```bash
+curl "https://www.manaskumarbehera.com/api/email/health?verify=true"
+```
+
+**Response (Success):**
+```json
+{
+  "ok": true,
+  "configured": true,
+  "mode": "smtp",
+  "host": "smtp.gmail.com",
+  "verified": true
+}
+```
+
+**Response (Failure):**
+```json
+{
+  "ok": false,
+  "configured": true,
+  "mode": "smtp",
+  "verified": false,
+  "error": "Authentication failed. Check EMAIL_USER and EMAIL_PASS."
 }
 ```
 
