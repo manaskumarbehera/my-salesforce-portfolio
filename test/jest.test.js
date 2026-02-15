@@ -715,6 +715,63 @@ describe('📱 Contact Form Integration Tests', () => {
   });
 });
 
+describe('📬 Contact API Endpoint Tests', () => {
+  let serverContent;
+
+  beforeAll(() => {
+    serverContent = fs.readFileSync(path.join(rootDir, 'server.js'), 'utf-8');
+  });
+
+  test('should have POST /api/contact endpoint', () => {
+    expect(serverContent).toContain("app.post('/api/contact'");
+  });
+
+  test('should make subject optional', () => {
+    // Subject is now optional with default value
+    expect(serverContent).toContain("subject: subject");
+    expect(serverContent).toContain("'Contact Form'");
+  });
+
+  test('should validate required fields', () => {
+    expect(serverContent).toContain('!name');
+    expect(serverContent).toContain('!email');
+    expect(serverContent).toContain('!message');
+  });
+
+  test('should validate email format', () => {
+    expect(serverContent).toContain('emailRegex');
+    expect(serverContent).toContain('test(email)');
+  });
+
+  test('should return ok field in response', () => {
+    expect(serverContent).toContain('ok: true');
+    expect(serverContent).toContain('ok: false');
+  });
+
+  test('should capture user agent', () => {
+    expect(serverContent).toContain("req.headers['user-agent']");
+    expect(serverContent).toContain('userAgent');
+  });
+
+  test('should capture IP address', () => {
+    expect(serverContent).toContain("x-forwarded-for");
+    expect(serverContent).toContain('req.ip');
+  });
+
+  test('should use sendContactNotification', () => {
+    expect(serverContent).toContain('sendContactNotification');
+  });
+
+  test('should use sendAutoReply', () => {
+    expect(serverContent).toContain('sendAutoReply');
+  });
+
+  test('should still save lead even if email fails', () => {
+    expect(serverContent).toContain('leads.push(lead)');
+    expect(serverContent).toContain('fs.writeFileSync');
+  });
+});
+
 describe('🎨 Frontend Assets Tests', () => {
   test('should have Bootstrap CSS files', () => {
     expect(fs.existsSync(path.join(cssDir, 'bootstrap.min.css'))).toBe(true);
@@ -805,6 +862,407 @@ describe('🔄 SMTP Configuration Tests', () => {
   test('should import email modules', () => {
     expect(serverContent).toContain("require('./src/config/email')");
     expect(serverContent).toContain("require('./src/services/emailService')");
+  });
+});
+
+describe('📧 Email Configuration Module Tests', () => {
+  let emailConfigContent;
+
+  beforeAll(() => {
+    const emailConfigPath = path.join(rootDir, 'src/config/email.js');
+    emailConfigContent = fs.readFileSync(emailConfigPath, 'utf-8');
+  });
+
+  test('should export getEmailConfig function', () => {
+    expect(emailConfigContent).toContain('function getEmailConfig()');
+    expect(emailConfigContent).toContain('module.exports');
+    expect(emailConfigContent).toContain('getEmailConfig');
+  });
+
+  test('should export createTransporter function', () => {
+    expect(emailConfigContent).toContain('function createTransporter()');
+    expect(emailConfigContent).toContain('createTransporter');
+  });
+
+  test('should export verifyConnection function', () => {
+    expect(emailConfigContent).toContain('function verifyConnection');
+    expect(emailConfigContent).toContain('verifyConnection');
+  });
+
+  test('should export isEmailConfigured function', () => {
+    expect(emailConfigContent).toContain('function isEmailConfigured()');
+    expect(emailConfigContent).toContain('isEmailConfigured');
+  });
+
+  test('should export getEmailHealthStatus function', () => {
+    expect(emailConfigContent).toContain('function getEmailHealthStatus()');
+    expect(emailConfigContent).toContain('getEmailHealthStatus');
+  });
+
+  test('should validate required config variables', () => {
+    expect(emailConfigContent).toContain('EMAIL_HOST');
+    expect(emailConfigContent).toContain('EMAIL_USER');
+    expect(emailConfigContent).toContain('EMAIL_PASS');
+    expect(emailConfigContent).toContain('EMAIL_TO');
+  });
+
+  test('should support optional config variables', () => {
+    expect(emailConfigContent).toContain('EMAIL_FROM');
+    expect(emailConfigContent).toContain('EMAIL_FROM_NAME');
+    expect(emailConfigContent).toContain('EMAIL_REPLY_TO_DOMAIN');
+    expect(emailConfigContent).toContain('EMAIL_SECURE');
+  });
+
+  test('should have safe error message handler', () => {
+    expect(emailConfigContent).toContain('function getSafeErrorMessage');
+    expect(emailConfigContent).toContain('EAUTH');
+    expect(emailConfigContent).toContain('ECONNREFUSED');
+    expect(emailConfigContent).toContain('ETIMEDOUT');
+  });
+
+  test('should mask email addresses for security', () => {
+    expect(emailConfigContent).toContain('function maskEmail');
+    expect(emailConfigContent).toContain('***');
+  });
+
+  test('should configure TLS settings', () => {
+    expect(emailConfigContent).toContain('tls');
+    expect(emailConfigContent).toContain('rejectUnauthorized');
+    expect(emailConfigContent).toContain('TLSv1.2');
+  });
+
+  test('should set connection timeouts', () => {
+    expect(emailConfigContent).toContain('connectionTimeout');
+    expect(emailConfigContent).toContain('greetingTimeout');
+    expect(emailConfigContent).toContain('socketTimeout');
+  });
+});
+
+describe('📨 Email Service Module Tests', () => {
+  let emailServiceContent;
+
+  beforeAll(() => {
+    const emailServicePath = path.join(rootDir, 'src/services/emailService.js');
+    emailServiceContent = fs.readFileSync(emailServicePath, 'utf-8');
+  });
+
+  test('should export sendContactNotification function', () => {
+    expect(emailServiceContent).toContain('async function sendContactNotification');
+    expect(emailServiceContent).toContain('sendContactNotification');
+  });
+
+  test('should export sendAutoReply function', () => {
+    expect(emailServiceContent).toContain('async function sendAutoReply');
+    expect(emailServiceContent).toContain('sendAutoReply');
+  });
+
+  test('should export sendRecommendationNotification function', () => {
+    expect(emailServiceContent).toContain('async function sendRecommendationNotification');
+    expect(emailServiceContent).toContain('sendRecommendationNotification');
+  });
+
+  test('should have input sanitization for headers', () => {
+    expect(emailServiceContent).toContain('function sanitizeForHeaders');
+    expect(emailServiceContent).toContain('replace');
+    expect(emailServiceContent).toContain('CRLF');
+  });
+
+  test('should have email address sanitization', () => {
+    expect(emailServiceContent).toContain('function sanitizeEmail');
+    expect(emailServiceContent).toContain('emailRegex');
+  });
+
+  test('should have HTML escape function', () => {
+    expect(emailServiceContent).toContain('function escapeHtml');
+    expect(emailServiceContent).toContain('&amp;');
+    expect(emailServiceContent).toContain('&lt;');
+    expect(emailServiceContent).toContain('&gt;');
+  });
+
+  test('should build HTML email body', () => {
+    expect(emailServiceContent).toContain('function buildContactEmailHtml');
+    expect(emailServiceContent).toContain('<!DOCTYPE html>');
+    expect(emailServiceContent).toContain('<html');
+  });
+
+  test('should build plain text email body', () => {
+    expect(emailServiceContent).toContain('function buildContactEmailText');
+  });
+
+  test('should handle both email modes', () => {
+    expect(emailServiceContent).toContain("config.mode === 'smtp'");
+    expect(emailServiceContent).toContain('forward_only');
+  });
+
+  test('should set correct From header based on mode', () => {
+    expect(emailServiceContent).toContain('config.fromAddress');
+    expect(emailServiceContent).toContain('config.user');
+  });
+
+  test('should set Reply-To header', () => {
+    expect(emailServiceContent).toContain('replyTo');
+  });
+
+  test('should include timestamp in emails', () => {
+    expect(emailServiceContent).toContain('timestamp');
+  });
+
+  test('should include user agent when available', () => {
+    expect(emailServiceContent).toContain('userAgent');
+  });
+
+  test('should include IP address when available', () => {
+    expect(emailServiceContent).toContain('ip');
+  });
+
+  test('should have transporter caching', () => {
+    expect(emailServiceContent).toContain('cachedTransporter');
+    expect(emailServiceContent).toContain('function getTransporter');
+  });
+
+  test('should have transporter reset function', () => {
+    expect(emailServiceContent).toContain('function resetTransporter');
+  });
+});
+
+describe('🔐 Email Security Tests', () => {
+  let serverContent;
+  let emailConfigContent;
+  let emailServiceContent;
+
+  beforeAll(() => {
+    serverContent = fs.readFileSync(path.join(rootDir, 'server.js'), 'utf-8');
+    emailConfigContent = fs.readFileSync(path.join(rootDir, 'src/config/email.js'), 'utf-8');
+    emailServiceContent = fs.readFileSync(path.join(rootDir, 'src/services/emailService.js'), 'utf-8');
+  });
+
+  test('should not log EMAIL_PASS in config', () => {
+    // Make sure we don't have console.log that includes EMAIL_PASS
+    expect(emailConfigContent).not.toMatch(/console\.log.*EMAIL_PASS/);
+  });
+
+  test('should mask sensitive data in health status', () => {
+    expect(emailConfigContent).toContain('maskEmail');
+  });
+
+  test('should prevent header injection with CRLF removal', () => {
+    expect(emailServiceContent).toContain('[\\r\\n]');
+    expect(emailServiceContent).toContain('replace');
+  });
+
+  test('should limit input lengths', () => {
+    expect(emailServiceContent).toContain('slice');
+    expect(emailServiceContent).toContain('500');
+  });
+
+  test('should return safe error messages', () => {
+    expect(emailConfigContent).toContain('getSafeErrorMessage');
+    expect(emailConfigContent).not.toContain('error.stack');
+  });
+
+  test('should use TLS for secure connections', () => {
+    expect(emailConfigContent).toContain("minVersion: 'TLSv1.2'");
+  });
+});
+
+describe('⚡ Rate Limiting Tests', () => {
+  let serverContent;
+
+  beforeAll(() => {
+    serverContent = fs.readFileSync(path.join(rootDir, 'server.js'), 'utf-8');
+  });
+
+  test('should have rate limiter imported', () => {
+    expect(serverContent).toContain("require('express-rate-limit')");
+  });
+
+  test('should have contact rate limiter configured', () => {
+    expect(serverContent).toContain('contactRateLimiter');
+    expect(serverContent).toContain('rateLimit');
+  });
+
+  test('should set rate limit window to 15 minutes', () => {
+    expect(serverContent).toContain('15 * 60 * 1000');
+  });
+
+  test('should set max requests to 10', () => {
+    expect(serverContent).toContain('max: 10');
+  });
+
+  test('should have rate limit error message', () => {
+    expect(serverContent).toContain('Too many requests');
+    expect(serverContent).toContain('retryAfter');
+  });
+
+  test('should apply rate limiter to contact endpoint', () => {
+    expect(serverContent).toContain("app.post('/api/contact', contactRateLimiter");
+  });
+});
+
+describe('🏥 Email Health Endpoint Tests', () => {
+  let serverContent;
+
+  beforeAll(() => {
+    serverContent = fs.readFileSync(path.join(rootDir, 'server.js'), 'utf-8');
+  });
+
+  test('should have email health GET endpoint', () => {
+    expect(serverContent).toContain("app.get('/api/email/health'");
+  });
+
+  test('should return configured status', () => {
+    expect(serverContent).toContain('configured');
+    expect(serverContent).toContain('getEmailHealthStatus');
+  });
+
+  test('should support verify query parameter', () => {
+    expect(serverContent).toContain("req.query.verify === 'true'");
+  });
+
+  test('should return mode in health response', () => {
+    expect(serverContent).toContain('mode: status.mode');
+  });
+
+  test('should return host in health response', () => {
+    expect(serverContent).toContain('host: status.host');
+  });
+
+  test('should return port in health response', () => {
+    expect(serverContent).toContain('port: status.port');
+  });
+
+  test('should return ok status', () => {
+    expect(serverContent).toContain('ok: true');
+    expect(serverContent).toContain('ok: false');
+  });
+});
+
+describe('📄 Email Documentation Tests', () => {
+  test('should have EMAIL_SETUP.md documentation', () => {
+    const emailSetupPath = path.join(docsDir, 'EMAIL_SETUP.md');
+    expect(fs.existsSync(emailSetupPath)).toBe(true);
+  });
+
+  test('should document Mode A (SMTP)', () => {
+    const content = fs.readFileSync(path.join(docsDir, 'EMAIL_SETUP.md'), 'utf-8');
+    expect(content).toContain('Mode A');
+    expect(content).toContain('smtp');
+    expect(content).toContain('Real Mailbox');
+  });
+
+  test('should document Mode B (Forward-Only)', () => {
+    const content = fs.readFileSync(path.join(docsDir, 'EMAIL_SETUP.md'), 'utf-8');
+    expect(content).toContain('Mode B');
+    expect(content).toContain('forward_only');
+    expect(content).toContain('Forward');
+  });
+
+  test('should document DNS setup for providers', () => {
+    const content = fs.readFileSync(path.join(docsDir, 'EMAIL_SETUP.md'), 'utf-8');
+    expect(content).toContain('Google Workspace');
+    expect(content).toContain('Microsoft 365');
+    expect(content).toContain('Zoho');
+  });
+
+  test('should document MX records', () => {
+    const content = fs.readFileSync(path.join(docsDir, 'EMAIL_SETUP.md'), 'utf-8');
+    expect(content).toContain('MX');
+  });
+
+  test('should document SPF records', () => {
+    const content = fs.readFileSync(path.join(docsDir, 'EMAIL_SETUP.md'), 'utf-8');
+    expect(content).toContain('SPF');
+    expect(content).toContain('v=spf1');
+  });
+
+  test('should document DKIM records', () => {
+    const content = fs.readFileSync(path.join(docsDir, 'EMAIL_SETUP.md'), 'utf-8');
+    expect(content).toContain('DKIM');
+  });
+
+  test('should document DMARC records', () => {
+    const content = fs.readFileSync(path.join(docsDir, 'EMAIL_SETUP.md'), 'utf-8');
+    expect(content).toContain('DMARC');
+    expect(content).toContain('v=DMARC1');
+  });
+
+  test('should document Heroku config vars', () => {
+    const content = fs.readFileSync(path.join(docsDir, 'EMAIL_SETUP.md'), 'utf-8');
+    expect(content).toContain('heroku config:set');
+    expect(content).toContain('EMAIL_MODE');
+  });
+
+  test('should document troubleshooting', () => {
+    const content = fs.readFileSync(path.join(docsDir, 'EMAIL_SETUP.md'), 'utf-8');
+    expect(content).toContain('Troubleshooting');
+    expect(content).toContain('Authentication');
+  });
+
+  test('should be listed in docs README', () => {
+    const content = fs.readFileSync(path.join(docsDir, 'README.md'), 'utf-8');
+    expect(content).toContain('EMAIL_SETUP.md');
+  });
+});
+
+describe('📋 .env.example Email Tests', () => {
+  let envExampleContent;
+
+  beforeAll(() => {
+    envExampleContent = fs.readFileSync(path.join(rootDir, '.env.example'), 'utf-8');
+  });
+
+  test('should document EMAIL_MODE', () => {
+    expect(envExampleContent).toContain('EMAIL_MODE');
+    expect(envExampleContent).toContain('smtp');
+    expect(envExampleContent).toContain('forward_only');
+  });
+
+  test('should document EMAIL_HOST', () => {
+    expect(envExampleContent).toContain('EMAIL_HOST');
+  });
+
+  test('should document EMAIL_PORT', () => {
+    expect(envExampleContent).toContain('EMAIL_PORT');
+    expect(envExampleContent).toContain('587');
+    expect(envExampleContent).toContain('465');
+  });
+
+  test('should document EMAIL_USER', () => {
+    expect(envExampleContent).toContain('EMAIL_USER');
+  });
+
+  test('should document EMAIL_PASS', () => {
+    expect(envExampleContent).toContain('EMAIL_PASS');
+    expect(envExampleContent).toContain('App Password');
+  });
+
+  test('should document EMAIL_TO', () => {
+    expect(envExampleContent).toContain('EMAIL_TO');
+  });
+
+  test('should have provider examples', () => {
+    expect(envExampleContent).toContain('Gmail');
+    expect(envExampleContent).toContain('Google Workspace');
+    expect(envExampleContent).toContain('Outlook');
+    expect(envExampleContent).toContain('Zoho');
+  });
+});
+
+describe('📁 Email Module File Structure Tests', () => {
+  test('should have src/config directory', () => {
+    expect(fs.existsSync(path.join(rootDir, 'src/config'))).toBe(true);
+  });
+
+  test('should have src/services directory', () => {
+    expect(fs.existsSync(path.join(rootDir, 'src/services'))).toBe(true);
+  });
+
+  test('should have email.js in src/config', () => {
+    expect(fs.existsSync(path.join(rootDir, 'src/config/email.js'))).toBe(true);
+  });
+
+  test('should have emailService.js in src/services', () => {
+    expect(fs.existsSync(path.join(rootDir, 'src/services/emailService.js'))).toBe(true);
   });
 });
 
