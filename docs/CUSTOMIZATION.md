@@ -1,5 +1,58 @@
 # Customization Guide
 
+## 🌟 New Features Configuration
+
+### AI Chatbot Customization
+
+The chatbot is configured in `js/main.js`:
+
+```javascript
+const CHATBOT_CONFIG = {
+    botName: "Manas's Assistant",
+    welcomeMessage: "Hi there! 👋 I'm Manas's AI assistant...",
+    useAstratisAI: true,  // Enable Astratis AI
+    typingDelay: 800      // Typing animation delay
+};
+```
+
+**Customize responses** in `chatbotResponses` object:
+```javascript
+const chatbotResponses = {
+    greetings: ["Your custom greeting..."],
+    skills: ["Your skills response..."],
+    // Add more categories
+};
+```
+
+### Chrome Extension Stats
+
+Update extension IDs in `server.js`:
+```javascript
+const CHROME_EXTENSIONS = {
+    yourextension: {
+        id: 'chrome-extension-id',
+        name: 'Your Extension',
+        storeUrl: 'https://chromewebstore.google.com/detail/...'
+    }
+};
+```
+
+### Recommendations System
+
+Recommendations are stored in `recommendations.json` and displayed dynamically.
+
+**Admin approval URL format:**
+```
+/api/recommendations/approve?id=<recommendation_id>&key=<admin_key>
+```
+
+Configure admin key in Heroku:
+```bash
+heroku config:set ADMIN_KEY=your-secret-key -a manaskumarbehera
+```
+
+---
+
 ## Quick Customization Checklist
 
 ### 1. Personal Information (index.html)

@@ -2,6 +2,10 @@
 
 A professional portfolio website showcasing Salesforce development projects, tools, and expertise. Designed to be hosted on Heroku with custom domain support.
 
+## 🌟 Live Demo
+
+**Website:** [manaskumarbehera.com](https://www.manaskumarbehera.com)
+
 ## 📚 Documentation
 
 **All guides are in the `docs/` directory.**
@@ -10,6 +14,7 @@ A professional portfolio website showcasing Salesforce development projects, too
 - **[START_HERE.md](docs/START_HERE.md)** ⭐ - Quick setup in 5 minutes
 - **[INTELLIJ.md](docs/INTELLIJ.md)** - IntelliJ one-click commands
 - **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Deploy to Heroku
+- **[API.md](docs/API.md)** - Complete API reference 🆕
 - **[TESTING.md](docs/TESTING.md)** - Testing guide
 - **[TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** - Fix common issues
 - **[CUSTOMIZATION.md](docs/CUSTOMIZATION.md)** - Customize your portfolio
@@ -35,21 +40,85 @@ A professional portfolio website showcasing Salesforce development projects, too
 
 ## 🚀 Features
 
+### Core Features
 - **Responsive Design**: Mobile-friendly layout using Bootstrap 5
 - **GitHub Integration**: Automatically displays your latest repositories
 - **Project Showcase**: Highlight your Salesforce tools and Chrome extensions
 - **Skills Section**: Display your technical expertise
-- **Contact Form**: Ready-to-integrate contact functionality
+- **Contact Form**: Email notifications with auto-reply
 - **SEO Optimized**: Meta tags and semantic HTML
 - **Fast Loading**: Compressed assets and optimized delivery
 
+### 🆕 New Features (2026)
+
+#### 🤖 AI Chatbot
+- Interactive chatbot assistant on the portfolio
+- Answers questions about skills, projects, and contact info
+- Supports Astratis AI integration with local fallback
+- Quick reply buttons for common queries
+
+#### ⭐ Recommendations System
+- Visitors can submit recommendations/testimonials
+- Admin approval workflow via email
+- Star rating system (1-5 stars)
+- LinkedIn profile integration
+
+#### 📊 Chrome Extension Stats API
+- Real-time user count from Chrome Web Store
+- Displays stats for all published extensions:
+  - **TrackForce Pro** - Audit trail analysis
+  - **Week Number** - Week number display
+  - **MetaForce** - Metadata management
+- Auto-caching (1 hour) to prevent rate limiting
+
+#### 📈 Analytics Dashboard
+- Page view tracking
+- Visitor counting
+- Project & tool click tracking
+- Astratis Global Analytics integration
+
+## 🔌 API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/contact` | POST | Submit contact form (sends email) |
+| `/api/chat` | POST | Chat with AI assistant |
+| `/api/recommendations` | GET | Get approved recommendations |
+| `/api/recommendations` | POST | Submit new recommendation |
+| `/api/extensions/stats` | GET | Get all Chrome extension user counts |
+| `/api/extensions/:key/stats` | GET | Get single extension stats |
+
+### Example: Get Extension Stats
+```bash
+curl https://www.manaskumarbehera.com/api/extensions/stats
+```
+
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "extensions": {
+      "trackforcepro": { "name": "TrackForce Pro", "users": 9 },
+      "weeknumber": { "name": "Week Number", "users": 332 },
+      "metaforce": { "name": "MetaForce", "users": 54 }
+    },
+    "totalUsers": 395,
+    "fetchedAt": "2026-02-15T06:15:03.789Z"
+  }
+}
+```
+
 ## 🛠️ Technologies Used
 
-- HTML5, CSS3, JavaScript
-- Bootstrap 5
-- Font Awesome Icons
-- Node.js & Express (for Heroku deployment)
-- GitHub API Integration
+- **Frontend**: HTML5, CSS3, JavaScript, Bootstrap 5
+- **Backend**: Node.js, Express.js
+- **Icons**: Font Awesome 6
+- **Email**: Nodemailer (Outlook SMTP)
+- **Security**: Helmet.js, CSP Headers
+- **Scraping**: Axios, Cheerio (for Chrome Web Store)
+- **Analytics**: Astratis Global (optional)
+- **Hosting**: Heroku with custom domain
 
 ## 📦 Local Development
 
@@ -137,6 +206,23 @@ A professional portfolio website showcasing Salesforce development projects, too
    ```
 
 ## ⚙️ Configuration
+
+### Environment Variables (Heroku Config Vars)
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `EMAIL_USER` | SMTP email address (Outlook) | Yes |
+| `EMAIL_PASS` | SMTP password/app password | Yes |
+| `EMAIL_HOST` | SMTP host (default: smtp-mail.outlook.com) | No |
+| `EMAIL_PORT` | SMTP port (default: 587) | No |
+| `ADMIN_KEY` | Admin key for approving recommendations | No |
+| `ASTRATIS_URL` | Astratis AI API key | No |
+
+### Set Environment Variables on Heroku
+```bash
+heroku config:set EMAIL_USER=your-email@outlook.com -a manaskumarbehera
+heroku config:set EMAIL_PASS=your-app-password -a manaskumarbehera
+```
 
 ### Update Personal Information
 

@@ -104,24 +104,98 @@ npm test
 
 ---
 
+## 🔌 API Endpoints
+
+Your portfolio has several API endpoints:
+
+| Endpoint | Method | What it does |
+|----------|--------|--------------|
+| `/api/contact` | POST | Sends contact form email |
+| `/api/chat` | POST | AI chatbot responses |
+| `/api/recommendations` | GET | Get approved recommendations |
+| `/api/recommendations` | POST | Submit new recommendation |
+| `/api/extensions/stats` | GET | Get Chrome extension user counts |
+
+### Test the APIs locally:
+
+```bash
+# Test contact form
+curl -X POST http://localhost:3000/api/contact \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test","email":"test@test.com","subject":"Hi","message":"Hello"}'
+
+# Test chatbot
+curl -X POST http://localhost:3000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"What are your skills?"}'
+
+# Test extension stats
+curl http://localhost:3000/api/extensions/stats
+```
+
+---
+
+## 🔐 Environment Variables (Heroku)
+
+Set these in Heroku Config Vars:
+
+| Variable | Purpose | Example |
+|----------|---------|---------|
+| `EMAIL_USER` | SMTP email for sending | manaskumarbehera1@outlook.com |
+| `EMAIL_PASS` | SMTP app password | your-app-password |
+| `EMAIL_HOST` | SMTP server | smtp-mail.outlook.com |
+| `EMAIL_PORT` | SMTP port | 587 |
+| `ADMIN_KEY` | Approve recommendations | manas2026 |
+| `ASTRATIS_URL` | Analytics API key | (optional) |
+
+**Set a variable:**
+```bash
+heroku config:set EMAIL_USER=your-email@outlook.com -a manaskumarbehera
+```
+
+**View all variables:**
+```bash
+heroku config -a manaskumarbehera
+```
+
+---
+
 ## Quick Reference Card
 
 | What | Where |
 |------|-------|
+| **Live Website** | https://www.manaskumarbehera.com |
 | **GitHub Repo** | https://github.com/manaskumarbehera/my-salesforce-portfolio |
+| **Heroku App** | manaskumarbehera |
 | **Main Branch** | main |
 | **Featured Projects** | 4 (from your GitHub) |
 | **Local Website** | http://localhost:3000 |
 
 ---
 
-## Need Help?
+## Chrome Extensions
 
-- **GitHub not saving?** Check your internet connection and try `npm run push` again
-- **Errors?** Run `npm test` to check what went wrong
-- **Website not working locally?** Make sure you ran `npm start` first
+Your portfolio showcases these Chrome extensions with real-time user counts:
+
+| Extension | Chrome Web Store ID |
+|-----------|---------------------|
+| TrackForce Pro | eombeiphccjbnndbabnkimdlkpaooipk |
+| Week Number | hjbeeopedbnpahgbkndkemigkcellibm |
+| MetaForce | hclbblgimnkmlmnkekmbclfemhdgmjep |
+
+User counts are fetched automatically and cached for 1 hour.
 
 ---
 
-*Last updated: February 14, 2026*
+## Need Help?
+
+- **GitHub not saving?** Check your internet connection and try `git push origin main` again
+- **Heroku not deploying?** Run `git push heroku main`
+- **Errors?** Run `npm test` to check what went wrong
+- **Website not working locally?** Make sure you ran `npm start` first
+- **Emails not sending?** Check EMAIL_PASS is set correctly in Heroku config
+
+---
+
+*Last updated: February 15, 2026*
 

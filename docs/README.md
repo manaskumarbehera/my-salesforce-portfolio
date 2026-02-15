@@ -2,6 +2,13 @@
 
 Welcome to your Salesforce Developer Portfolio documentation!
 
+## 🌟 What's New (2026)
+
+- **🤖 AI Chatbot** - Interactive assistant to answer visitor questions
+- **⭐ Recommendations System** - Collect and display testimonials
+- **📊 Chrome Extension Stats API** - Real-time user counts from Web Store
+- **📈 Analytics Dashboard** - Track page views and interactions
+
 ## 🎯 Start Here
 
 **New to the project? Read this first:**
@@ -16,12 +23,59 @@ Welcome to your Salesforce Developer Portfolio documentation!
 4. **[TESTING.md](TESTING.md)** - Testing guide
 5. **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - Fix common issues
 
+### Configuration & Features
+- **[CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md)** - Environment variables & API setup
+- **[API.md](API.md)** - Complete API reference ⭐ NEW
+- **[CUSTOMIZATION.md](CUSTOMIZATION.md)** - Customize your portfolio
+
 ### Domain & Hosting
 - **[DOMAIN.md](DOMAIN.md)** - Domain configuration (manaskumarbehera.com) ⭐
 - **[DOMAIN_SETUP_GUIDE.md](DOMAIN_SETUP_GUIDE.md)** - Step-by-step domain setup
 
-### Additional Guides
-- **[CUSTOMIZATION.md](CUSTOMIZATION.md)** - Customize your portfolio
+---
+
+## 🔌 API Reference
+
+### Contact API
+```bash
+POST /api/contact
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "subject": "Hello",
+  "message": "Your message here"
+}
+```
+
+### Chat API (AI Chatbot)
+```bash
+POST /api/chat
+Content-Type: application/json
+
+{ "message": "What are your skills?" }
+```
+
+### Recommendations API
+```bash
+# Get approved recommendations
+GET /api/recommendations
+
+# Submit new recommendation
+POST /api/recommendations
+```
+
+### Chrome Extension Stats API
+```bash
+# Get all extension stats
+GET /api/extensions/stats
+
+# Get specific extension
+GET /api/extensions/trackforcepro/stats
+GET /api/extensions/weeknumber/stats
+GET /api/extensions/metaforce/stats
+```
 
 ---
 
@@ -35,7 +89,7 @@ See: [START_HERE.md](START_HERE.md)
 
 ### "How do I deploy?"
 ```bash
-npm run deploy
+git push heroku main
 ```
 See: [DEPLOYMENT.md](DEPLOYMENT.md)
 
@@ -49,6 +103,13 @@ npm test
 ```
 See: [TESTING.md](TESTING.md)
 
+### "How do I configure email notifications?"
+```bash
+heroku config:set EMAIL_USER=your-email@outlook.com
+heroku config:set EMAIL_PASS=your-app-password
+```
+See: [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md)
+
 ---
 
 ## 📁 Documentation Structure
@@ -61,8 +122,11 @@ docs/
 ├── DEPLOYMENT.md          ← Deploy guide
 ├── TESTING.md             ← Testing guide
 ├── TROUBLESHOOTING.md     ← Fix issues
+├── API.md                 ← API reference (NEW!)
+├── CONFIGURATION_GUIDE.md ← API & env setup
 ├── CUSTOMIZATION.md       ← Customize
-└── DOMAIN_SETUP_GUIDE.md  ← Domain setup (pending)
+├── DOMAIN.md              ← Domain config
+└── DOMAIN_SETUP_GUIDE.md  ← Domain setup
 ```
 
 ---
@@ -80,7 +144,12 @@ npm run dev         # Auto-reload
 ```bash
 npm run validate    # Check syntax
 npm run build       # Build
-npm run deploy      # Deploy to Heroku
+git push heroku main  # Deploy to Heroku
+```
+
+### View Logs
+```bash
+heroku logs --tail -a manaskumarbehera
 ```
 
 ### IntelliJ (One-Click)

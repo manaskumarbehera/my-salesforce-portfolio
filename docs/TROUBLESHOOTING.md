@@ -152,6 +152,140 @@ curl http://localhost:3000
 
 ---
 
+## ❌ Chatbot not responding
+
+### Problem
+The AI chatbot doesn't respond or shows errors.
+
+### Solution
+
+**1. Check if server is running:**
+```bash
+curl -X POST http://localhost:3000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"hello"}'
+```
+
+**2. Check console for errors:**
+- Open browser DevTools (F12)
+- Look at Console and Network tabs
+
+**3. Chatbot uses local fallback:**
+If Astratis AI is not configured, the chatbot uses local keyword-based responses automatically.
+
+---
+
+## ❌ Emails not sending
+
+### Problem
+Contact form shows success but no email received.
+
+### Solution
+
+**1. Check Heroku config vars are set:**
+```bash
+heroku config -a manaskumarbehera | grep EMAIL
+```
+
+**2. Set email credentials:**
+```bash
+heroku config:set EMAIL_USER=your-email@outlook.com -a manaskumarbehera
+heroku config:set EMAIL_PASS=your-app-password -a manaskumarbehera
+```
+
+**3. For Outlook, use App Password:**
+- Go to: https://account.microsoft.com/security
+- Enable 2FA if not enabled
+- Create an App Password
+- Use that as EMAIL_PASS
+
+**4. Check Heroku logs:**
+```bash
+heroku logs --tail -a manaskumarbehera | grep -i email
+```
+
+---
+
+## ❌ Chrome Extension stats not loading
+
+### Problem
+Extension user counts show "N/A" or don't load.
+
+### Solution
+
+**1. Test API directly:**
+```bash
+curl http://localhost:3000/api/extensions/stats
+```
+
+**2. Check if extensions exist:**
+Verify Chrome Web Store URLs are correct in `server.js`.
+
+**3. Rate limiting:**
+Stats are cached for 1 hour. If Chrome Web Store rate limits requests, wait and try again.
+
+**4. Check server logs:**
+```bash
+heroku logs --tail -a manaskumarbehera | grep -i extension
+```
+
+---
+
+## ❌ Recommendations not showing
+
+### Problem
+Recommendations section shows "No Recommendations Yet" even after submitting.
+
+### Solution
+
+**1. Check if recommendations exist:**
+```bash
+curl http://localhost:3000/api/recommendations
+```
+
+**2. Recommendations need approval:**
+New recommendations are `pending` by default. Check your email for approval link.
+
+**3. Approve manually:**
+```bash
+curl "http://localhost:3000/api/recommendations/approve?id=<recommendation_id>&key=manas2026"
+```
+
+**4. Check recommendations.json:**
+```bash
+cat recommendations.json
+```
+
+---
+
+## ❌ Heroku remote not found
+
+### Problem
+```
+remote: ! No such app as manas-behera-dev.
+```
+
+### Solution
+
+**1. Check current remote:**
+```bash
+git remote -v
+```
+
+**2. Update to correct app name:**
+```bash
+git remote remove heroku
+git remote add heroku https://git.heroku.com/manaskumarbehera.git
+```
+
+**3. Verify and deploy:**
+```bash
+git remote -v
+git push heroku main
+```
+
+---
+
 ## ❌ Changes not showing on site
 
 ### Problem

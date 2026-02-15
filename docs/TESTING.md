@@ -19,9 +19,54 @@ npm run test:watch
 
 ---
 
+## 🔌 API Testing
+
+Test the API endpoints locally:
+
+### Start the Server
+```bash
+npm start
+```
+
+### Test Contact API
+```bash
+curl -X POST http://localhost:3000/api/contact \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test","email":"test@test.com","subject":"Test","message":"Hello"}'
+```
+
+### Test Chat API
+```bash
+curl -X POST http://localhost:3000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"What are your skills?"}'
+```
+
+### Test Recommendations API
+```bash
+# Get recommendations
+curl http://localhost:3000/api/recommendations
+
+# Submit recommendation
+curl -X POST http://localhost:3000/api/recommendations \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test User","title":"Developer","email":"test@test.com","relationship":"Colleague","message":"This is a test recommendation that is at least fifty characters long.","rating":5}'
+```
+
+### Test Extension Stats API
+```bash
+# All extensions
+curl http://localhost:3000/api/extensions/stats
+
+# Single extension
+curl http://localhost:3000/api/extensions/trackforcepro/stats
+```
+
+---
+
 ## 📊 Test Results
 
-Your project has **52 tests** covering:
+Your project has **52+ tests** covering:
 - ✅ File organization
 - ✅ Configuration files
 - ✅ Portfolio content (all links)

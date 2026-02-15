@@ -149,6 +149,26 @@ heroku create manaskumarbehera
 heroku create
 ```
 
+**Note:** The Heroku app is `manaskumarbehera` (not `manas-behera-dev`).
+
+### Step 4: Set Environment Variables (Important!)
+
+Configure email and other settings:
+
+```bash
+# Email settings for contact form
+heroku config:set EMAIL_USER=manaskumarbehera1@outlook.com -a manaskumarbehera
+heroku config:set EMAIL_PASS=your-app-password -a manaskumarbehera
+
+# Admin key for recommendations
+heroku config:set ADMIN_KEY=your-secret-key -a manaskumarbehera
+```
+
+**Verify settings:**
+```bash
+heroku config -a manaskumarbehera
+```
+
 **If name is taken, try:**
 - `manaskumarbehera-portfolio`
 - `mkbehera-dev`

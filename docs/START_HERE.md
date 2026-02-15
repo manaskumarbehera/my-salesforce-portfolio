@@ -4,6 +4,19 @@
 
 Get your Salesforce Developer Portfolio up and running in 5 minutes.
 
+**Live Site:** [manaskumarbehera.com](https://www.manaskumarbehera.com)
+
+---
+
+## 🌟 What's Included
+
+- ✅ **AI Chatbot** - Interactive assistant for visitors
+- ✅ **Recommendations System** - Collect testimonials with star ratings
+- ✅ **Chrome Extension Stats** - Real-time user counts from Web Store
+- ✅ **Contact Form** - Email notifications with auto-reply
+- ✅ **Analytics Dashboard** - Track page views and clicks
+- ✅ **Mobile Responsive** - Works on all devices
+
 ---
 
 ## ⚡ Quick Start (3 Steps)
@@ -24,7 +37,7 @@ Visit: http://localhost:3000
 ```bash
 npm test
 ```
-✅ All 52 tests should pass
+✅ All tests should pass
 
 ---
 
@@ -55,7 +68,7 @@ npm run dev         # Auto-reload server
 ```bash
 npm run validate    # Check syntax
 npm run build       # Build project
-npm run deploy      # Deploy to Heroku
+git push heroku main  # Deploy to Heroku
 npm run logs        # View Heroku logs
 ```
 
@@ -63,8 +76,25 @@ npm run logs        # View Heroku logs
 ```bash
 git add .
 git commit -m "Your message"
-git push origin main
-git push heroku main  # Deploy to Heroku
+git push origin main   # Push to GitHub
+git push heroku main   # Deploy to Heroku
+```
+
+---
+
+## 🔌 Test the APIs
+
+```bash
+# Test chatbot
+curl -X POST http://localhost:3000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"What are your skills?"}'
+
+# Test extension stats
+curl http://localhost:3000/api/extensions/stats
+
+# Test recommendations
+curl http://localhost:3000/api/recommendations
 ```
 
 ---
@@ -79,6 +109,11 @@ git push heroku main  # Deploy to Heroku
 - ✅ Trailblazer: [manasbehera1990](https://www.salesforce.com/trailblazer/manasbehera1990)
 - ✅ Buy Me a Coffee: [manaskumarbehera](https://buymeacoffee.com/manaskumarbehera)
 
+**Chrome Extensions:**
+- ✅ TrackForce Pro - Audit trail analysis
+- ✅ Week Number - Week number display
+- ✅ MetaForce - Metadata management
+
 All links are already integrated in your portfolio!
 
 ---
@@ -89,8 +124,9 @@ All links are already integrated in your portfolio!
 - **[INTELLIJ.md](./INTELLIJ.md)** - IntelliJ setup & one-click commands
 - **[TESTING.md](./TESTING.md)** - Testing guide
 - **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - Fix common issues
+- **[CONFIGURATION_GUIDE.md](./CONFIGURATION_GUIDE.md)** - API & environment setup
 - **[CUSTOMIZATION.md](./CUSTOMIZATION.md)** - Customize your portfolio
-- **[DOMAIN_SETUP_GUIDE.md](./DOMAIN_SETUP_GUIDE.md)** - Custom domain setup (coming soon)
+- **[DOMAIN.md](./DOMAIN.md)** - Custom domain setup
 
 ---
 
@@ -100,7 +136,7 @@ All links are already integrated in your portfolio!
 1. Click: `npm: Start Server` (in IntelliJ)
 2. Edit your files
 3. Click: `npm: Test`
-4. Click: `npm: Deploy`
+4. Run: `git push heroku main`
 
 ### One-Click Deployment
 1. Click: `npm: Release (All-in-One)` (in IntelliJ)
@@ -126,4 +162,8 @@ If all tests pass, you're ready to go! 🎉
 - 📖 Docs: Check the docs/ folder
 
 **Happy coding!** 🚀
+
+---
+
+*Last updated: February 15, 2026*
 

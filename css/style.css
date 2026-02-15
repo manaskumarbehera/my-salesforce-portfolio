@@ -1843,6 +1843,61 @@ body {
    Extension Stats Banner
    ============================================ */
 
+/* Hero Extension Stats Counter */
+.hero-extension-stats {
+    animation: fadeInUp 1s ease 0.8s both;
+}
+
+.extension-counter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    font-size: 1.1rem;
+    color: white;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.extension-counter-badge:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.extension-counter-badge i {
+    font-size: 1.5rem;
+    color: #4285f4;
+}
+
+.extension-counter-badge .counter-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #4ade80;
+    text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+}
+
+.extension-counter-badge .counter-label {
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+.extension-tagline {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+}
+
+.extension-tagline i {
+    color: #fbbf24;
+    margin-right: 0.5rem;
+}
+
+/* Tools Section Extension Stats */
 .extension-stats-banner {
     display: flex;
     align-items: center;
@@ -1864,31 +1919,51 @@ body {
     color: var(--primary-color);
 }
 
-/* No Recommendations Styling */
-.no-recommendations {
-    text-align: center;
-    padding: 3rem 2rem;
-    background: var(--light-color);
-    border-radius: var(--border-radius);
+/* Mobile adjustments for hero extension stats */
+@media (max-width: 768px) {
+    .extension-counter-badge {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.95rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .extension-counter-badge .counter-number {
+        font-size: 1.5rem;
+    }
+
+    .extension-counter-badge .counter-label {
+        width: 100%;
+        font-size: 0.85rem;
+    }
+
+    .extension-tagline {
+        font-size: 0.85rem;
+        padding: 0 1rem;
+    }
 }
 
-.no-recommendations i {
-    display: block;
-    margin-bottom: 1rem;
-    color: #ccc;
-}
-
-.no-recommendations h4 {
-    margin-bottom: 0.5rem;
-    color: var(--dark-color);
-}
-
-.no-recommendations p {
-    margin: 0;
-}
-
-/* Mobile adjustments for extension stats */
 @media (max-width: 576px) {
+    .extension-counter-badge {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+        border-radius: 12px;
+    }
+
+    .extension-counter-badge i {
+        font-size: 1.2rem;
+    }
+
+    .extension-counter-badge .counter-number {
+        font-size: 1.3rem;
+    }
+
+    .extension-tagline {
+        font-size: 0.8rem;
+    }
+
     .extension-stats-banner {
         flex-direction: column;
         text-align: center;
@@ -1900,9 +1975,5 @@ body {
     .tool-features .badge {
         font-size: 0.65rem;
         padding: 0.2rem 0.4rem;
-    }
-
-    .no-recommendations {
-        padding: 2rem 1rem;
     }
 }

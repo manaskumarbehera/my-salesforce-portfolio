@@ -1183,6 +1183,8 @@ function showRecommendationNotification(type, message) {
 async function loadExtensionStats() {
     const banner = document.getElementById('extensionStatsBanner');
     const totalUsersEl = document.getElementById('totalExtensionUsers');
+    const heroTotalUsersEl = document.getElementById('heroTotalUsers');
+    const aboutExtensionUsersEl = document.getElementById('aboutExtensionUsers');
 
     try {
         const response = await fetch('/api/extensions/stats');
@@ -1190,10 +1192,21 @@ async function loadExtensionStats() {
 
         if (data.success && data.data) {
             const stats = data.data;
+            const totalUsers = stats.totalUsers || 0;
 
-            // Update total users
+            // Update tools section total
             if (totalUsersEl) {
-                totalUsersEl.textContent = stats.totalUsersFormatted || stats.totalUsers || '0';
+                totalUsersEl.textContent = stats.totalUsersFormatted || totalUsers;
+            }
+
+            // Animate hero counter with counting effect
+            if (heroTotalUsersEl) {
+                animateCounter(heroTotalUsersEl, 0, totalUsers, 2000);
+            }
+
+            // Update about section stat
+            if (aboutExtensionUsersEl) {
+                aboutExtensionUsersEl.textContent = (stats.totalUsersFormatted || totalUsers) + '+';
             }
 
             // Update individual extension counts
@@ -1218,7 +1231,35 @@ async function loadExtensionStats() {
         if (totalUsersEl) {
             totalUsersEl.textContent = 'N/A';
         }
+        if (heroTotalUsersEl) {
+            heroTotalUsersEl.textContent = '300+';
+        }
     }
+}
+
+// Animate counter from start to end value
+function animateCounter(element, start, end, duration) {
+    if (!element) return;
+
+    const range = end - start;
+    const startTime = performance.now();
+
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const currentValue = Math.floor(start + (range * easeOutQuart));
+
+        element.textContent = currentValue.toLocaleString() + '+';
+
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        }
+    }
+
+    requestAnimationFrame(updateCounter);
 }
 
 // Initialize extension stats on page load
