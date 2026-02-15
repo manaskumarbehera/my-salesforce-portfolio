@@ -235,12 +235,17 @@ const PROJECT_METADATA = {
 async function fetchGitHubRepos() {
     const reposContainer = document.getElementById('github-repos');
 
-    // Hide section if SHOW_GITHUB_REPOS is false
-    if (!SHOW_GITHUB_REPOS) {
-        reposContainer.innerHTML = '';
-        reposContainer.style.display = 'none';
+    // Hide section if SHOW_GITHUB_REPOS is false or element doesn't exist
+    if (!SHOW_GITHUB_REPOS || !reposContainer) {
+        if (reposContainer) {
+            reposContainer.innerHTML = '';
+            reposContainer.style.display = 'none';
+        }
         return;
     }
+
+    // Show the container if we're going to load repos
+    reposContainer.style.display = 'flex';
 
     try {
         const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100`);
@@ -935,6 +940,8 @@ function generateVisitorId() {
 // Initialize analytics dashboard on page load
 document.addEventListener('DOMContentLoaded', () => {
     loadAnalyticsStats();
+    loadRecommendations(); // Load recommendations on page load
+    initRatingStars(); // Initialize rating stars for the form
 
     // Track clicks on project links
     document.querySelectorAll('.project-card a, .repo-card a').forEach(link => {
