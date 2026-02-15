@@ -167,6 +167,104 @@ app.post('/api/contact', async (req, res) => {
 // Recommendations file path
 const recommendationsFile = path.join(__dirname, 'recommendations.json');
 
+// ============================================
+// AI Chatbot API with Astratis Integration
+// ============================================
+
+// Portfolio context for AI responses
+const PORTFOLIO_CONTEXT = {
+    name: "Manas Kumar Behera",
+    title: "Salesforce Developer & Architect",
+    email: "behera.manas98@gmail.com",
+    linkedin: "https://linkedin.com/in/manas-behera-68607547",
+    github: "https://github.com/manaskumarbehera",
+    trailblazer: "https://salesforce.com/trailblazer/manasbehera1990",
+    skills: [
+        "Apex", "LWC", "Visualforce", "SOQL/SOSL", "Triggers", "Batch Apex",
+        "REST API", "SOAP API", "Tooling API", "GraphQL API",
+        "JavaScript", "HTML5", "CSS3", "React", "Node.js",
+        "Git", "Copado", "AutoRABIT", "CI/CD", "Heroku", "Azure"
+    ],
+    projects: [
+        { name: "TrackForce Pro", desc: "Chrome extension for Salesforce audit trail analysis" },
+        { name: "MetaForce", desc: "Salesforce metadata management extension" },
+        { name: "Week Number", desc: "Simple week number display extension" }
+    ],
+    focus: "Building free and open-source tools for the Salesforce developer community"
+};
+
+// AI Chat endpoint
+app.post('/api/chat', async (req, res) => {
+    const { message } = req.body;
+
+    if (!message) {
+        return res.status(400).json({ success: false, message: 'Message is required' });
+    }
+
+    try {
+        // Try Astratis AI if available
+        if (ASTRATIS_API_KEY) {
+            try {
+                const aiResponse = await fetch('https://api.astratis.io/v1/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${ASTRATIS_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        context: PORTFOLIO_CONTEXT,
+                        systemPrompt: `You are a helpful AI assistant for ${PORTFOLIO_CONTEXT.name}'s portfolio website. 
+                        Answer questions about their skills, projects, and experience as a Salesforce Developer.
+                        Be friendly, concise, and helpful. If asked about topics outside the portfolio, 
+                        politely redirect to portfolio-related topics.`
+                    })
+                });
+
+                if (aiResponse.ok) {
+                    const data = await aiResponse.json();
+                    return res.json({
+                        success: true,
+                        response: data.response,
+                        source: 'astratis-ai'
+                    });
+                }
+            } catch (aiError) {
+                console.log('Astratis AI not available:', aiError.message);
+            }
+        }
+
+        // Fallback to simple keyword-based responses
+        const response = getSimpleResponse(message.toLowerCase());
+        res.json({
+            success: true,
+            response: response,
+            source: 'local'
+        });
+
+    } catch (error) {
+        console.error('Chat API error:', error);
+        res.status(500).json({ success: false, message: 'Failed to process chat message' });
+    }
+});
+
+// Simple keyword-based response generator (fallback)
+function getSimpleResponse(message) {
+    if (message.includes('skill') || message.includes('know') || message.includes('expertise')) {
+        return `${PORTFOLIO_CONTEXT.name} is skilled in: ${PORTFOLIO_CONTEXT.skills.slice(0, 8).join(', ')}, and more!`;
+    }
+    if (message.includes('project') || message.includes('built') || message.includes('created')) {
+        return PORTFOLIO_CONTEXT.projects.map(p => `• ${p.name}: ${p.desc}`).join('\n');
+    }
+    if (message.includes('contact') || message.includes('email') || message.includes('reach')) {
+        return `You can reach ${PORTFOLIO_CONTEXT.name} at ${PORTFOLIO_CONTEXT.email} or connect on LinkedIn!`;
+    }
+    if (message.includes('salesforce')) {
+        return `${PORTFOLIO_CONTEXT.name} specializes in Salesforce development including Apex, LWC, and API integrations.`;
+    }
+    return `I can help you learn about ${PORTFOLIO_CONTEXT.name}'s skills, projects, or how to get in touch. What would you like to know?`;
+}
+
 // Helper function to read recommendations
 function readRecommendations() {
     try {

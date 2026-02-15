@@ -435,21 +435,29 @@ function showNotification(type, message) {
 }
 
 // ============================================
-// Chatbot Functionality
+// Chatbot Functionality with Astratis AI
 // ============================================
 
-// Chatbot knowledge base
+// Chatbot configuration
+const CHATBOT_CONFIG = {
+    botName: "Manas's Assistant",
+    welcomeMessage: "Hi there! 👋 I'm Manas's AI assistant. How can I help you learn about his work?",
+    useAstratisAI: true, // Set to true to use Astratis AI
+    typingDelay: 800
+};
+
+// Chatbot knowledge base (fallback when AI is not available)
 const chatbotKnowledge = {
-    greetings: ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'hola'],
-    skills: ['skills', 'expertise', 'technologies', 'tech stack', 'what can you do', 'programming'],
-    projects: ['projects', 'work', 'portfolio', 'built', 'created', 'developed'],
-    tools: ['tools', 'extensions', 'chrome', 'trackforce', 'metaforce', 'week number'],
-    contact: ['contact', 'email', 'reach', 'hire', 'connect', 'linkedin'],
-    experience: ['experience', 'years', 'background', 'career', 'work history'],
-    salesforce: ['salesforce', 'apex', 'lwc', 'lightning', 'soql', 'trailblazer'],
-    help: ['help', 'support', 'assist', 'what can you', 'options'],
-    thanks: ['thank', 'thanks', 'appreciate', 'helpful'],
-    coffee: ['coffee', 'donate', 'support', 'buy me']
+    greetings: ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'hola', 'howdy'],
+    skills: ['skills', 'expertise', 'technologies', 'tech stack', 'what can you do', 'programming', 'know'],
+    projects: ['projects', 'work', 'portfolio', 'built', 'created', 'developed', 'made'],
+    tools: ['tools', 'extensions', 'chrome', 'trackforce', 'metaforce', 'week number', 'extension'],
+    contact: ['contact', 'email', 'reach', 'hire', 'connect', 'linkedin', 'github', 'message'],
+    experience: ['experience', 'years', 'background', 'career', 'work history', 'job'],
+    salesforce: ['salesforce', 'apex', 'lwc', 'lightning', 'soql', 'trailblazer', 'crm', 'sfdc'],
+    help: ['help', 'support', 'assist', 'what can you', 'options', 'menu', '?'],
+    thanks: ['thank', 'thanks', 'appreciate', 'helpful', 'great', 'awesome'],
+    coffee: ['coffee', 'donate', 'support', 'buy me', 'tip', 'sponsor']
 };
 
 const chatbotResponses = {
@@ -459,63 +467,63 @@ const chatbotResponses = {
         "Hey! 😊 Great to see you here. What would you like to know about Manas?"
     ],
     skills: [
-        "Manas is a skilled **Salesforce Developer** with expertise in:\n\n" +
-        "☁️ **Salesforce:** Apex, LWC, Visualforce, SOQL/SOSL, Triggers, Batch Apex\n" +
-        "🔗 **APIs:** REST, SOAP, Tooling API, GraphQL\n" +
-        "💻 **Frontend:** JavaScript, HTML5, CSS3, React, Chrome Extensions\n" +
-        "🔧 **DevOps:** Git, Copado, AutoRABIT, CI/CD\n" +
-        "☁️ **Cloud:** Heroku, Azure, Node.js\n\n" +
+        "Manas is a skilled <strong>Salesforce Developer</strong> with expertise in:<br><br>" +
+        "☁️ <strong>Salesforce:</strong> Apex, LWC, Visualforce, SOQL/SOSL, Triggers, Batch Apex<br>" +
+        "🔗 <strong>APIs:</strong> REST, SOAP, Tooling API, GraphQL<br>" +
+        "💻 <strong>Frontend:</strong> JavaScript, HTML5, CSS3, React, Chrome Extensions<br>" +
+        "🔧 <strong>DevOps:</strong> Git, Copado, AutoRABIT, CI/CD<br>" +
+        "☁️ <strong>Cloud:</strong> Heroku, Azure, Node.js<br><br>" +
         "Want to know more about a specific skill?"
     ],
     projects: [
-        "Manas has built several awesome projects! Here are the highlights:\n\n" +
-        "🔹 **TrackForce Pro** - Chrome extension for Salesforce audit trail analysis\n" +
-        "🔹 **MetaForce** - Salesforce metadata management extension\n" +
-        "🔹 **Week Number** - Simple week number display extension\n" +
-        "🔹 **This Portfolio** - Built with Bootstrap & Node.js\n\n" +
-        "All projects are **100% free and open-source**! Check out the Projects section for more details."
+        "Manas has built several awesome projects! Here are the highlights:<br><br>" +
+        "🔹 <strong>TrackForce Pro</strong> - Chrome extension for Salesforce audit trail analysis<br>" +
+        "🔹 <strong>MetaForce</strong> - Salesforce metadata management extension<br>" +
+        "🔹 <strong>Week Number</strong> - Simple week number display extension<br>" +
+        "🔹 <strong>This Portfolio</strong> - Built with Bootstrap & Node.js<br><br>" +
+        "All projects are <strong>100% free and open-source</strong>! Check out the Projects section for more details."
     ],
     tools: [
-        "Manas has created several **free Chrome extensions** for the Salesforce community:\n\n" +
-        "🛡️ **TrackForce Pro** - Extract and analyze Salesforce audit trails\n" +
-        "📊 **MetaForce** - Manage Salesforce metadata efficiently\n" +
-        "📅 **Week Number** - Display current week number\n\n" +
+        "Manas has created several <strong>free Chrome extensions</strong> for the Salesforce community:<br><br>" +
+        "🛡️ <strong>TrackForce Pro</strong> - Extract and analyze Salesforce audit trails<br>" +
+        "📊 <strong>MetaForce</strong> - Manage Salesforce metadata efficiently<br>" +
+        "📅 <strong>Week Number</strong> - Display current week number<br><br>" +
         "All available on the Chrome Web Store! Would you like links to install them?"
     ],
     contact: [
-        "You can reach Manas through:\n\n" +
-        "📧 **Email:** behera.manas98@gmail.com\n" +
-        "💼 **LinkedIn:** linkedin.com/in/manas-behera-68607547\n" +
-        "💻 **GitHub:** github.com/manaskumarbehera\n" +
-        "🌟 **Trailblazer:** salesforce.com/trailblazer/manasbehera1990\n\n" +
+        "You can reach Manas through:<br><br>" +
+        "📧 <strong>Email:</strong> behera.manas98@gmail.com<br>" +
+        "💼 <strong>LinkedIn:</strong> <a href='https://linkedin.com/in/manas-behera-68607547' target='_blank'>Connect on LinkedIn</a><br>" +
+        "💻 <strong>GitHub:</strong> <a href='https://github.com/manaskumarbehera' target='_blank'>View GitHub Profile</a><br>" +
+        "🌟 <strong>Trailblazer:</strong> <a href='https://salesforce.com/trailblazer/manasbehera1990' target='_blank'>View Trailblazer</a><br><br>" +
         "Feel free to connect for collaborations or projects!"
     ],
     experience: [
-        "Manas is an experienced **Salesforce Developer & Architect** with expertise in:\n\n" +
-        "✅ Custom Salesforce application development\n" +
-        "✅ Lightning Web Components (LWC)\n" +
-        "✅ API integrations (Genesys CTI, Auth0, Azure)\n" +
-        "✅ DevOps & CI/CD implementation\n" +
-        "✅ Chrome extension development\n\n" +
-        "He's passionate about building **free tools** to help the developer community!"
+        "Manas is an experienced <strong>Salesforce Developer & Architect</strong> with expertise in:<br><br>" +
+        "✅ Custom Salesforce application development<br>" +
+        "✅ Lightning Web Components (LWC)<br>" +
+        "✅ API integrations (Genesys CTI, Auth0, Azure)<br>" +
+        "✅ DevOps & CI/CD implementation<br>" +
+        "✅ Chrome extension development<br><br>" +
+        "He's passionate about building <strong>free tools</strong> to help the developer community!"
     ],
     salesforce: [
-        "Manas specializes in the **Salesforce ecosystem**:\n\n" +
-        "⚡ **Development:** Apex, LWC, Visualforce, Aura Components\n" +
-        "🔍 **Queries:** SOQL, SOSL, GraphQL API\n" +
-        "🔗 **Integration:** REST API, SOAP API, Tooling API\n" +
-        "🎯 **CTI:** Genesys integration with Salesforce\n" +
-        "🛠️ **Tools:** SFDX, VS Code, Developer Console\n\n" +
+        "Manas specializes in the <strong>Salesforce ecosystem</strong>:<br><br>" +
+        "⚡ <strong>Development:</strong> Apex, LWC, Visualforce, Aura Components<br>" +
+        "🔍 <strong>Queries:</strong> SOQL, SOSL, GraphQL API<br>" +
+        "🔗 <strong>Integration:</strong> REST API, SOAP API, Tooling API<br>" +
+        "🎯 <strong>CTI:</strong> Genesys integration with Salesforce<br>" +
+        "🛠️ <strong>Tools:</strong> SFDX, VS Code, Developer Console<br><br>" +
         "Check out his Trailblazer profile for certifications!"
     ],
     help: [
-        "I can help you with:\n\n" +
-        "💼 **Skills** - Learn about Manas's technical expertise\n" +
-        "🚀 **Projects** - Explore his portfolio and Chrome extensions\n" +
-        "🔧 **Tools** - Discover free Salesforce tools he's built\n" +
-        "📧 **Contact** - Get in touch with Manas\n" +
-        "☁️ **Salesforce** - His Salesforce expertise\n\n" +
-        "Just type your question or click on a topic!"
+        "I can help you with:<br><br>" +
+        "💼 <strong>Skills</strong> - Learn about Manas's technical expertise<br>" +
+        "🚀 <strong>Projects</strong> - Explore his portfolio and Chrome extensions<br>" +
+        "🔧 <strong>Tools</strong> - Discover free Salesforce tools he's built<br>" +
+        "📧 <strong>Contact</strong> - Get in touch with Manas<br>" +
+        "☁️ <strong>Salesforce</strong> - His Salesforce expertise<br><br>" +
+        "Just type your question or click a button below!"
     ],
     thanks: [
         "You're welcome! 😊 Is there anything else you'd like to know?",
@@ -523,14 +531,14 @@ const chatbotResponses = {
         "Glad I could assist! Don't forget to check out the free Chrome extensions! 🚀"
     ],
     coffee: [
-        "That's so kind! ☕ If Manas's tools have helped you, you can support his work:\n\n" +
-        "👉 **Buy Me a Coffee:** buymeacoffee.com/manaskumarbehera\n\n" +
+        "That's so kind! ☕ If Manas's tools have helped you, you can support his work:<br><br>" +
+        "👉 <a href='https://buymeacoffee.com/manaskumarbehera' target='_blank'><strong>Buy Me a Coffee</strong></a><br><br>" +
         "Your support helps keep these tools free for everyone! 💙"
     ],
     default: [
-        "I'm not sure I understood that. Could you try rephrasing? Or ask about:\n• Skills\n• Projects\n• Tools\n• Contact\n• Salesforce",
-        "Hmm, I didn't quite catch that. Try asking about Manas's projects, skills, or how to contact him!",
-        "I'm still learning! Try asking about specific topics like 'projects', 'skills', or 'contact'."
+        "I'm not sure I understood that. Could you try rephrasing? Or click one of the buttons below to learn about specific topics!",
+        "Hmm, I didn't quite catch that. Try clicking a button below or ask about Manas's projects, skills, or contact info!",
+        "I'm still learning! Try clicking a topic button or ask about 'projects', 'skills', or 'contact'."
     ]
 };
 
@@ -551,54 +559,72 @@ function initChatbot() {
     const messages = document.getElementById('chatMessages');
     const badge = document.getElementById('chatBadge');
 
-    if (!toggle || !container) return;
+    if (!toggle || !container) {
+        console.log('Chatbot elements not found');
+        return;
+    }
+
+    console.log('Chatbot initialized');
 
     // Show welcome badge after 3 seconds
     setTimeout(() => {
         if (!container.classList.contains('active')) {
-            badge.style.display = 'flex';
+            if (badge) badge.style.display = 'flex';
         }
     }, 3000);
 
-    // Toggle chatbot
-    toggle.addEventListener('click', () => {
+    // Toggle chatbot on button click
+    toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
         const isActive = container.classList.toggle('active');
         toggle.classList.toggle('active');
-        badge.style.display = 'none';
+        if (badge) badge.style.display = 'none';
 
         if (isActive && messages.children.length === 0) {
-            // Send welcome message
+            // Send welcome message with quick replies
             setTimeout(() => {
-                addBotMessage("Hi there! 👋 I'm Manas's virtual assistant. How can I help you learn about his work?", true);
+                addBotMessage(CHATBOT_CONFIG.welcomeMessage, true);
             }, 500);
         }
 
-        if (isActive) {
-            input.focus();
+        if (isActive && input) {
+            setTimeout(() => input.focus(), 100);
         }
+
+        // Track chatbot usage
+        trackEvent('chatbot_toggled', {
+            action: isActive ? 'opened' : 'closed',
+            icon: 'fa-comments'
+        });
     });
 
     // Send message on button click
-    sendBtn.addEventListener('click', () => sendMessage());
+    if (sendBtn) {
+        sendBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            sendChatMessage();
+        });
+    }
 
     // Send message on Enter key
-    input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    });
-
-    // Track chatbot usage
-    toggle.addEventListener('click', () => {
-        trackEvent('chatbot_opened', { icon: 'fa-comments' });
-    });
+    if (input) {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        });
+    }
 }
 
 // Send user message and get response
-function sendMessage() {
+async function sendChatMessage() {
     const input = document.getElementById('chatInput');
-    const message = input.value.trim();
+    if (!input) return;
 
+    const message = input.value.trim();
     if (!message) return;
 
     // Add user message
@@ -611,17 +637,53 @@ function sendMessage() {
     // Show typing indicator
     showTypingIndicator();
 
-    // Process and respond after delay
+    try {
+        // Try server-side AI first
+        const serverResponse = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+        });
+
+        if (serverResponse.ok) {
+            const data = await serverResponse.json();
+            if (data.success && data.response) {
+                removeTypingIndicator();
+                addBotMessage(data.response);
+                return;
+            }
+        }
+    } catch (serverError) {
+        console.log('Server AI not available:', serverError);
+    }
+
+    // Try Astratis client-side AI
+    if (CHATBOT_CONFIG.useAstratisAI && window.astratis && typeof window.astratis.chat === 'function') {
+        try {
+            const aiResponse = await window.astratis.chat(message);
+            if (aiResponse) {
+                removeTypingIndicator();
+                addBotMessage(aiResponse);
+                return;
+            }
+        } catch (astratisError) {
+            console.log('Astratis client AI not available:', astratisError);
+        }
+    }
+
+    // Fallback to local responses
     setTimeout(() => {
         removeTypingIndicator();
-        const response = getResponse(message);
+        const response = getLocalResponse(message);
         addBotMessage(response);
-    }, 800 + Math.random() * 700);
+    }, CHATBOT_CONFIG.typingDelay);
 }
 
 // Add user message to chat
 function addUserMessage(text) {
     const messages = document.getElementById('chatMessages');
+    if (!messages) return;
+
     const messageDiv = document.createElement('div');
     messageDiv.className = 'chat-message user';
     messageDiv.innerHTML = `
@@ -631,26 +693,23 @@ function addUserMessage(text) {
         <div class="chat-message-content">${escapeHtml(text)}</div>
     `;
     messages.appendChild(messageDiv);
-    scrollToBottom();
+    scrollChatToBottom();
 }
 
 // Add bot message to chat
-function addBotMessage(text, showQuickReplies = false) {
+function addBotMessage(text, showQuickRepliesButtons = false) {
     const messages = document.getElementById('chatMessages');
+    if (!messages) return;
+
     const messageDiv = document.createElement('div');
     messageDiv.className = 'chat-message bot';
 
-    // Convert markdown-style formatting
-    let formattedText = text
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\n/g, '<br>');
-
     let quickRepliesHtml = '';
-    if (showQuickReplies) {
+    if (showQuickRepliesButtons) {
         quickRepliesHtml = `
             <div class="quick-replies">
                 ${quickReplies.map(qr => 
-                    `<button class="quick-reply-btn" onclick="handleQuickReply('${qr.query}')">${qr.text}</button>`
+                    `<button class="quick-reply-btn" data-query="${qr.query}">${qr.text}</button>`
                 ).join('')}
             </div>
         `;
@@ -661,24 +720,38 @@ function addBotMessage(text, showQuickReplies = false) {
             <i class="fab fa-salesforce"></i>
         </div>
         <div class="chat-message-content">
-            ${formattedText}
+            ${text}
             ${quickRepliesHtml}
         </div>
     `;
     messages.appendChild(messageDiv);
-    scrollToBottom();
-}
 
-// Handle quick reply button clicks
-function handleQuickReply(query) {
-    const input = document.getElementById('chatInput');
-    input.value = query;
-    sendMessage();
+    // Add click handlers to quick reply buttons
+    messageDiv.querySelectorAll('.quick-reply-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const query = this.getAttribute('data-query');
+            if (query) {
+                const input = document.getElementById('chatInput');
+                if (input) {
+                    input.value = query;
+                    sendChatMessage();
+                }
+            }
+        });
+    });
+
+    scrollChatToBottom();
 }
 
 // Show typing indicator
 function showTypingIndicator() {
     const messages = document.getElementById('chatMessages');
+    if (!messages) return;
+
+    // Remove existing typing indicator
+    removeTypingIndicator();
+
     const indicator = document.createElement('div');
     indicator.className = 'chat-message bot';
     indicator.id = 'typingIndicator';
@@ -693,7 +766,7 @@ function showTypingIndicator() {
         </div>
     `;
     messages.appendChild(indicator);
-    scrollToBottom();
+    scrollChatToBottom();
 }
 
 // Remove typing indicator
@@ -702,26 +775,31 @@ function removeTypingIndicator() {
     if (indicator) indicator.remove();
 }
 
-// Get response based on user input
-function getResponse(input) {
+// Get local response based on user input (fallback)
+function getLocalResponse(input) {
     const lowerInput = input.toLowerCase();
 
     // Check each category
     for (const [category, keywords] of Object.entries(chatbotKnowledge)) {
         if (keywords.some(keyword => lowerInput.includes(keyword))) {
             const responses = chatbotResponses[category];
-            return responses[Math.floor(Math.random() * responses.length)];
+            if (responses && responses.length > 0) {
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
         }
     }
 
     // Default response
-    return chatbotResponses.default[Math.floor(Math.random() * chatbotResponses.default.length)];
+    const defaultResponses = chatbotResponses.default;
+    return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
 }
 
 // Scroll chat to bottom
-function scrollToBottom() {
+function scrollChatToBottom() {
     const messages = document.getElementById('chatMessages');
-    messages.scrollTop = messages.scrollHeight;
+    if (messages) {
+        messages.scrollTop = messages.scrollHeight;
+    }
 }
 
 // Escape HTML to prevent XSS
@@ -731,12 +809,10 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Make handleQuickReply globally available
-window.handleQuickReply = handleQuickReply;
-
-// Initialize chatbot on DOM load
-document.addEventListener('DOMContentLoaded', () => {
-    initChatbot();
+// Initialize chatbot when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Small delay to ensure all elements are loaded
+    setTimeout(initChatbot, 100);
 });
 
 // ============================================
