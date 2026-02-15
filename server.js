@@ -458,38 +458,89 @@ const CHROME_EXTENSIONS = buildChromeExtensionsMap();
 console.log(`🔌 Chrome Extensions configured: ${Object.keys(CHROME_EXTENSIONS).join(', ')}`);
 
 
-// Fetch user count for a single extension
-async function fetchExtensionUserCount(extensionId) {
+// Extension user counts from environment variable (most reliable)
+// Format: EXTENSION_USER_COUNTS='{"trackforcepro":150,"weeknumber":350,"metaforce":60}'
+function getManualUserCounts() {
     try {
-        const url = `https://chrome.google.com/webstore/detail/${extensionId}`;
-        const response = await axios.get(url, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                'Accept-Language': 'en-US,en;q=0.5'
-            },
-            timeout: 10000
-        });
+        if (process.env.EXTENSION_USER_COUNTS) {
+            return JSON.parse(process.env.EXTENSION_USER_COUNTS);
+        }
+    } catch (e) {
+        console.error('Failed to parse EXTENSION_USER_COUNTS:', e.message);
+    }
+    return null;
+}
 
-        const $ = cheerio.load(response.data);
+// Fetch user count for a single extension using multiple methods
+async function fetchExtensionUserCount(extensionId, extensionKey) {
+    // Method 1: Check manual override from environment variable
+    const manualCounts = getManualUserCounts();
+    if (manualCounts && manualCounts[extensionKey]) {
+        console.log(`📊 Using manual count for ${extensionKey}: ${manualCounts[extensionKey]}`);
+        return manualCounts[extensionKey];
+    }
 
-        // Try multiple selectors to find user count
-        let userCount = null;
+    // Method 2: Try to scrape from Chrome Web Store
+    try {
+        // Use the old URL format that sometimes still works for scraping
+        const urls = [
+            `https://chrome.google.com/webstore/detail/${extensionId}`,
+            `https://chromewebstore.google.com/detail/_/${extensionId}`
+        ];
 
-        // Look for text containing "users" in various elements
-        $('*').each((i, elem) => {
-            const text = $(elem).text();
-            const match = text.match(/(\d+[\d,]*)\s*(?:\+\s*)?users?/i);
-            if (match && !userCount) {
-                userCount = match[1].replace(/,/g, '');
+        for (const url of urls) {
+            try {
+                const response = await axios.get(url, {
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                        'Accept-Language': 'en-US,en;q=0.9',
+                        'Accept-Encoding': 'gzip, deflate, br',
+                        'Cache-Control': 'no-cache',
+                        'Sec-Fetch-Dest': 'document',
+                        'Sec-Fetch-Mode': 'navigate',
+                        'Sec-Fetch-Site': 'none'
+                    },
+                    timeout: 15000,
+                    maxRedirects: 5
+                });
+
+                const html = response.data;
+
+                // Method 2a: Look for user count in raw HTML (works better than cheerio for JS-rendered content)
+                // Pattern matches: "10,000+ users", "500 users", etc.
+                const patterns = [
+                    /(\d{1,3}(?:,\d{3})*|\d+)\s*\+?\s*users/gi,
+                    /"userCount":\s*"?(\d+)"?/i,
+                    /users.*?(\d{1,3}(?:,\d{3})*)/gi
+                ];
+
+                for (const pattern of patterns) {
+                    const matches = html.match(pattern);
+                    if (matches && matches.length > 0) {
+                        // Extract the number from the first match
+                        const numMatch = matches[0].match(/(\d{1,3}(?:,\d{3})*|\d+)/);
+                        if (numMatch) {
+                            const count = parseInt(numMatch[1].replace(/,/g, ''));
+                            if (count > 0) {
+                                console.log(`📊 Scraped count for ${extensionKey}: ${count}`);
+                                return count;
+                            }
+                        }
+                    }
+                }
+            } catch (urlError) {
+                // Try next URL
+                continue;
             }
-        });
-
-        return userCount ? parseInt(userCount) : null;
+        }
     } catch (error) {
         console.error(`Error fetching extension ${extensionId}:`, error.message);
-        return null;
     }
+
+    // Method 3: Return null if all methods fail
+    console.log(`⚠️ Could not fetch user count for ${extensionKey}`);
+    return null;
 }
 
 // API endpoint to get all extension stats
@@ -511,7 +562,7 @@ app.get('/api/extensions/stats', async (req, res) => {
         let totalUsers = 0;
 
         for (const [key, ext] of Object.entries(CHROME_EXTENSIONS)) {
-            const userCount = await fetchExtensionUserCount(ext.id);
+            const userCount = await fetchExtensionUserCount(ext.id, key);
             stats[key] = {
                 name: ext.name,
                 id: ext.id,
@@ -562,7 +613,7 @@ app.get('/api/extensions/:extensionKey/stats', async (req, res) => {
     }
 
     try {
-        const userCount = await fetchExtensionUserCount(extension.id);
+        const userCount = await fetchExtensionUserCount(extension.id, extensionKey.toLowerCase());
         res.json({
             success: true,
             data: {

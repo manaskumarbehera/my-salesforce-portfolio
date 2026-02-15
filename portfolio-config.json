@@ -13,9 +13,9 @@
     {
       "key": "trackforcepro",
       "name": "TrackForce Pro",
-      "description": "Chrome extension to extract and analyze Salesforce audit trail data with comprehensive reporting and insights for compliance monitoring.",
+      "description": "TrackForcePro is the ultimate productivity toolkit for Salesforce Administrators and Developers. Access powerful audit, query building, data exploration, and monitoring tools directly from your browser.",
       "icon": "fab fa-chrome",
-      "tags": ["Chrome Extension", "Salesforce", "Audit Logs"],
+      "tags": ["Chrome Extension", "Salesforce", "Productivity"],
       "github": "https://github.com/manaskumarbehera/sf-audit-extractor",
       "chromeStore": "https://chromewebstore.google.com/detail/trackforcepro/eombeiphccjbnndbabnkimdlkpaooipk",
       "featured": true,

@@ -14,6 +14,20 @@ The portfolio supports loading projects and Chrome extension data from:
 
 Set the following environment variables in Heroku or your hosting platform:
 
+#### `EXTENSION_USER_COUNTS` (Recommended for reliable user counts)
+
+Since Chrome Web Store scraping is unreliable (JavaScript-rendered content), you can manually set user counts:
+
+```bash
+# Heroku CLI example - Set manual user counts
+heroku config:set EXTENSION_USER_COUNTS='{"trackforcepro":150,"weeknumber":350,"metaforce":60}' --app manaskumarbehera
+```
+
+**Why use this?**
+- Chrome Web Store uses JavaScript rendering which makes scraping unreliable
+- Ensures your portfolio always shows accurate user counts
+- Update monthly or when you check your extension stats
+
 #### `PORTFOLIO_PROJECTS`
 JSON string containing all projects to display on the portfolio.
 
