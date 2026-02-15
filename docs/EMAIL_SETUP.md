@@ -10,34 +10,74 @@ This guide helps you configure email sending from your custom domain `web@manask
 - **Full control**: SPF, DKIM, DMARC authentication
 - **Best deliverability**: Emails won't go to spam
 
-### Mode B: Forward-Only Fallback
-- **Uses**: Your personal Gmail/Outlook account
-- **Sends As**: Your personal email
+### Mode B: Forward-Only Fallback (Current Setup)
+- **Uses**: Your personal Outlook account
+- **Sends As**: Your personal email (manaskumarbehera1@outlook.com)
 - **Reply-To**: `web@manaskumarbehera.com`
 - **Limitation**: Cannot truly send "from" your domain
 
 ---
 
-## 🎯 Quick Setup: Mode B (Forward-Only)
+## 🎯 Quick Setup: Outlook (CURRENT PRODUCTION CONFIG)
 
-If you want to keep Squarespace email forwarding and use your personal email for sending:
+Your portfolio is configured to use Outlook for sending emails:
 
-### Heroku Config Vars
+### Current Heroku Config Vars
 ```bash
-heroku config:set EMAIL_MODE=forward_only -a manaskumarbehera
-heroku config:set EMAIL_HOST=smtp.gmail.com -a manaskumarbehera
+heroku config:set EMAIL_MODE=smtp -a manaskumarbehera
+heroku config:set EMAIL_HOST=smtp.office365.com -a manaskumarbehera
 heroku config:set EMAIL_PORT=587 -a manaskumarbehera
+heroku config:set EMAIL_USER=manaskumarbehera1@outlook.com -a manaskumarbehera
+heroku config:set EMAIL_PASS=YOUR_OUTLOOK_APP_PASSWORD -a manaskumarbehera
+heroku config:set EMAIL_TO=manaskumarbehera1@outlook.com -a manaskumarbehera
+heroku config:set EMAIL_FROM=web@manaskumarbehera.com -a manaskumarbehera
+heroku config:set EMAIL_REPLY_TO_DOMAIN=web@manaskumarbehera.com -a manaskumarbehera
+```
+
+### ⚠️ IMPORTANT: Get Outlook App Password
+
+**You MUST use an App Password, NOT your regular Outlook password!**
+
+1. Go to [Microsoft Account Security](https://account.microsoft.com/security)
+2. Click **Advanced security options**
+3. Enable **Two-step verification** (if not already enabled)
+4. After enabling, scroll down to **App passwords**
+5. Click **Create a new app password**
+6. Name it "HerokuPortfolio" or similar
+7. Copy the generated password (it looks like: `abcd-efgh-ijkl-mnop`)
+8. Use that password in Heroku:
+
+```bash
+heroku config:set EMAIL_PASS=abcd-efgh-ijkl-mnop -a manaskumarbehera
+heroku restart -a manaskumarbehera
+```
+
+### 🧠 Why App Passwords?
+
+Modern email security doesn't allow raw passwords for third-party apps:
+- **Regular password** = Your login password (blocked for SMTP)
+- **App password** = A disposable, revocable token for apps
+
+Gmail requires App Passwords. Outlook requires App Passwords. This is security 101.
+
+---
+
+## 🔄 Alternative: Use Gmail Instead
+
+If you prefer Gmail:
+
+### Gmail Heroku Config
+```bash
+heroku config:set EMAIL_HOST=smtp.gmail.com -a manaskumarbehera
 heroku config:set EMAIL_USER=your-gmail@gmail.com -a manaskumarbehera
 heroku config:set EMAIL_PASS=xxxx-xxxx-xxxx-xxxx -a manaskumarbehera
-heroku config:set EMAIL_TO=manaskumarbehera1@outlook.com -a manaskumarbehera
-heroku config:set EMAIL_REPLY_TO_DOMAIN=web@manaskumarbehera.com -a manaskumarbehera
 ```
 
 ### Gmail App Password
 1. Go to [Google Account Security](https://myaccount.google.com/security)
-2. Enable 2-Step Verification
+2. Enable **2-Step Verification**
 3. Go to **App passwords**
-4. Generate new app password for "Mail"
+4. Select App: Mail, Device: Other (name it "HerokuPortfolio")
 5. Use the 16-character code as `EMAIL_PASS`
 
 ---
@@ -102,10 +142,10 @@ heroku config:set EMAIL_FROM=web@manaskumarbehera.com -a manaskumarbehera
 **Heroku Config**:
 ```bash
 heroku config:set EMAIL_MODE=smtp -a manaskumarbehera
-heroku config:set EMAIL_HOST=smtp-mail.outlook.com -a manaskumarbehera
+heroku config:set EMAIL_HOST=smtp.office365.com -a manaskumarbehera
 heroku config:set EMAIL_PORT=587 -a manaskumarbehera
 heroku config:set EMAIL_USER=web@manaskumarbehera.com -a manaskumarbehera
-heroku config:set EMAIL_PASS=your-password -a manaskumarbehera
+heroku config:set EMAIL_PASS=your-app-password -a manaskumarbehera
 heroku config:set EMAIL_TO=manaskumarbehera1@outlook.com -a manaskumarbehera
 heroku config:set EMAIL_FROM=web@manaskumarbehera.com -a manaskumarbehera
 ```
@@ -194,23 +234,47 @@ Use these tools:
 
 ## 🔧 Troubleshooting
 
+### ⚠️ Most Common Issue: Wrong Password Type
+
+**NEVER use your regular email password!**
+
+| Provider | App Password Required? | How to Get |
+|----------|----------------------|------------|
+| **Outlook** | ✅ YES | account.microsoft.com/security → App passwords |
+| **Gmail** | ✅ YES | myaccount.google.com/security → App passwords |
+| **Zoho** | ✅ YES | accounts.zoho.com → Security → App passwords |
+
 ### Gmail "Less secure app" Error
 - Gmail requires App Passwords for third-party apps
 - Enable 2FA, then create an App Password
+- Go to: myaccount.google.com/apppasswords
 
-### "535 Authentication Failed"
+### Outlook "535 Authentication Failed"
+- You're using your regular password instead of App Password
+- Go to: account.microsoft.com/security
+- Enable Two-step verification FIRST
+- Then create App Password
+- Use the generated password in EMAIL_PASS
+
+### "535 Authentication Failed" (General)
 - Wrong password or app password
-- Account may have blocked sign-in (check Gmail security alerts)
-- For Outlook: enable "Let apps use my account"
+- Account may have blocked sign-in (check security alerts)
+- For Outlook: Must enable Two-step verification before App Passwords work
+
+### Gmail vs Outlook SMTP Host Mismatch
+- If `EMAIL_HOST=smtp.gmail.com` → Use Gmail App Password
+- If `EMAIL_HOST=smtp.office365.com` → Use Outlook App Password
+- **DO NOT MIX THEM!**
 
 ### Port 465 vs 587
 - **Port 587**: TLS/STARTTLS (recommended)
 - **Port 465**: SSL (legacy, but still works)
-- Some providers only support one
+- Outlook uses 587, Gmail supports both
 
 ### "553 Invalid Sender"
 - You're trying to send "from" an email you don't control
 - In `forward_only` mode, use your actual email as sender
+- EMAIL_FROM must match a verified email on your SMTP account
 
 ### Emails Going to Spam
 1. Check SPF record is correct
@@ -221,8 +285,14 @@ Use these tools:
 
 ### "ECONNREFUSED"
 - Check EMAIL_HOST is correct
+- Outlook: Use `smtp.office365.com` (NOT `smtp-mail.outlook.com`)
 - Check firewall isn't blocking outbound SMTP
 - Try port 465 instead of 587 (or vice versa)
+
+### "ETIMEDOUT"
+- Network issue or wrong host
+- Heroku may have outbound SMTP blocked on some plans
+- Try the email health endpoint: `/api/email/health?verify=true`
 
 ---
 
@@ -231,10 +301,10 @@ Use these tools:
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `EMAIL_MODE` | Yes | `smtp` | `smtp` or `forward_only` |
-| `EMAIL_HOST` | Yes | - | SMTP server hostname |
+| `EMAIL_HOST` | Yes | - | SMTP server (`smtp.office365.com` for Outlook) |
 | `EMAIL_PORT` | Yes | `587` | SMTP port |
-| `EMAIL_USER` | Yes | - | SMTP username/email |
-| `EMAIL_PASS` | Yes | - | SMTP password |
+| `EMAIL_USER` | Yes | - | Your email address |
+| `EMAIL_PASS` | Yes | - | **App Password** (NOT regular password!) |
 | `EMAIL_TO` | Yes | - | Notification recipient |
 | `EMAIL_FROM` | No | Auto | From address |
 | `EMAIL_FROM_NAME` | No | `Manas` | Display name |
@@ -243,16 +313,21 @@ Use these tools:
 
 ---
 
-## 🎯 Recommended Setup
+## 🎯 Current Recommended Setup
 
-For the best experience, we recommend **Google Workspace** or **Zoho Mail**:
+You are using **Outlook (smtp.office365.com)**:
 
-1. **Cost**: Zoho has a free tier, Google Workspace starts at $6/month
-2. **Reliability**: Both have excellent deliverability
-3. **Features**: Calendar, Drive, etc. included
-4. **SPF/DKIM/DMARC**: Easy to set up
+```bash
+EMAIL_MODE=smtp
+EMAIL_HOST=smtp.office365.com
+EMAIL_PORT=587
+EMAIL_USER=manaskumarbehera1@outlook.com
+EMAIL_PASS=<YOUR_OUTLOOK_APP_PASSWORD>
+EMAIL_TO=manaskumarbehera1@outlook.com
+EMAIL_FROM=web@manaskumarbehera.com
+```
 
-If you want zero cost, use **Mode B (Forward-Only)** with Gmail App Password.
+For custom domain email, consider **Google Workspace** or **Zoho Mail**.
 
 ---
 

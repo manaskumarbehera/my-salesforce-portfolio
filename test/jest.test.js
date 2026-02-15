@@ -1242,8 +1242,8 @@ describe('📋 .env.example Email Tests', () => {
 
   test('should have provider examples', () => {
     expect(envExampleContent).toContain('Gmail');
-    expect(envExampleContent).toContain('Google Workspace');
     expect(envExampleContent).toContain('Outlook');
+    expect(envExampleContent).toContain('smtp.office365.com');
     expect(envExampleContent).toContain('Zoho');
   });
 });
