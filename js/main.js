@@ -440,68 +440,72 @@ function showNotification(type, message) {
 }
 
 // ============================================
-// Chatbot Functionality with Astratis AI
+// AI Chatbot with Multi-Provider Support
 // ============================================
 
 // Chatbot configuration
 const CHATBOT_CONFIG = {
-    botName: "Manas's Assistant",
-    welcomeMessage: "Hi there! 👋 I'm Manas's AI assistant. How can I help you learn about his work?",
-    useAstratisAI: true, // Set to true to use Astratis AI
-    typingDelay: 800
+    botName: "AI Assistant",
+    welcomeMessage: "Hi there! 👋 I'm Manas's AI assistant powered by advanced language models. Ask me anything about his Salesforce expertise, projects, or how to connect!",
+    useAstratisAI: true,
+    typingDelay: 600,
+    showSourceBadge: true // Show which AI provider responded
 };
 
-// Chatbot knowledge base (fallback when AI is not available)
+// Enhanced chatbot knowledge base (fallback when AI is not available)
 const chatbotKnowledge = {
-    greetings: ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'hola', 'howdy'],
-    skills: ['skills', 'expertise', 'technologies', 'tech stack', 'what can you do', 'programming', 'know'],
-    projects: ['projects', 'work', 'portfolio', 'built', 'created', 'developed', 'made'],
-    tools: ['tools', 'extensions', 'chrome', 'trackforce', 'metaforce', 'week number', 'extension'],
-    contact: ['contact', 'email', 'reach', 'hire', 'connect', 'linkedin', 'github', 'message'],
-    experience: ['experience', 'years', 'background', 'career', 'work history', 'job'],
-    salesforce: ['salesforce', 'apex', 'lwc', 'lightning', 'soql', 'trailblazer', 'crm', 'sfdc'],
-    help: ['help', 'support', 'assist', 'what can you', 'options', 'menu', '?'],
-    thanks: ['thank', 'thanks', 'appreciate', 'helpful', 'great', 'awesome'],
-    coffee: ['coffee', 'donate', 'support', 'buy me', 'tip', 'sponsor']
+    greetings: ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'hola', 'howdy', 'sup', 'yo'],
+    skills: ['skills', 'expertise', 'technologies', 'tech stack', 'what can you do', 'programming', 'know', 'capable'],
+    projects: ['projects', 'work', 'portfolio', 'built', 'created', 'developed', 'made', 'building'],
+    tools: ['tools', 'extensions', 'chrome', 'trackforce', 'metaforce', 'week number', 'extension', 'plugin'],
+    contact: ['contact', 'email', 'reach', 'hire', 'connect', 'linkedin', 'github', 'message', 'job'],
+    experience: ['experience', 'years', 'background', 'career', 'work history', 'job', 'company'],
+    salesforce: ['salesforce', 'apex', 'lwc', 'lightning', 'soql', 'trailblazer', 'crm', 'sfdc', 'trigger'],
+    help: ['help', 'support', 'assist', 'what can you', 'options', 'menu', '?', 'how to'],
+    thanks: ['thank', 'thanks', 'appreciate', 'helpful', 'great', 'awesome', 'amazing'],
+    coffee: ['coffee', 'donate', 'support', 'buy me', 'tip', 'sponsor', 'pay'],
+    pricing: ['price', 'cost', 'free', 'premium', 'pay', 'subscription', 'money'],
+    about: ['who', 'about', 'manas', 'yourself', 'introduce']
 };
 
 const chatbotResponses = {
     greetings: [
-        "Hi there! 👋 I'm Manas's virtual assistant. How can I help you today?",
+        "Hi there! 👋 I'm Manas's AI assistant. How can I help you today?",
         "Hello! Welcome to Manas's portfolio. Feel free to ask me anything about his work!",
         "Hey! 😊 Great to see you here. What would you like to know about Manas?"
     ],
     skills: [
-        "Manas is a skilled <strong>Salesforce Developer</strong> with expertise in:<br><br>" +
-        "☁️ <strong>Salesforce:</strong> Apex, LWC, Visualforce, SOQL/SOSL, Triggers, Batch Apex<br>" +
-        "🔗 <strong>APIs:</strong> REST, SOAP, Tooling API, GraphQL<br>" +
+        "Manas is a skilled <strong>Salesforce Developer & Architect</strong> with expertise in:<br><br>" +
+        "☁️ <strong>Salesforce:</strong> Apex, LWC, Visualforce, SOQL/SOSL, Triggers, Batch Apex, Flow Builder<br>" +
+        "🔗 <strong>APIs:</strong> REST, SOAP, Tooling API, GraphQL, Bulk API<br>" +
         "💻 <strong>Frontend:</strong> JavaScript, HTML5, CSS3, React, Chrome Extensions<br>" +
-        "🔧 <strong>DevOps:</strong> Git, Copado, AutoRABIT, CI/CD<br>" +
-        "☁️ <strong>Cloud:</strong> Heroku, Azure, Node.js<br><br>" +
+        "🔧 <strong>DevOps:</strong> Git, Copado, AutoRABIT, GitHub Actions, CI/CD<br>" +
+        "☁️ <strong>Cloud:</strong> Heroku, Azure, Node.js, Express<br>" +
+        "🔌 <strong>Integration:</strong> Genesys CTI, Auth0, Azure AD<br><br>" +
         "Want to know more about a specific skill?"
     ],
     projects: [
         "Manas has built several awesome projects! Here are the highlights:<br><br>" +
-        "🔹 <strong>TrackForce Pro</strong> - Chrome extension for Salesforce audit trail analysis<br>" +
+        "🔹 <strong>TrackForce Pro</strong> - Ultimate productivity toolkit for Salesforce Admins & Developers<br>" +
         "🔹 <strong>MetaForce</strong> - Salesforce metadata management extension<br>" +
         "🔹 <strong>Week Number</strong> - Simple week number display extension<br>" +
-        "🔹 <strong>This Portfolio</strong> - Built with Bootstrap & Node.js<br><br>" +
-        "All projects are <strong>100% free and open-source</strong>! Check out the Projects section for more details."
+        "🔹 <strong>This Portfolio</strong> - Built with Bootstrap, Node.js & AI chatbot<br><br>" +
+        "All projects are <strong>100% free and open-source</strong>! 🎉"
     ],
     tools: [
         "Manas has created several <strong>free Chrome extensions</strong> for the Salesforce community:<br><br>" +
-        "🛡️ <strong>TrackForce Pro</strong> - Extract and analyze Salesforce audit trails<br>" +
+        "🛡️ <strong>TrackForce Pro</strong> - Audit, query building, data exploration & monitoring tools<br>" +
         "📊 <strong>MetaForce</strong> - Manage Salesforce metadata efficiently<br>" +
         "📅 <strong>Week Number</strong> - Display current week number<br><br>" +
-        "All available on the Chrome Web Store! Would you like links to install them?"
+        "All available on the Chrome Web Store - <strong>completely FREE!</strong>"
     ],
     contact: [
         "You can reach Manas through:<br><br>" +
-        "📧 <strong>Email:</strong> behera.manas98@gmail.com<br>" +
+        "📧 <strong>Email:</strong> web@manaskumarbehera.com<br>" +
         "💼 <strong>LinkedIn:</strong> <a href='https://linkedin.com/in/manas-behera-68607547' target='_blank'>Connect on LinkedIn</a><br>" +
         "💻 <strong>GitHub:</strong> <a href='https://github.com/manaskumarbehera' target='_blank'>View GitHub Profile</a><br>" +
         "🌟 <strong>Trailblazer:</strong> <a href='https://salesforce.com/trailblazer/manasbehera1990' target='_blank'>View Trailblazer</a><br><br>" +
-        "Feel free to connect for collaborations or projects!"
+        "He's available for collaborations and Salesforce projects!"
     ],
     experience: [
         "Manas is an experienced <strong>Salesforce Developer & Architect</strong> with expertise in:<br><br>" +
@@ -514,26 +518,42 @@ const chatbotResponses = {
     ],
     salesforce: [
         "Manas specializes in the <strong>Salesforce ecosystem</strong>:<br><br>" +
-        "⚡ <strong>Development:</strong> Apex, LWC, Visualforce, Aura Components<br>" +
-        "🔍 <strong>Queries:</strong> SOQL, SOSL, GraphQL API<br>" +
+        "⚡ <strong>Development:</strong> Apex, LWC, Visualforce, Aura, Flows<br>" +
+        "🔍 <strong>Data:</strong> SOQL, SOSL, GraphQL API, Bulk API<br>" +
         "🔗 <strong>Integration:</strong> REST API, SOAP API, Tooling API<br>" +
         "🎯 <strong>CTI:</strong> Genesys integration with Salesforce<br>" +
-        "🛠️ <strong>Tools:</strong> SFDX, VS Code, Developer Console<br><br>" +
+        "🛠️ <strong>Tools:</strong> SFDX, VS Code, Copado, AutoRABIT<br><br>" +
         "Check out his Trailblazer profile for certifications!"
+    ],
+    pricing: [
+        "Great news! 🎉 <strong>All of Manas's tools are 100% FREE!</strong><br><br>" +
+        "✅ TrackForce Pro - FREE<br>" +
+        "✅ MetaForce - FREE<br>" +
+        "✅ Week Number - FREE<br><br>" +
+        "No premium versions, no subscriptions - just free tools for the community!<br><br>" +
+        "If they help you, consider <a href='https://buymeacoffee.com/manaskumarbehera' target='_blank'>buying him a coffee</a> ☕"
+    ],
+    about: [
+        "Manas Kumar Behera is a <strong>Salesforce Developer & Architect</strong> passionate about building free, open-source tools.<br><br>" +
+        "🎯 <strong>Focus:</strong> Helping developers work smarter<br>" +
+        "🔧 <strong>Created:</strong> 3+ Chrome extensions with hundreds of users<br>" +
+        "💡 <strong>Philosophy:</strong> Free tools for everyone<br><br>" +
+        "Want to know about his skills, projects, or get in touch?"
     ],
     help: [
         "I can help you with:<br><br>" +
-        "💼 <strong>Skills</strong> - Learn about Manas's technical expertise<br>" +
-        "🚀 <strong>Projects</strong> - Explore his portfolio and Chrome extensions<br>" +
-        "🔧 <strong>Tools</strong> - Discover free Salesforce tools he's built<br>" +
-        "📧 <strong>Contact</strong> - Get in touch with Manas<br>" +
-        "☁️ <strong>Salesforce</strong> - His Salesforce expertise<br><br>" +
-        "Just type your question or click a button below!"
+        "💼 <strong>Skills</strong> - Technical expertise & technologies<br>" +
+        "🚀 <strong>Projects</strong> - Portfolio & Chrome extensions<br>" +
+        "🔧 <strong>Tools</strong> - Free Salesforce tools<br>" +
+        "📧 <strong>Contact</strong> - How to reach Manas<br>" +
+        "☁️ <strong>Salesforce</strong> - SF expertise<br>" +
+        "💰 <strong>Pricing</strong> - Spoiler: Everything is FREE!<br><br>" +
+        "Just type your question!"
     ],
     thanks: [
         "You're welcome! 😊 Is there anything else you'd like to know?",
-        "Happy to help! Feel free to ask more questions or explore the portfolio.",
-        "Glad I could assist! Don't forget to check out the free Chrome extensions! 🚀"
+        "Happy to help! Feel free to explore the portfolio or try the free Chrome extensions!",
+        "Glad I could assist! Don't forget to check out TrackForce Pro - it's free! 🚀"
     ],
     coffee: [
         "That's so kind! ☕ If Manas's tools have helped you, you can support his work:<br><br>" +
@@ -541,18 +561,20 @@ const chatbotResponses = {
         "Your support helps keep these tools free for everyone! 💙"
     ],
     default: [
-        "I'm not sure I understood that. Could you try rephrasing? Or click one of the buttons below to learn about specific topics!",
-        "Hmm, I didn't quite catch that. Try clicking a button below or ask about Manas's projects, skills, or contact info!",
-        "I'm still learning! Try clicking a topic button or ask about 'projects', 'skills', or 'contact'."
+        "I'm not sure I understood that. Try asking about <strong>skills</strong>, <strong>projects</strong>, <strong>tools</strong>, or <strong>contact</strong>!",
+        "Hmm, I didn't quite catch that. Try asking about Manas's Salesforce expertise or Chrome extensions!",
+        "I can help you learn about Manas's work. Try asking: 'What are your skills?' or 'Tell me about your projects'"
     ]
 };
 
-// Quick reply options
+// Quick reply options - More options for better UX
 const quickReplies = [
-    { text: "👨‍💻 Skills", query: "skills" },
-    { text: "🚀 Projects", query: "projects" },
-    { text: "🔧 Tools", query: "tools" },
-    { text: "📧 Contact", query: "contact" }
+    { text: "👨‍💻 Skills", query: "What are your technical skills?" },
+    { text: "🚀 Projects", query: "Show me your projects" },
+    { text: "🔧 Extensions", query: "Tell me about your Chrome extensions" },
+    { text: "☁️ Salesforce", query: "What's your Salesforce expertise?" },
+    { text: "📧 Contact", query: "How can I contact you?" },
+    { text: "💰 Pricing", query: "Are your tools free?" }
 ];
 
 // Initialize chatbot
@@ -643,7 +665,7 @@ async function sendChatMessage() {
     showTypingIndicator();
 
     try {
-        // Try server-side AI first
+        // Try server-side AI first (supports OpenAI, Anthropic, Astratis)
         const serverResponse = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -654,7 +676,15 @@ async function sendChatMessage() {
             const data = await serverResponse.json();
             if (data.success && data.response) {
                 removeTypingIndicator();
-                addBotMessage(data.response);
+                // Convert markdown-style formatting to HTML
+                let formattedResponse = formatAIResponse(data.response);
+                // Add source badge if enabled
+                const sourceBadge = CHATBOT_CONFIG.showSourceBadge && data.source ?
+                    `<div class="ai-source-badge">${getSourceLabel(data.source)}</div>` : '';
+                addBotMessage(formattedResponse + sourceBadge);
+
+                // Track AI source
+                trackEvent('chatbot_ai_response', { source: data.source, intent: data.intent });
                 return;
             }
         }
@@ -668,7 +698,7 @@ async function sendChatMessage() {
             const aiResponse = await window.astratis.chat(message);
             if (aiResponse) {
                 removeTypingIndicator();
-                addBotMessage(aiResponse);
+                addBotMessage(formatAIResponse(aiResponse));
                 return;
             }
         } catch (astratisError) {
@@ -778,6 +808,39 @@ function showTypingIndicator() {
 function removeTypingIndicator() {
     const indicator = document.getElementById('typingIndicator');
     if (indicator) indicator.remove();
+}
+
+// Format AI response - convert markdown to HTML
+function formatAIResponse(text) {
+    if (!text) return '';
+
+    return text
+        // Bold: **text** or __text__
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/__(.*?)__/g, '<strong>$1</strong>')
+        // Italic: *text* or _text_
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+        .replace(/_([^_]+)_/g, '<em>$1</em>')
+        // Line breaks
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>')
+        // Links: [text](url)
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+        // Lists with bullets
+        .replace(/^- (.*)/gm, '• $1')
+        .replace(/^\* (.*)/gm, '• $1');
+}
+
+// Get human-readable label for AI source
+function getSourceLabel(source) {
+    const labels = {
+        'openai': '🤖 GPT',
+        'anthropic': '🧠 Claude',
+        'astratis': '✨ Astratis',
+        'astratis-ai': '✨ Astratis',
+        'local': '💡 Local AI'
+    };
+    return labels[source] || source;
 }
 
 // Get local response based on user input (fallback)

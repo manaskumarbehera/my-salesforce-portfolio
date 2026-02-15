@@ -485,11 +485,6 @@ body {
     color: #666;
 }
 
-.tool-features li i {
-    color: var(--primary-color);
-    margin-right: 0.5rem;
-}
-
 /* Contact Section */
 .contact-item {
     padding: 2rem;
@@ -1977,3 +1972,95 @@ body {
         padding: 0.2rem 0.4rem;
     }
 }
+
+/* ============================================
+   AI Chatbot Enhancements
+   ============================================ */
+
+/* AI Source Badge */
+.ai-source-badge {
+    display: inline-block;
+    margin-top: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    background: linear-gradient(135deg, #f0f7ff 0%, #e8f4fc 100%);
+    border: 1px solid rgba(0, 161, 224, 0.2);
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+    opacity: 0.8;
+}
+
+/* Enhanced Quick Replies */
+.quick-replies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.quick-reply-btn {
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--dark-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.quick-reply-btn:hover {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 161, 224, 0.3);
+}
+
+.quick-reply-btn:active {
+    transform: translateY(0);
+}
+
+/* Enhanced chat message content for markdown */
+.chat-message-content strong {
+    color: var(--secondary-color);
+    font-weight: 600;
+}
+
+.chat-message-content em {
+    font-style: italic;
+    color: #64748b;
+}
+
+.chat-message-content a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.chat-message-content a:hover {
+    text-decoration: underline;
+}
+
+/* Mobile quick replies */
+@media (max-width: 576px) {
+    .quick-replies {
+        gap: 0.35rem;
+    }
+
+    .quick-reply-btn {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    .ai-source-badge {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.5rem;
+    }
+}
+

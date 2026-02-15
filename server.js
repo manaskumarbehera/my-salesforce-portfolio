@@ -222,102 +222,410 @@ app.get('/api/email/health', async (req, res) => {
 const recommendationsFile = path.join(__dirname, 'recommendations.json');
 
 // ============================================
-// AI Chatbot API with Astratis Integration
+// AI Chatbot API with Multiple AI Providers
 // ============================================
+
+// AI Provider Configuration
+const AI_CONFIG = {
+    openaiKey: process.env.OPENAI_API_KEY || '',
+    anthropicKey: process.env.ANTHROPIC_API_KEY || '',
+    astratisKey: ASTRATIS_API_KEY,
+    preferredProvider: process.env.AI_PROVIDER || 'auto' // 'openai', 'anthropic', 'astratis', 'auto'
+};
 
 // Portfolio context for AI responses
 const PORTFOLIO_CONTEXT = {
     name: "Manas Kumar Behera",
     title: "Salesforce Developer & Architect",
-    email: "behera.manas98@gmail.com",
+    email: "web@manaskumarbehera.com",
+    website: "https://www.manaskumarbehera.com",
     linkedin: "https://linkedin.com/in/manas-behera-68607547",
     github: "https://github.com/manaskumarbehera",
     trailblazer: "https://salesforce.com/trailblazer/manasbehera1990",
-    skills: [
-        "Apex", "LWC", "Visualforce", "SOQL/SOSL", "Triggers", "Batch Apex",
-        "REST API", "SOAP API", "Tooling API", "GraphQL API",
-        "JavaScript", "HTML5", "CSS3", "React", "Node.js",
-        "Git", "Copado", "AutoRABIT", "CI/CD", "Heroku", "Azure"
-    ],
+    buyMeCoffee: "https://buymeacoffee.com/manaskumarbehera",
+    skills: {
+        salesforce: ["Apex", "LWC", "Visualforce", "SOQL/SOSL", "Triggers", "Batch Apex", "Flow Builder"],
+        apis: ["REST API", "SOAP API", "Tooling API", "GraphQL API", "Bulk API"],
+        frontend: ["JavaScript", "HTML5", "CSS3", "React", "Chrome Extensions", "Bootstrap"],
+        devops: ["Git", "Copado", "AutoRABIT", "CI/CD", "GitHub Actions", "SFDX"],
+        cloud: ["Heroku", "Azure", "Node.js", "Express.js"],
+        integrations: ["Genesys CTI", "Auth0", "Azure AD"]
+    },
     projects: [
-        { name: "TrackForce Pro", desc: "Chrome extension for Salesforce audit trail analysis" },
-        { name: "MetaForce", desc: "Salesforce metadata management extension" },
-        { name: "Week Number", desc: "Simple week number display extension" }
+        {
+            name: "TrackForce Pro",
+            desc: "Ultimate productivity toolkit for Salesforce Admins and Developers with audit, query building, data exploration, and monitoring tools",
+            type: "Chrome Extension",
+            url: "https://chromewebstore.google.com/detail/trackforcepro/eombeiphccjbnndbabnkimdlkpaooipk"
+        },
+        {
+            name: "MetaForce",
+            desc: "Salesforce metadata management and browser extension",
+            type: "Chrome Extension",
+            url: "https://chromewebstore.google.com/detail/metaforce/hclbblgimnkmlmnkekmbclfemhdgmjep"
+        },
+        {
+            name: "Week Number",
+            desc: "Simple and elegant week number display extension",
+            type: "Chrome Extension",
+            url: "https://chromewebstore.google.com/detail/week-number/hjbeeopedbnpahgbkndkemigkcellibm"
+        },
+        {
+            name: "Portfolio Website",
+            desc: "This professional portfolio built with Node.js, Express, and Bootstrap",
+            type: "Web Application",
+            url: "https://www.manaskumarbehera.com"
+        }
     ],
-    focus: "Building free and open-source tools for the Salesforce developer community"
+    focus: "Building free and open-source tools for the Salesforce developer community",
+    openSource: true,
+    availableForHire: true
 };
 
-// AI Chat endpoint
+// System prompt for AI providers
+const SYSTEM_PROMPT = `You are a friendly and helpful AI assistant for ${PORTFOLIO_CONTEXT.name}'s portfolio website (${PORTFOLIO_CONTEXT.website}).
+
+ABOUT ${PORTFOLIO_CONTEXT.name.toUpperCase()}:
+- Title: ${PORTFOLIO_CONTEXT.title}
+- Focus: ${PORTFOLIO_CONTEXT.focus}
+- All tools are FREE and open-source
+
+SKILLS:
+- Salesforce: ${PORTFOLIO_CONTEXT.skills.salesforce.join(', ')}
+- APIs: ${PORTFOLIO_CONTEXT.skills.apis.join(', ')}
+- Frontend: ${PORTFOLIO_CONTEXT.skills.frontend.join(', ')}
+- DevOps: ${PORTFOLIO_CONTEXT.skills.devops.join(', ')}
+- Cloud: ${PORTFOLIO_CONTEXT.skills.cloud.join(', ')}
+
+PROJECTS:
+${PORTFOLIO_CONTEXT.projects.map(p => `- ${p.name}: ${p.desc} (${p.type})`).join('\n')}
+
+CONTACT:
+- Email: ${PORTFOLIO_CONTEXT.email}
+- LinkedIn: ${PORTFOLIO_CONTEXT.linkedin}
+- GitHub: ${PORTFOLIO_CONTEXT.github}
+- Support: ${PORTFOLIO_CONTEXT.buyMeCoffee}
+
+GUIDELINES:
+1. Be friendly, concise, and helpful
+2. Answer questions about skills, projects, and experience
+3. For hiring inquiries, mention he's available and provide contact info
+4. For off-topic questions, politely redirect to portfolio topics
+5. Encourage visitors to try the free Chrome extensions
+6. Keep responses under 200 words unless more detail is needed
+7. Use emojis sparingly to be friendly but professional
+8. If asked about pricing, emphasize all tools are FREE`;
+
+// Try OpenAI API
+async function tryOpenAI(message) {
+    if (!AI_CONFIG.openaiKey) return null;
+
+    try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${AI_CONFIG.openaiKey}`
+            },
+            body: JSON.stringify({
+                model: process.env.OPENAI_MODEL || 'gpt-3.5-turbo',
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    { role: 'user', content: message }
+                ],
+                max_tokens: 500,
+                temperature: 0.7
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return {
+                response: data.choices[0].message.content,
+                source: 'openai',
+                model: data.model
+            };
+        }
+    } catch (error) {
+        console.log('OpenAI error:', error.message);
+    }
+    return null;
+}
+
+// Try Anthropic Claude API
+async function tryAnthropic(message) {
+    if (!AI_CONFIG.anthropicKey) return null;
+
+    try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': AI_CONFIG.anthropicKey,
+                'anthropic-version': '2023-06-01'
+            },
+            body: JSON.stringify({
+                model: process.env.ANTHROPIC_MODEL || 'claude-3-haiku-20240307',
+                max_tokens: 500,
+                system: SYSTEM_PROMPT,
+                messages: [
+                    { role: 'user', content: message }
+                ]
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return {
+                response: data.content[0].text,
+                source: 'anthropic',
+                model: data.model
+            };
+        }
+    } catch (error) {
+        console.log('Anthropic error:', error.message);
+    }
+    return null;
+}
+
+// Try Astratis AI
+async function tryAstratis(message) {
+    if (!AI_CONFIG.astratisKey) return null;
+
+    try {
+        const response = await fetch('https://api.astratis.io/v1/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${AI_CONFIG.astratisKey}`
+            },
+            body: JSON.stringify({
+                message: message,
+                context: PORTFOLIO_CONTEXT,
+                systemPrompt: SYSTEM_PROMPT
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return {
+                response: data.response,
+                source: 'astratis'
+            };
+        }
+    } catch (error) {
+        console.log('Astratis error:', error.message);
+    }
+    return null;
+}
+
+// Enhanced local response generator with NLP-like matching
+function getSmartLocalResponse(message) {
+    const msg = message.toLowerCase().trim();
+
+    // Intent detection with weighted keywords
+    const intents = {
+        greeting: {
+            keywords: ['hi', 'hello', 'hey', 'howdy', 'hola', 'good morning', 'good afternoon', 'good evening', 'whats up', "what's up"],
+            weight: 1
+        },
+        skills: {
+            keywords: ['skill', 'expertise', 'know', 'experience', 'capable', 'technology', 'tech stack', 'programming', 'language', 'framework'],
+            weight: 1
+        },
+        projects: {
+            keywords: ['project', 'portfolio', 'built', 'created', 'developed', 'work', 'made', 'build'],
+            weight: 1
+        },
+        extensions: {
+            keywords: ['extension', 'chrome', 'trackforce', 'metaforce', 'week number', 'tool', 'plugin', 'addon'],
+            weight: 1.5
+        },
+        contact: {
+            keywords: ['contact', 'email', 'reach', 'hire', 'connect', 'linkedin', 'github', 'message', 'talk'],
+            weight: 1
+        },
+        salesforce: {
+            keywords: ['salesforce', 'apex', 'lwc', 'lightning', 'soql', 'trigger', 'visualforce', 'trailblazer', 'sfdc', 'crm'],
+            weight: 1.2
+        },
+        pricing: {
+            keywords: ['price', 'cost', 'pay', 'free', 'premium', 'subscription', 'license', 'money'],
+            weight: 1.5
+        },
+        help: {
+            keywords: ['help', 'assist', 'support', 'what can you', 'options', 'menu', 'how to'],
+            weight: 0.8
+        },
+        thanks: {
+            keywords: ['thank', 'thanks', 'appreciate', 'helpful', 'great', 'awesome', 'amazing'],
+            weight: 1
+        },
+        coffee: {
+            keywords: ['coffee', 'donate', 'support', 'sponsor', 'tip', 'buy me'],
+            weight: 1.5
+        },
+        about: {
+            keywords: ['who', 'about', 'tell me about', 'introduce', 'yourself', 'manas'],
+            weight: 1
+        }
+    };
+
+    // Score each intent
+    let bestIntent = 'help';
+    let bestScore = 0;
+
+    for (const [intent, config] of Object.entries(intents)) {
+        let score = 0;
+        for (const keyword of config.keywords) {
+            if (msg.includes(keyword)) {
+                score += config.weight;
+            }
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            bestIntent = intent;
+        }
+    }
+
+    // Generate response based on intent
+    const responses = {
+        greeting: `Hi there! 👋 I'm ${PORTFOLIO_CONTEXT.name}'s AI assistant. I can help you learn about his Salesforce expertise, projects, Chrome extensions, or how to get in touch. What would you like to know?`,
+
+        skills: `${PORTFOLIO_CONTEXT.name} is a **${PORTFOLIO_CONTEXT.title}** with expertise in:\n\n` +
+            `☁️ **Salesforce:** ${PORTFOLIO_CONTEXT.skills.salesforce.slice(0, 5).join(', ')}\n` +
+            `🔗 **APIs:** ${PORTFOLIO_CONTEXT.skills.apis.slice(0, 4).join(', ')}\n` +
+            `💻 **Frontend:** ${PORTFOLIO_CONTEXT.skills.frontend.slice(0, 4).join(', ')}\n` +
+            `🔧 **DevOps:** ${PORTFOLIO_CONTEXT.skills.devops.slice(0, 4).join(', ')}\n\n` +
+            `Ask about any specific skill for more details!`,
+
+        projects: `Here are ${PORTFOLIO_CONTEXT.name}'s featured projects:\n\n` +
+            PORTFOLIO_CONTEXT.projects.map(p => `🔹 **${p.name}** - ${p.desc}`).join('\n\n') +
+            `\n\nAll projects are **100% free and open-source**! 🎉`,
+
+        extensions: `${PORTFOLIO_CONTEXT.name} has built **free Chrome extensions** for Salesforce developers:\n\n` +
+            `🛡️ **TrackForce Pro** - Productivity toolkit with audit, query building & monitoring\n` +
+            `📊 **MetaForce** - Salesforce metadata management\n` +
+            `📅 **Week Number** - Simple week number display\n\n` +
+            `All available on the Chrome Web Store - completely FREE! Would you like installation links?`,
+
+        contact: `You can reach ${PORTFOLIO_CONTEXT.name} through:\n\n` +
+            `📧 **Email:** ${PORTFOLIO_CONTEXT.email}\n` +
+            `💼 **LinkedIn:** ${PORTFOLIO_CONTEXT.linkedin}\n` +
+            `💻 **GitHub:** ${PORTFOLIO_CONTEXT.github}\n` +
+            `🌟 **Trailblazer:** ${PORTFOLIO_CONTEXT.trailblazer}\n\n` +
+            `He's available for collaborations and Salesforce projects!`,
+
+        salesforce: `${PORTFOLIO_CONTEXT.name} is a **Salesforce expert** specializing in:\n\n` +
+            `⚡ **Development:** Apex, LWC, Visualforce, Triggers\n` +
+            `🔍 **Data:** SOQL, SOSL, GraphQL API, Bulk API\n` +
+            `🔗 **Integration:** REST/SOAP APIs, Genesys CTI, Auth0\n` +
+            `🛠️ **DevOps:** Copado, AutoRABIT, SFDX, CI/CD\n\n` +
+            `Check out his Trailblazer profile for certifications!`,
+
+        pricing: `Great news! 🎉 **All of ${PORTFOLIO_CONTEXT.name}'s tools are 100% FREE!**\n\n` +
+            `This includes:\n` +
+            `✅ TrackForce Pro\n` +
+            `✅ MetaForce\n` +
+            `✅ Week Number\n\n` +
+            `No premium versions, no subscriptions - just free tools for the community!\n\n` +
+            `If they help you, consider supporting via Buy Me a Coffee ☕`,
+
+        help: `I can help you with:\n\n` +
+            `💼 **Skills** - Technical expertise & technologies\n` +
+            `🚀 **Projects** - Portfolio & Chrome extensions\n` +
+            `☁️ **Salesforce** - SF-specific expertise\n` +
+            `📧 **Contact** - How to reach ${PORTFOLIO_CONTEXT.name}\n` +
+            `💰 **Pricing** - Spoiler: Everything is FREE!\n\n` +
+            `Just type your question or topic!`,
+
+        thanks: `You're welcome! 😊 Is there anything else you'd like to know about ${PORTFOLIO_CONTEXT.name}'s work? Feel free to explore the portfolio or try the free Chrome extensions!`,
+
+        coffee: `That's so thoughtful! ☕\n\nIf ${PORTFOLIO_CONTEXT.name}'s tools have helped you, you can support his work:\n\n` +
+            `👉 **[Buy Me a Coffee](${PORTFOLIO_CONTEXT.buyMeCoffee})**\n\n` +
+            `Your support helps keep these tools free for everyone! 💙`,
+
+        about: `${PORTFOLIO_CONTEXT.name} is a **${PORTFOLIO_CONTEXT.title}** passionate about ${PORTFOLIO_CONTEXT.focus}.\n\n` +
+            `🎯 **Focus:** Building free, open-source Salesforce tools\n` +
+            `🔧 **Created:** 3+ Chrome extensions with hundreds of users\n` +
+            `💡 **Philosophy:** Help developers work smarter, not harder\n\n` +
+            `Want to know about his skills, projects, or get in touch?`
+    };
+
+    return {
+        response: responses[bestIntent] || responses.help,
+        source: 'local',
+        intent: bestIntent
+    };
+}
+
+// AI Chat endpoint with multi-provider support
 app.post('/api/chat', async (req, res) => {
-    const { message } = req.body;
+    const { message, conversationId } = req.body;
 
     if (!message) {
         return res.status(400).json({ success: false, message: 'Message is required' });
     }
 
-    try {
-        // Try Astratis AI if available
-        if (ASTRATIS_API_KEY) {
-            try {
-                const aiResponse = await fetch('https://api.astratis.io/v1/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${ASTRATIS_API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        message: message,
-                        context: PORTFOLIO_CONTEXT,
-                        systemPrompt: `You are a helpful AI assistant for ${PORTFOLIO_CONTEXT.name}'s portfolio website. 
-                        Answer questions about their skills, projects, and experience as a Salesforce Developer.
-                        Be friendly, concise, and helpful. If asked about topics outside the portfolio, 
-                        politely redirect to portfolio-related topics.`
-                    })
-                });
+    // Log chat for analytics (no PII)
+    console.log(`💬 Chat: "${message.substring(0, 50)}..." at ${new Date().toISOString()}`);
 
-                if (aiResponse.ok) {
-                    const data = await aiResponse.json();
-                    return res.json({
-                        success: true,
-                        response: data.response,
-                        source: 'astratis-ai'
-                    });
-                }
-            } catch (aiError) {
-                console.log('Astratis AI not available:', aiError.message);
-            }
+    try {
+        let result = null;
+        const provider = AI_CONFIG.preferredProvider;
+
+        // Try providers based on configuration
+        if (provider === 'openai' || provider === 'auto') {
+            result = await tryOpenAI(message);
         }
 
-        // Fallback to simple keyword-based responses
-        const response = getSimpleResponse(message.toLowerCase());
+        if (!result && (provider === 'anthropic' || provider === 'auto')) {
+            result = await tryAnthropic(message);
+        }
+
+        if (!result && (provider === 'astratis' || provider === 'auto')) {
+            result = await tryAstratis(message);
+        }
+
+        // Fallback to smart local response
+        if (!result) {
+            result = getSmartLocalResponse(message);
+        }
+
         res.json({
             success: true,
-            response: response,
-            source: 'local'
+            response: result.response,
+            source: result.source,
+            model: result.model || undefined,
+            intent: result.intent || undefined
         });
 
     } catch (error) {
         console.error('Chat API error:', error);
-        res.status(500).json({ success: false, message: 'Failed to process chat message' });
+        res.status(500).json({
+            success: false,
+            message: 'Failed to process chat message. Please try again.'
+        });
     }
 });
 
-// Simple keyword-based response generator (fallback)
-function getSimpleResponse(message) {
-    if (message.includes('skill') || message.includes('know') || message.includes('expertise')) {
-        return `${PORTFOLIO_CONTEXT.name} is skilled in: ${PORTFOLIO_CONTEXT.skills.slice(0, 8).join(', ')}, and more!`;
-    }
-    if (message.includes('project') || message.includes('built') || message.includes('created')) {
-        return PORTFOLIO_CONTEXT.projects.map(p => `• ${p.name}: ${p.desc}`).join('\n');
-    }
-    if (message.includes('contact') || message.includes('email') || message.includes('reach')) {
-        return `You can reach ${PORTFOLIO_CONTEXT.name} at ${PORTFOLIO_CONTEXT.email} or connect on LinkedIn!`;
-    }
-    if (message.includes('salesforce')) {
-        return `${PORTFOLIO_CONTEXT.name} specializes in Salesforce development including Apex, LWC, and API integrations.`;
-    }
-    return `I can help you learn about ${PORTFOLIO_CONTEXT.name}'s skills, projects, or how to get in touch. What would you like to know?`;
-}
+// Chat health/status endpoint
+app.get('/api/chat/status', (req, res) => {
+    res.json({
+        success: true,
+        providers: {
+            openai: !!AI_CONFIG.openaiKey,
+            anthropic: !!AI_CONFIG.anthropicKey,
+            astratis: !!AI_CONFIG.astratisKey,
+            local: true
+        },
+        preferredProvider: AI_CONFIG.preferredProvider,
+        portfolioContext: {
+            name: PORTFOLIO_CONTEXT.name,
+            projectCount: PORTFOLIO_CONTEXT.projects.length
+        }
+    });
+});
 
 // ============================================
 // Portfolio Configuration API

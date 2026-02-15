@@ -159,16 +159,43 @@ Set these in Heroku Config Vars:
 |----------|---------|--------|
 | `PORTFOLIO_PROJECTS` | Configure projects via env | JSON array |
 | `CHROME_EXTENSIONS` | Configure extensions via env | JSON array |
+| `EXTENSION_USER_COUNTS` | Manual user counts for extensions | JSON object |
 
 **See [PORTFOLIO_DATA.md](PORTFOLIO_DATA.md) for full configuration guide.**
 
+### 🤖 AI Chatbot Configuration
+| Variable | Purpose | Example |
+|----------|---------|---------|
+| `OPENAI_API_KEY` | OpenAI GPT API key | sk-... |
+| `OPENAI_MODEL` | OpenAI model to use | gpt-3.5-turbo |
+| `ANTHROPIC_API_KEY` | Anthropic Claude API key | sk-ant-... |
+| `ANTHROPIC_MODEL` | Anthropic model to use | claude-3-haiku-20240307 |
+| `AI_PROVIDER` | Preferred AI provider | auto, openai, anthropic, astratis |
+
+**AI Provider Priority (when `AI_PROVIDER=auto`):**
+1. OpenAI GPT (if `OPENAI_API_KEY` is set)
+2. Anthropic Claude (if `ANTHROPIC_API_KEY` is set)
+3. Astratis AI (if `ASTRATIS_URL` is set)
+4. Smart local fallback (always available)
+
 **Quick example:**
 ```bash
+# Use OpenAI for chatbot
+heroku config:set OPENAI_API_KEY=sk-your-api-key -a manaskumarbehera
+heroku config:set AI_PROVIDER=openai -a manaskumarbehera
+
+# Or use Anthropic Claude
+heroku config:set ANTHROPIC_API_KEY=sk-ant-your-key -a manaskumarbehera
+heroku config:set AI_PROVIDER=anthropic -a manaskumarbehera
+
 # Set projects
 heroku config:set PORTFOLIO_PROJECTS='[{"key":"myproject","name":"My Project","description":"Description","icon":"fas fa-code","tags":["Tag1"],"github":"https://github.com/...","featured":true}]' -a manaskumarbehera
 
 # Set Chrome extensions
 heroku config:set CHROME_EXTENSIONS='[{"key":"myext","id":"chrome-extension-id","name":"My Extension","storeUrl":"https://chromewebstore.google.com/..."}]' -a manaskumarbehera
+
+# Set extension user counts (manual override)
+heroku config:set EXTENSION_USER_COUNTS='{"trackforcepro":150,"weeknumber":350,"metaforce":60}' -a manaskumarbehera
 ```
 
 **Set a variable:**
