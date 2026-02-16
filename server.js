@@ -233,6 +233,13 @@ const AI_CONFIG = {
     preferredProvider: process.env.AI_PROVIDER || 'auto' // 'openai', 'anthropic', 'astratis', 'auto'
 };
 
+// Log AI configuration at startup
+console.log('🤖 AI Chatbot Configuration:');
+console.log(`   - Provider: ${AI_CONFIG.preferredProvider}`);
+console.log(`   - OpenAI: ${AI_CONFIG.openaiKey ? '✅ Configured' : '❌ Not configured'}`);
+console.log(`   - Anthropic: ${AI_CONFIG.anthropicKey ? '✅ Configured' : '❌ Not configured'}`);
+console.log(`   - Astratis: ${AI_CONFIG.astratisKey ? '✅ Configured' : '❌ Not configured'}`);
+
 // Portfolio context for AI responses
 const PORTFOLIO_CONTEXT = {
     name: "Manas Kumar Behera",
@@ -318,103 +325,112 @@ GUIDELINES:
 
 // Try OpenAI API
 async function tryOpenAI(message) {
-    if (!AI_CONFIG.openaiKey) return null;
+    if (!AI_CONFIG.openaiKey) {
+        console.log('⚠️ OpenAI: No API key configured');
+        return null;
+    }
 
     try {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
+        console.log('🤖 Trying OpenAI...');
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+            model: process.env.OPENAI_MODEL || 'gpt-3.5-turbo',
+            messages: [
+                { role: 'system', content: SYSTEM_PROMPT },
+                { role: 'user', content: message }
+            ],
+            max_tokens: 500,
+            temperature: 0.7
+        }, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${AI_CONFIG.openaiKey}`
             },
-            body: JSON.stringify({
-                model: process.env.OPENAI_MODEL || 'gpt-3.5-turbo',
-                messages: [
-                    { role: 'system', content: SYSTEM_PROMPT },
-                    { role: 'user', content: message }
-                ],
-                max_tokens: 500,
-                temperature: 0.7
-            })
+            timeout: 30000
         });
 
-        if (response.ok) {
-            const data = await response.json();
+        if (response.data && response.data.choices && response.data.choices[0]) {
+            console.log('✅ OpenAI response received');
             return {
-                response: data.choices[0].message.content,
+                response: response.data.choices[0].message.content,
                 source: 'openai',
-                model: data.model
+                model: response.data.model
             };
         }
     } catch (error) {
-        console.log('OpenAI error:', error.message);
+        console.log('❌ OpenAI error:', error.response?.data?.error?.message || error.message);
     }
     return null;
 }
 
 // Try Anthropic Claude API
 async function tryAnthropic(message) {
-    if (!AI_CONFIG.anthropicKey) return null;
+    if (!AI_CONFIG.anthropicKey) {
+        console.log('⚠️ Anthropic: No API key configured');
+        return null;
+    }
 
     try {
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
+        console.log('🧠 Trying Anthropic Claude...');
+        const response = await axios.post('https://api.anthropic.com/v1/messages', {
+            model: process.env.ANTHROPIC_MODEL || 'claude-3-haiku-20240307',
+            max_tokens: 500,
+            system: SYSTEM_PROMPT,
+            messages: [
+                { role: 'user', content: message }
+            ]
+        }, {
             headers: {
                 'Content-Type': 'application/json',
                 'x-api-key': AI_CONFIG.anthropicKey,
                 'anthropic-version': '2023-06-01'
             },
-            body: JSON.stringify({
-                model: process.env.ANTHROPIC_MODEL || 'claude-3-haiku-20240307',
-                max_tokens: 500,
-                system: SYSTEM_PROMPT,
-                messages: [
-                    { role: 'user', content: message }
-                ]
-            })
+            timeout: 30000
         });
 
-        if (response.ok) {
-            const data = await response.json();
+        if (response.data && response.data.content && response.data.content[0]) {
+            console.log('✅ Anthropic response received');
             return {
-                response: data.content[0].text,
+                response: response.data.content[0].text,
                 source: 'anthropic',
-                model: data.model
+                model: response.data.model
             };
         }
     } catch (error) {
-        console.log('Anthropic error:', error.message);
+        console.log('❌ Anthropic error:', error.response?.data?.error?.message || error.message);
     }
     return null;
 }
 
 // Try Astratis AI
 async function tryAstratis(message) {
-    if (!AI_CONFIG.astratisKey) return null;
+    if (!AI_CONFIG.astratisKey) {
+        console.log('⚠️ Astratis: No API key configured');
+        return null;
+    }
 
     try {
-        const response = await fetch('https://api.astratis.io/v1/chat', {
-            method: 'POST',
+        console.log('✨ Trying Astratis AI...');
+        const response = await axios.post('https://api.astratis.io/v1/chat', {
+            message: message,
+            context: PORTFOLIO_CONTEXT,
+            systemPrompt: SYSTEM_PROMPT
+        }, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${AI_CONFIG.astratisKey}`
             },
-            body: JSON.stringify({
-                message: message,
-                context: PORTFOLIO_CONTEXT,
-                systemPrompt: SYSTEM_PROMPT
-            })
+            timeout: 30000
         });
 
-        if (response.ok) {
-            const data = await response.json();
+        if (response.data && response.data.response) {
+            console.log('✅ Astratis response received');
             return {
-                response: data.response,
+                response: response.data.response,
                 source: 'astratis'
             };
         }
     } catch (error) {
-        console.log('Astratis error:', error.message);
+        console.log('❌ Astratis error:', error.response?.data?.error?.message || error.message);
     }
     return null;
 }
