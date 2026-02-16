@@ -70,10 +70,10 @@ app.use(helmet({
         directives: {
             defaultSrc: ["'self'"],
             styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.astratis.io"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
             imgSrc: ["'self'", "data:", "https:"],
             fontSrc: ["'self'", "https://cdnjs.cloudflare.com"],
-            connectSrc: ["'self'", "https://api.github.com", "https://api.astratis.io", "https://*.astratis.io"]
+            connectSrc: ["'self'", "https://api.github.com", "https://api.openai.com", "https://api.anthropic.com"]
         }
     }
 }));
