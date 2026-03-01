@@ -287,7 +287,7 @@ const PORTFOLIO_CONTEXT = {
             name: "Salesforce Label Converter",
             desc: "Full-stack tool to upload, edit, translate, and deploy Salesforce Custom Labels with CSV→XML conversion and direct Metadata API deployment",
             type: "Web Application",
-            url: "https://tools.manaskumarbehera.com"
+            url: "https://salesforce-utility-tool-app-40bf289886bc.herokuapp.com/"
         }
     ],
     focus: "Building free and open-source tools for the Salesforce developer community",

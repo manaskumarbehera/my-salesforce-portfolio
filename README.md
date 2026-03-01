@@ -76,7 +76,7 @@ A professional portfolio website showcasing Salesforce development projects, too
 - Direct Metadata API deployment to live orgs
 - Any Salesforce user can sign in — no Connected App setup needed
 - 86 tests, 100% code coverage
-- **Live:** [tools.manaskumarbehera.com](https://tools.manaskumarbehera.com)
+- **Live:** [salesforce-utility-tool-app-40bf289886bc.herokuapp.com](https://salesforce-utility-tool-app-40bf289886bc.herokuapp.com/)
 - **GitHub:** [salesforce-utility-tool-app](https://github.com/manaskumarbehera/salesforce-utility-tool-app)
 - Auto-caching (1 hour) to prevent rate limiting
 

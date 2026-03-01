@@ -232,7 +232,7 @@ const PROJECT_METADATA = {
     },
     'salesforce-utility-tool-app': {
         displayName: 'Salesforce Label Converter',
-        liveUrl: 'https://tools.manaskumarbehera.com',
+        liveUrl: 'https://salesforce-utility-tool-app-40bf289886bc.herokuapp.com/',
         type: 'web'
     }
 };
