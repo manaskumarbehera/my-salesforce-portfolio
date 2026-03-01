@@ -257,7 +257,7 @@ heroku config:unset PORTFOLIO_PROJECTS --app manaskumarbehera
   "icon": "fab fa-salesforce",
   "tags": ["Node.js", "Express", "Salesforce", "Metadata API"],
   "github": "https://github.com/manaskumarbehera/salesforce-utility-tool-app",
-  "live": "https://tools.manaskumarbehera.com",
+  "live": "",
   "featured": true
 }
 ```
