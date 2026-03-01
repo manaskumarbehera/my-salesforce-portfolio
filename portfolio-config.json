@@ -42,6 +42,16 @@
       "chromeStore": "https://chromewebstore.google.com/detail/metaforce/hclbblgimnkmlmnkekmbclfemhdgmjep",
       "featured": true,
       "extensionId": "hclbblgimnkmlmnkekmbclfemhdgmjep"
+    },
+    {
+      "key": "salesforce-label-converter",
+      "name": "Salesforce Label Converter",
+      "description": "Full-stack tool to upload, edit, translate, and deploy Salesforce Custom Labels. Any Salesforce user can sign in — no Connected App setup needed.",
+      "icon": "fab fa-salesforce",
+      "tags": ["Node.js", "Express", "Salesforce", "Metadata API"],
+      "github": "https://github.com/manaskumarbehera/salesforce-utility-tool-app",
+      "live": "https://tools.manaskumarbehera.com",
+      "featured": true
     }
   ],
   "chromeExtensions": [
@@ -68,8 +78,8 @@
     }
   ],
   "metadata": {
-    "lastUpdated": "2026-02-15",
-    "version": "1.0.0"
+    "lastUpdated": "2026-03-01",
+    "version": "1.1.0"
   }
 }
 

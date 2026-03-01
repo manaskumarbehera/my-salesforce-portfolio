@@ -4,6 +4,7 @@ Welcome to your Salesforce Developer Portfolio documentation!
 
 ## 🌟 What's New (2026)
 
+- **🛠️ Salesforce Label Converter** - Full-stack tool for Custom Labels (CSV→XML + Deploy)
 - **📧 Email System Upgrade** - Custom domain email support (SMTP/Forward modes)
 - **🤖 AI Chatbot** - Interactive assistant to answer visitor questions
 - **⭐ Recommendations System** - Collect and display testimonials

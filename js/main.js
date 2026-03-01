@@ -204,7 +204,8 @@ const INCLUDED_REPOS = [
     'my-salesforce-portfolio',  // My Portfolio Project
     'sf-audit-extractor',       // TrackForce Pro Chrome Extension
     'CurrentWeek',              // Week Number Chrome Extension
-    'MetaForce'                 // MetaForce Chrome Extension
+    'MetaForce',                // MetaForce Chrome Extension
+    'salesforce-utility-tool-app' // Salesforce Label Converter
 ];
 
 // Project metadata with live links and Chrome Web Store URLs
@@ -228,6 +229,11 @@ const PROJECT_METADATA = {
         displayName: 'MetaForce',
         storeUrl: 'https://chromewebstore.google.com/detail/metaforce/hclbblgimnkmlmnkekmbclfemhdgmjep',
         type: 'extension'
+    },
+    'salesforce-utility-tool-app': {
+        displayName: 'Salesforce Label Converter',
+        liveUrl: 'https://tools.manaskumarbehera.com',
+        type: 'web'
     }
 };
 

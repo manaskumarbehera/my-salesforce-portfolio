@@ -282,6 +282,12 @@ const PORTFOLIO_CONTEXT = {
             desc: "This professional portfolio built with Node.js, Express, and Bootstrap",
             type: "Web Application",
             url: "https://www.manaskumarbehera.com"
+        },
+        {
+            name: "Salesforce Label Converter",
+            desc: "Full-stack tool to upload, edit, translate, and deploy Salesforce Custom Labels with CSV→XML conversion and direct Metadata API deployment",
+            type: "Web Application",
+            url: "https://tools.manaskumarbehera.com"
         }
     ],
     focus: "Building free and open-source tools for the Salesforce developer community",

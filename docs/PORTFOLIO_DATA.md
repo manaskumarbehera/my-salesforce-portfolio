@@ -247,6 +247,27 @@ heroku config:unset PORTFOLIO_PROJECTS --app manaskumarbehera
 }
 ```
 
+### Example: Salesforce Label Converter
+
+```json
+{
+  "key": "salesforce-label-converter",
+  "name": "Salesforce Label Converter",
+  "description": "Full-stack tool to upload, edit, translate, and deploy Salesforce Custom Labels. Any Salesforce user can sign in — no Connected App setup needed.",
+  "icon": "fab fa-salesforce",
+  "tags": ["Node.js", "Express", "Salesforce", "Metadata API"],
+  "github": "https://github.com/manaskumarbehera/salesforce-utility-tool-app",
+  "live": "https://tools.manaskumarbehera.com",
+  "featured": true
+}
+```
+
+**Key Highlights:**
+- CSV → XML conversion with in-browser editing
+- Direct Metadata API deployment to live orgs
+- 86 tests, 100% code coverage
+- Glassmorphism UI with dark mode
+
 ### Step 2: Update Environment Variable
 
 Get current projects:

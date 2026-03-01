@@ -69,6 +69,15 @@ A professional portfolio website showcasing Salesforce development projects, too
   - **TrackForce Pro** - Audit trail analysis
   - **Week Number** - Week number display
   - **MetaForce** - Metadata management
+
+#### 🛠️ Salesforce Label Converter
+- Full-stack tool to upload, edit, translate, and deploy Salesforce Custom Labels
+- CSV → XML conversion with in-browser editing
+- Direct Metadata API deployment to live orgs
+- Any Salesforce user can sign in — no Connected App setup needed
+- 86 tests, 100% code coverage
+- **Live:** [tools.manaskumarbehera.com](https://tools.manaskumarbehera.com)
+- **GitHub:** [salesforce-utility-tool-app](https://github.com/manaskumarbehera/salesforce-utility-tool-app)
 - Auto-caching (1 hour) to prevent rate limiting
 
 #### 📈 Analytics Dashboard
