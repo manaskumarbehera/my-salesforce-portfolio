@@ -655,15 +655,24 @@ app.get('/api/chat/status', (req, res) => {
 
 // Load portfolio config from env or file
 function loadPortfolioConfig() {
-    let config = { projects: [], chromeExtensions: [], source: 'default' };
+    let config = { projects: [], chromeExtensions: [], githubUsername: '', source: 'default' };
 
     // Try environment variables first
     try {
+        // GitHub username from env
+        if (process.env.GITHUB_USERNAME) {
+            config.githubUsername = process.env.GITHUB_USERNAME;
+            console.log(`📦 GitHub Username: ${config.githubUsername}`);
+        }
+
+        // Projects from env - supports both JSON array and simplified format
         if (process.env.PORTFOLIO_PROJECTS) {
             config.projects = JSON.parse(process.env.PORTFOLIO_PROJECTS);
             config.source = 'env';
             console.log(`📦 Loaded ${config.projects.length} projects from PORTFOLIO_PROJECTS env`);
         }
+
+        // Chrome extensions from env
         if (process.env.CHROME_EXTENSIONS) {
             config.chromeExtensions = JSON.parse(process.env.CHROME_EXTENSIONS);
             config.source = 'env';
@@ -686,6 +695,9 @@ function loadPortfolioConfig() {
                 if (config.chromeExtensions.length === 0 && fileConfig.chromeExtensions) {
                     config.chromeExtensions = fileConfig.chromeExtensions;
                     console.log(`🔌 Loaded ${config.chromeExtensions.length} extensions from portfolio-config.json`);
+                }
+                if (!config.githubUsername && fileConfig.githubUsername) {
+                    config.githubUsername = fileConfig.githubUsername;
                 }
                 if (config.source === 'default') config.source = 'file';
             }

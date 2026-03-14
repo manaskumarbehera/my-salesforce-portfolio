@@ -194,50 +194,176 @@ window.addEventListener('scroll', () => {
 });
 
 // GitHub Repository Configuration
-const GITHUB_USERNAME = 'manaskumarbehera';
+// Now loaded dynamically from /api/portfolio/config
+let GITHUB_USERNAME = 'manaskumarbehera';
 
 // Set to false to temporarily hide the GitHub repos section
 const SHOW_GITHUB_REPOS = false;
 
-// Add the exact repo names you want to feature (leave empty to show all repos)
-const INCLUDED_REPOS = [
-    'my-salesforce-portfolio',  // My Portfolio Project
-    'sf-audit-extractor',       // TrackForce Pro Chrome Extension
-    'CurrentWeek',              // Week Number Chrome Extension
-    'MetaForce',                // MetaForce Chrome Extension
-    'salesforce-utility-tool-app' // Salesforce Label Converter
-];
+// ============================================
+// Dynamic Project Loading from API
+// ============================================
 
-// Project metadata with live links and Chrome Web Store URLs
-const PROJECT_METADATA = {
-    'my-salesforce-portfolio': {
-        displayName: 'My Portfolio',
-        liveUrl: 'https://www.manaskumarbehera.com/',
-        type: 'web'
-    },
-    'sf-audit-extractor': {
-        displayName: 'TrackForce Pro',
-        storeUrl: 'https://chromewebstore.google.com/detail/trackforcepro/eombeiphccjbnndbabnkimdlkpaooipk',
-        type: 'extension'
-    },
-    'CurrentWeek': {
-        displayName: 'Week Number',
-        storeUrl: 'https://chromewebstore.google.com/detail/week-number/hjbeeopedbnpahgbkndkemigkcellibm',
-        type: 'extension'
-    },
-    'MetaForce': {
-        displayName: 'MetaForce',
-        storeUrl: 'https://chromewebstore.google.com/detail/metaforce/hclbblgimnkmlmnkekmbclfemhdgmjep',
-        type: 'extension'
-    },
-    'salesforce-utility-tool-app': {
-        displayName: 'Salesforce Label Converter',
-        liveUrl: 'https://salesforce-utility-tool-app-40bf289886bc.herokuapp.com/',
-        type: 'web'
+// Load portfolio configuration from server
+async function loadPortfolioConfig() {
+    try {
+        const response = await fetch('/api/portfolio/config');
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+            return data.data;
+        }
+        return null;
+    } catch (error) {
+        console.error('Error loading portfolio config:', error);
+        return null;
     }
-};
+}
 
-// Fetch GitHub Repositories
+// Render projects from API data
+function renderProjects(projects) {
+    const container = document.getElementById('projects-container');
+    const loadingEl = document.getElementById('projects-loading');
+    
+    if (!container) return;
+    
+    // Remove loading indicator
+    if (loadingEl) {
+        loadingEl.remove();
+    }
+    
+    if (!projects || projects.length === 0) {
+        container.innerHTML = `
+            <div class="col-12 text-center">
+                <p class="text-muted">No projects configured. Set PORTFOLIO_PROJECTS environment variable.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Filter featured projects
+    const featuredProjects = projects.filter(p => p.featured !== false);
+    
+    container.innerHTML = featuredProjects.map(project => createProjectCard(project)).join('');
+}
+
+// Create project card HTML
+function createProjectCard(project) {
+    const tags = project.tags || [];
+    const tagsHtml = tags.map((tag, index) => {
+        const colors = ['bg-primary', 'bg-secondary', 'bg-info', 'bg-success', 'bg-warning'];
+        return `<span class="badge ${colors[index % colors.length]}">${tag}</span>`;
+    }).join('\n                            ');
+    
+    // Build action links
+    let linksHtml = '';
+    
+    if (project.github) {
+        linksHtml += `
+                            <a href="${project.github}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                <i class="fab fa-github"></i> Code
+                            </a>`;
+    }
+    
+    if (project.live) {
+        linksHtml += `
+                            <a href="${project.live}" target="_blank" class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-globe"></i> Live
+                            </a>`;
+    }
+    
+    if (project.chromeStore) {
+        linksHtml += `
+                            <a href="${project.chromeStore}" target="_blank" class="btn btn-sm btn-outline-success">
+                                <i class="fab fa-chrome"></i> Install
+                            </a>`;
+    }
+    
+    // Determine icon based on project type
+    const icon = project.icon || (project.extensionId ? 'fab fa-chrome' : 'fas fa-code');
+    
+    // Add user count badge for Chrome extensions
+    let userCountBadge = '';
+    if (project.extensionId) {
+        userCountBadge = `<span class="badge bg-info ms-2 extension-user-count" data-extension-key="${project.key}" id="${project.key}-card-users">--</span>`;
+    }
+    
+    return `
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="project-card" data-project-key="${project.key}">
+                        <div class="project-icon">
+                            <i class="${icon}"></i>
+                        </div>
+                        <h4>${project.name}${userCountBadge}</h4>
+                        <p>${project.description}</p>
+                        <div class="project-tags">
+                            ${tagsHtml}
+                        </div>
+                        <div class="project-links mt-3">
+                            ${linksHtml}
+                        </div>
+                    </div>
+                </div>
+    `;
+}
+
+// Initialize projects on page load
+async function initializeProjects() {
+    const config = await loadPortfolioConfig();
+    
+    if (config && config.projects) {
+        renderProjects(config.projects);
+        
+        // Update GitHub username if available
+        if (config.githubUsername) {
+            GITHUB_USERNAME = config.githubUsername;
+        }
+        
+        // Update extension user counts on project cards after a short delay
+        setTimeout(updateProjectExtensionUsers, 1000);
+    } else {
+        // Fallback to local config fetch
+        try {
+            const response = await fetch('/portfolio-config.json');
+            const data = await response.json();
+            renderProjects(data.projects);
+        } catch (error) {
+            console.error('Error loading local config:', error);
+            const container = document.getElementById('projects-container');
+            if (container) {
+                const loadingEl = document.getElementById('projects-loading');
+                if (loadingEl) loadingEl.remove();
+                container.innerHTML = `
+                    <div class="col-12 text-center">
+                        <p class="text-muted">Unable to load projects. Please refresh the page.</p>
+                    </div>
+                `;
+            }
+        }
+    }
+}
+
+// Update extension user counts on project cards
+async function updateProjectExtensionUsers() {
+    try {
+        const response = await fetch('/api/extensions/stats');
+        const data = await response.json();
+        
+        if (data.success && data.data && data.data.extensions) {
+            for (const [key, ext] of Object.entries(data.data.extensions)) {
+                const badge = document.getElementById(`${key}-card-users`);
+                if (badge && ext.usersFormatted) {
+                    badge.textContent = ext.usersFormatted + ' users';
+                    badge.title = `${ext.users || 'N/A'} active users`;
+                }
+            }
+        }
+    } catch (error) {
+        console.log('Could not update project extension users:', error);
+    }
+}
+
+// Fetch GitHub Repositories (optional - only if SHOW_GITHUB_REPOS is true)
 async function fetchGitHubRepos() {
     const reposContainer = document.getElementById('github-repos');
 
@@ -262,15 +388,13 @@ async function fetchGitHubRepos() {
 
         const repos = await response.json();
 
-        // Filter to only include specified repos (if list is not empty)
-        const filteredRepos = INCLUDED_REPOS.length > 0
-            ? repos.filter(repo => INCLUDED_REPOS.includes(repo.name))
-            : repos.filter(repo => !repo.fork).slice(0, 4); // Fallback: show first 4 non-fork repos
+        // Show first 4 non-fork repos
+        const filteredRepos = repos.filter(repo => !repo.fork).slice(0, 4);
 
         if (filteredRepos.length === 0) {
             reposContainer.innerHTML = `
                 <div class="col-12 text-center">
-                    <p class="text-muted">No repositories found. Update your GitHub username in main.js</p>
+                    <p class="text-muted">No repositories found.</p>
                 </div>
             `;
             return;
@@ -284,52 +408,27 @@ async function fetchGitHubRepos() {
             <div class="col-12 text-center">
                 <div class="alert alert-info">
                     <i class="fas fa-info-circle"></i>
-                    <p class="mb-0">Update the GITHUB_USERNAME constant in js/main.js to display your repositories.</p>
+                    <p class="mb-0">Unable to load GitHub repositories.</p>
                 </div>
             </div>
         `;
     }
 }
 
-// Create Repository Card HTML
+// Create Repository Card HTML (for GitHub repos section)
 function createRepoCard(repo) {
-    const metadata = PROJECT_METADATA[repo.name] || {};
-    const displayName = metadata.displayName || repo.name;
     const description = repo.description || 'No description available';
     const language = repo.language || 'Unknown';
     const stars = repo.stargazers_count || 0;
     const forks = repo.forks_count || 0;
 
-    // Build action buttons based on project type
-    let actionButtons = `
-        <a href="${repo.html_url}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
-            <i class="fab fa-github"></i> View Code
-        </a>
-    `;
-
-    if (metadata.liveUrl) {
-        actionButtons += `
-            <a href="${metadata.liveUrl}" target="_blank" class="btn btn-sm btn-primary mt-2 ms-2">
-                <i class="fas fa-external-link-alt"></i> Live Demo
-            </a>
-        `;
-    }
-
-    if (metadata.storeUrl) {
-        actionButtons += `
-            <a href="${metadata.storeUrl}" target="_blank" class="btn btn-sm btn-success mt-2 ms-2">
-                <i class="fab fa-chrome"></i> Chrome Store
-            </a>
-        `;
-    }
-
     return `
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="repo-card">
                 <h5>
-                    ${metadata.type === 'extension' ? '<i class="fab fa-chrome"></i>' : '<i class="fab fa-github"></i>'}
+                    <i class="fab fa-github"></i>
                     <a href="${repo.html_url}" target="_blank" style="text-decoration: none; color: inherit;">
-                        ${displayName}
+                        ${repo.name}
                     </a>
                 </h5>
                 <p class="repo-description">${description}</p>
@@ -350,7 +449,9 @@ function createRepoCard(repo) {
                     </div>
                 </div>
                 <div class="repo-actions">
-                    ${actionButtons}
+                    <a href="${repo.html_url}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
+                        <i class="fab fa-github"></i> View Code
+                    </a>
                 </div>
             </div>
         </div>
@@ -1333,5 +1434,9 @@ function animateCounter(element, start, end, duration) {
 
 // Initialize extension stats on page load
 document.addEventListener('DOMContentLoaded', () => {
+    // Load projects dynamically from API
+    initializeProjects();
+    
+    // Load extension stats
     loadExtensionStats();
 });

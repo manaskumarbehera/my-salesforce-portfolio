@@ -94,10 +94,46 @@ A professional portfolio website showcasing Salesforce development projects, too
 | `/api/chat` | POST | Chat with AI assistant |
 | `/api/recommendations` | GET | Get approved recommendations |
 | `/api/recommendations` | POST | Submit new recommendation |
-| `/api/portfolio/projects` | GET | Get all projects (from config) 🆕 |
-| `/api/portfolio/projects/featured` | GET | Get featured projects only 🆕 |
-| `/api/portfolio/config` | GET | Get full portfolio config 🆕 |
+| `/api/portfolio/projects` | GET | Get all projects (from config) |
+| `/api/portfolio/projects/featured` | GET | Get featured projects only |
+| `/api/portfolio/config` | GET | Get full portfolio config |
 | `/api/extensions/stats` | GET | Get all Chrome extension user counts |
+| `/api/extensions/:key/stats` | GET | Get single extension stats |
+
+## 🔧 Dynamic Configuration via Heroku Environment Variables
+
+**New! Configure projects and Chrome extensions without code changes.**
+
+The portfolio now supports full configuration via Heroku environment variables, making it easy to add/remove projects and Chrome extensions without modifying code.
+
+### Quick Setup
+
+```bash
+# Set projects via Heroku CLI
+heroku config:set PORTFOLIO_PROJECTS='[
+  {"key":"project1","name":"My Project","description":"Description","github":"https://github.com/user/repo","featured":true}
+]'
+
+# Set Chrome extensions for real-time user counts
+heroku config:set CHROME_EXTENSIONS='[
+  {"key":"myext","id":"chrome-extension-id","name":"My Extension","storeUrl":"https://chromewebstore.google.com/detail/ext/id"}
+]'
+
+# Optional: Set GitHub username
+heroku config:set GITHUB_USERNAME='your-github-username'
+
+# Optional: Manual user counts (fallback if scraping fails)
+heroku config:set EXTENSION_USER_COUNTS='{"myext":150}'
+```
+
+### Features
+
+- **Real-time Chrome Web Store user counts** - Automatically fetches user counts from Chrome Web Store
+- **1-hour caching** - Prevents rate limiting while keeping data fresh
+- **Fallback to file config** - If env vars not set, reads from `portfolio-config.json`
+- **API endpoints** - Frontend loads projects dynamically from `/api/portfolio/config`
+
+**See:** [ENVIRONMENT_VARIABLES.md](docs/ENVIRONMENT_VARIABLES.md) for complete documentation.
 | `/api/extensions/:key/stats` | GET | Get single extension stats |
 
 ### 🆕 Configuration via Environment Variables

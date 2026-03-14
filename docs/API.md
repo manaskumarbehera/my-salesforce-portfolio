@@ -450,13 +450,24 @@ Required configuration (set in Heroku Config Vars):
 | `EMAIL_PORT` | SMTP port (default: 587) | No |
 | `ADMIN_KEY` | Admin key for recommendations | No (default: manas2026) |
 | `ASTRATIS_URL` | Astratis AI API key | No (optional) |
+| `GITHUB_USERNAME` | GitHub username for repos | No |
+| `PORTFOLIO_PROJECTS` | JSON array of projects | No (uses portfolio-config.json) |
+| `CHROME_EXTENSIONS` | JSON array of extensions | No (uses portfolio-config.json) |
+| `EXTENSION_USER_COUNTS` | Manual user counts JSON | No (scrapes from Chrome Store) |
 
 **Set variables:**
 ```bash
 heroku config:set EMAIL_USER=your-email@outlook.com -a manaskumarbehera
 heroku config:set EMAIL_PASS=your-app-password -a manaskumarbehera
 heroku config:set ADMIN_KEY=your-secret-key -a manaskumarbehera
+
+# Portfolio configuration
+heroku config:set GITHUB_USERNAME='manaskumarbehera' -a manaskumarbehera
+heroku config:set PORTFOLIO_PROJECTS='[{"key":"myproject","name":"My Project","description":"Description","github":"https://github.com/user/repo","featured":true}]' -a manaskumarbehera
+heroku config:set CHROME_EXTENSIONS='[{"key":"myext","id":"extension-id","name":"My Extension","storeUrl":"https://chromewebstore.google.com/detail/ext/id"}]' -a manaskumarbehera
 ```
+
+**Full Configuration Guide:** [ENVIRONMENT_VARIABLES.md](ENVIRONMENT_VARIABLES.md)
 
 ---
 
