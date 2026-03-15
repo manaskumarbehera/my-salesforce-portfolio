@@ -2064,3 +2064,163 @@ body {
     }
 }
 
+/* ==================== LinkedIn Recommendation Sync ==================== */
+
+/* LinkedIn Button Styles */
+.btn-linkedin-rec {
+    background: linear-gradient(135deg, #0077b5 0%, #005582 100%);
+    border: none;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 25px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 119, 181, 0.3);
+}
+
+.btn-linkedin-rec:hover {
+    background: linear-gradient(135deg, #005582 0%, #003d5c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 119, 181, 0.4);
+    color: white;
+}
+
+.btn-linkedin-rec:active {
+    transform: translateY(0);
+}
+
+.btn-linkedin-rec i {
+    font-size: 1.1rem;
+}
+
+/* LinkedIn Modal Header */
+.bg-linkedin {
+    background: linear-gradient(135deg, #0077b5 0%, #005582 100%);
+}
+
+.bg-linkedin .btn-close-white {
+    filter: brightness(0) invert(1);
+}
+
+/* Import Instructions */
+.import-instructions {
+    background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #0077b5;
+}
+
+.import-instructions h6 {
+    color: var(--dark-color);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.import-steps {
+    margin-bottom: 0;
+    padding-left: 1.2rem;
+}
+
+.import-steps li {
+    margin-bottom: 1rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.import-steps li:last-child {
+    margin-bottom: 0;
+}
+
+.import-steps li strong {
+    color: var(--dark-color);
+}
+
+/* Import Form Stars */
+.import-star {
+    font-size: 1.5rem !important;
+}
+
+#importRatingInput {
+    display: flex;
+    gap: 0.3rem;
+}
+
+/* LinkedIn Badge on Recommendation Cards */
+.linkedin-source-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: linear-gradient(135deg, #0077b5 0%, #005582 100%);
+    color: white;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    margin-left: 0.5rem;
+}
+
+.linkedin-source-badge i {
+    font-size: 0.6rem;
+}
+
+/* Recommendation Header with LinkedIn Link */
+.recommendation-header .recommendation-info h5 a {
+    color: #0077b5;
+    text-decoration: none;
+    margin-left: 0.4rem;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+.recommendation-header .recommendation-info h5 a:hover {
+    color: #005582;
+}
+
+/* Mobile Responsive LinkedIn Buttons */
+@media (max-width: 576px) {
+    .btn-linkedin-rec {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .import-instructions {
+        padding: 1rem;
+    }
+
+    .import-steps {
+        padding-left: 1rem;
+    }
+
+    .import-steps li {
+        font-size: 0.9rem;
+    }
+
+    #importRecommendationsModal .modal-body {
+        padding: 1rem;
+    }
+
+    #importRecommendationsModal .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+/* Animation for LinkedIn Import Success */
+@keyframes linkedinPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 119, 181, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(0, 119, 181, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 119, 181, 0);
+    }
+}
+
+.btn-linkedin-rec.success-pulse {
+    animation: linkedinPulse 1s ease-out;
+}

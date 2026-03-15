@@ -346,7 +346,19 @@
     <section id="recommendations" class="section-padding">
         <div class="container">
             <h2 class="section-title text-center mb-3">Recommendations</h2>
-            <p class="text-center text-muted mb-5">What colleagues and clients say about working with me</p>
+            <p class="text-center text-muted mb-4">What colleagues and clients say about working with me</p>
+
+            <!-- LinkedIn Shortcut Link -->
+            <div class="text-center mb-4">
+                <a href="https://www.linkedin.com/in/manas-behera-68607547/details/recommendations/"
+                   target="_blank"
+                   class="btn btn-linkedin-rec">
+                    <i class="fab fa-linkedin"></i> View on LinkedIn
+                </a>
+                <button class="btn btn-outline-secondary ms-2" data-bs-toggle="modal" data-bs-target="#importRecommendationsModal">
+                    <i class="fas fa-sync-alt"></i> Import from LinkedIn
+                </button>
+            </div>
 
             <!-- Display Recommendations -->
             <div class="row" id="recommendationsList">
@@ -366,6 +378,98 @@
             </div>
         </div>
     </section>
+
+    <!-- Import Recommendations Modal -->
+    <div class="modal fade" id="importRecommendationsModal" tabindex="-1" aria-labelledby="importRecommendationsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-linkedin text-white">
+                    <h5 class="modal-title" id="importRecommendationsModalLabel">
+                        <i class="fab fa-linkedin"></i> Import LinkedIn Recommendations
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="import-instructions">
+                        <h6><i class="fas fa-info-circle text-primary"></i> How to Import Recommendations</h6>
+                        <ol class="import-steps">
+                            <li>
+                                <strong>Go to LinkedIn Recommendations:</strong><br>
+                                <a href="https://www.linkedin.com/in/manas-behera-68607547/details/recommendations/" target="_blank" class="btn btn-sm btn-linkedin-rec mt-2">
+                                    <i class="fab fa-linkedin"></i> Open LinkedIn Recommendations
+                                </a>
+                            </li>
+                            <li>
+                                <strong>Copy the recommendation text</strong> from each person who recommended you
+                            </li>
+                            <li>
+                                <strong>Fill in the form below</strong> with the recommender's details
+                            </li>
+                        </ol>
+                    </div>
+
+                    <hr>
+
+                    <form id="importRecommendationForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="importName" class="form-label">Recommender Name *</label>
+                                <input type="text" class="form-control" id="importName" placeholder="John Doe" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="importTitle" class="form-label">Title/Role *</label>
+                                <input type="text" class="form-control" id="importTitle" placeholder="Senior Developer at Company" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="importLinkedIn" class="form-label">LinkedIn Profile URL</label>
+                                <input type="url" class="form-control" id="importLinkedIn" placeholder="https://linkedin.com/in/...">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="importRelationship" class="form-label">Relationship *</label>
+                                <select class="form-select" id="importRelationship" required>
+                                    <option value="">Select relationship</option>
+                                    <option value="Managed Manas directly">Managed Manas directly</option>
+                                    <option value="Reported to Manas">Reported to Manas</option>
+                                    <option value="Worked together">Worked together</option>
+                                    <option value="Client">Client</option>
+                                    <option value="Colleague">Colleague</option>
+                                    <option value="Mentor">Mentor</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="importDate" class="form-label">Date of Recommendation</label>
+                            <input type="date" class="form-control" id="importDate">
+                        </div>
+                        <div class="mb-3">
+                            <label for="importMessage" class="form-label">Recommendation Text *</label>
+                            <textarea class="form-control" id="importMessage" rows="5" placeholder="Paste the recommendation text from LinkedIn..." required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rating *</label>
+                            <div class="rating-input" id="importRatingInput">
+                                <i class="fas fa-star rating-star import-star" data-rating="1"></i>
+                                <i class="fas fa-star rating-star import-star" data-rating="2"></i>
+                                <i class="fas fa-star rating-star import-star" data-rating="3"></i>
+                                <i class="fas fa-star rating-star import-star" data-rating="4"></i>
+                                <i class="fas fa-star rating-star import-star" data-rating="5"></i>
+                            </div>
+                            <input type="hidden" id="importRating" value="5">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-linkedin-rec" id="submitImportRecommendation">
+                        <i class="fas fa-upload"></i> Import Recommendation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Recommendation Modal -->
     <div class="modal fade" id="recommendationModal" tabindex="-1" aria-labelledby="recommendationModalLabel" aria-hidden="true">

@@ -1439,4 +1439,153 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Load extension stats
     loadExtensionStats();
+    
+    // Initialize import recommendation rating stars
+    initImportRatingStars();
 });
+
+// ============================================
+// LinkedIn Recommendation Import
+// ============================================
+
+// Initialize import rating stars
+function initImportRatingStars() {
+    const stars = document.querySelectorAll('.import-star');
+    const ratingInput = document.getElementById('importRating');
+    
+    if (!stars.length || !ratingInput) return;
+    
+    // Set initial state (5 stars)
+    updateImportStars(5);
+    
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = parseInt(this.dataset.rating);
+            ratingInput.value = rating;
+            updateImportStars(rating);
+        });
+        
+        star.addEventListener('mouseenter', function() {
+            const rating = parseInt(this.dataset.rating);
+            highlightImportStars(rating);
+        });
+    });
+    
+    document.getElementById('importRatingInput')?.addEventListener('mouseleave', function() {
+        updateImportStars(parseInt(ratingInput.value));
+    });
+}
+
+function updateImportStars(rating) {
+    document.querySelectorAll('.import-star').forEach((star, index) => {
+        star.classList.toggle('active', index < rating);
+    });
+}
+
+function highlightImportStars(rating) {
+    document.querySelectorAll('.import-star').forEach((star, index) => {
+        star.classList.toggle('active', index < rating);
+    });
+}
+
+// Submit LinkedIn import recommendation
+document.getElementById('submitImportRecommendation')?.addEventListener('click', async function() {
+    const form = document.getElementById('importRecommendationForm');
+    const submitBtn = this;
+    
+    // Get form values
+    const name = document.getElementById('importName').value.trim();
+    const title = document.getElementById('importTitle').value.trim();
+    const linkedin = document.getElementById('importLinkedIn').value.trim();
+    const relationship = document.getElementById('importRelationship').value;
+    const date = document.getElementById('importDate').value;
+    const message = document.getElementById('importMessage').value.trim();
+    const rating = document.getElementById('importRating').value;
+    
+    // Validate
+    if (!name || !title || !relationship || !message) {
+        showImportNotification('error', 'Please fill in all required fields.');
+        return;
+    }
+    
+    if (message.length < 50) {
+        showImportNotification('error', 'Recommendation must be at least 50 characters.');
+        return;
+    }
+    
+    // Show loading state
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importing...';
+    submitBtn.disabled = true;
+    
+    try {
+        const response = await fetch('/api/recommendations/import', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name,
+                title,
+                linkedin,
+                relationship,
+                message,
+                rating,
+                source: 'linkedin',
+                importDate: date || new Date().toISOString()
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Track successful import
+            trackFormSubmission('linkedin_import', true);
+            
+            // Add success animation to button
+            submitBtn.classList.add('success-pulse');
+            setTimeout(() => submitBtn.classList.remove('success-pulse'), 1000);
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('importRecommendationsModal'));
+            modal.hide();
+            
+            // Reset form
+            form.reset();
+            updateImportStars(5);
+            document.getElementById('importRating').value = 5;
+            
+            // Reload recommendations
+            loadRecommendations();
+            
+            // Show success notification
+            showNotification('success', result.message || 'Recommendation imported successfully!');
+        } else {
+            trackFormSubmission('linkedin_import', false);
+            showImportNotification('error', result.message || 'Failed to import recommendation.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        trackFormSubmission('linkedin_import', false);
+        showImportNotification('error', 'Failed to import. Please try again.');
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+});
+
+// Show notification in import modal
+function showImportNotification(type, message) {
+    const existing = document.querySelector('#importRecommendationsModal .modal-notification');
+    if (existing) existing.remove();
+    
+    const notification = document.createElement('div');
+    notification.className = `modal-notification alert alert-${type === 'success' ? 'success' : 'danger'} mt-3`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        ${message}
+    `;
+    
+    document.querySelector('#importRecommendationsModal .modal-body').appendChild(notification);
+    setTimeout(() => notification.remove(), 5000);
+}

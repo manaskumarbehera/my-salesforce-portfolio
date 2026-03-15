@@ -1092,6 +1092,66 @@ app.post('/api/recommendations', async (req, res) => {
     }
 });
 
+// POST - Import a LinkedIn recommendation (admin only - auto-approves)
+app.post('/api/recommendations/import', async (req, res) => {
+    const { name, title, linkedin, relationship, message, rating, source, importDate } = req.body;
+    const timestamp = importDate || new Date().toISOString();
+
+    // Validate required fields
+    if (!name || !title || !relationship || !message || !rating) {
+        return res.status(400).json({
+            success: false,
+            message: 'All required fields must be filled.'
+        });
+    }
+
+    // Validate message length
+    if (message.length < 50) {
+        return res.status(400).json({
+            success: false,
+            message: 'Recommendation must be at least 50 characters.'
+        });
+    }
+
+    // Create recommendation object - auto-approved for imports
+    const recommendation = {
+        id: Date.now().toString(),
+        name,
+        title,
+        email: null, // Not required for imports
+        linkedin: linkedin || null,
+        relationship,
+        message,
+        rating: parseInt(rating),
+        status: 'approved', // Auto-approve LinkedIn imports
+        source: source || 'linkedin',
+        timestamp,
+        approvedAt: new Date().toISOString(),
+        importedAt: new Date().toISOString()
+    };
+
+    // Save recommendation
+    try {
+        const recommendations = readRecommendations();
+        recommendations.push(recommendation);
+        saveRecommendations(recommendations);
+
+        console.log('📥 LinkedIn Recommendation Imported:', { name, title, relationship, timestamp });
+
+        res.json({
+            success: true,
+            message: 'Recommendation imported and published successfully!'
+        });
+
+    } catch (error) {
+        console.error('Error importing recommendation:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to import recommendation. Please try again.'
+        });
+    }
+});
+
 // GET - Approve a recommendation (via email link)
 app.get('/api/recommendations/approve', (req, res) => {
     const { id, key } = req.query;

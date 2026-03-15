@@ -1,2 +1,17 @@
-[]
-
+[
+  {
+    "id": "1773562032715",
+    "name": "John Doe",
+    "title": "Senior Manager at Company XYZ",
+    "email": null,
+    "linkedin": "https://linkedin.com/in/johndoe",
+    "relationship": "Managed Manas directly",
+    "message": "Manas is an excellent developer who consistently delivers high-quality work. His expertise in Salesforce is outstanding.",
+    "rating": 5,
+    "status": "approved",
+    "source": "linkedin",
+    "timestamp": "2026-03-15T08:07:12.715Z",
+    "approvedAt": "2026-03-15T08:07:12.715Z",
+    "importedAt": "2026-03-15T08:07:12.715Z"
+  }
+]
