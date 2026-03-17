@@ -13,8 +13,8 @@
     },
     {
       "key": "trackforcepro",
-      "name": "TrackForce Pro",
-      "description": "TrackForcePro is the ultimate productivity toolkit for Salesforce Administrators and Developers. Access powerful audit, query building, data exploration, and monitoring tools directly from your browser.",
+      "name": "TrackForce Pro (Chrome Extension)",
+      "description": "Chrome Extension version of TrackForce Pro. Install directly in your browser for quick access to Salesforce audit, query building, and monitoring tools while you work.",
       "icon": "fab fa-chrome",
       "tags": ["Chrome Extension", "Salesforce", "Productivity"],
       "github": "https://github.com/manaskumarbehera/sf-audit-extractor",
@@ -56,8 +56,8 @@
     },
     {
       "key": "trackforcepro-web",
-      "name": "TrackForce Pro Web",
-      "description": "Full-featured web application for Salesforce Audit & Query tools. Access powerful audit logs, query builder, data exploration, and monitoring tools directly from your browser.",
+      "name": "TrackForce Pro (Web App)",
+      "description": "Web application version of TrackForce Pro. No installation required — access the full Salesforce audit, query builder, and monitoring toolkit directly from any browser.",
       "icon": "fas fa-globe",
       "tags": ["Node.js", "Express", "Salesforce", "Heroku", "Web App"],
       "github": "https://github.com/manaskumarbehera/sf-audit-extractor",
