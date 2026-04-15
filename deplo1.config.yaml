@@ -1,0 +1,7 @@
+# Deplo1 configuration — generated automatically
+project:
+  name: "deplo1-project"
+
+deploy:
+  strategy: "branch"
+  defaultBranch: "main"
